@@ -1,0 +1,28 @@
+set cut_paste_input [stack 0]
+version 13.0 v6
+push $cut_paste_input
+Group {
+ name Light_Mixer
+ selected true
+ xpos 202
+ ypos -227
+ addUserKnob {20 User l "Light Mixer"}
+ addUserKnob {6 dsd_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {22 test +INVISIBLE T "import light_mixer\nimport imp\nimp.reload(light_mixer)\nfrom light_mixer import LightMixerUtil\n\nLightMixerUtil.test_this()" +STARTLINE}
+ addUserKnob {22 build l Build T "from light_mixer import LightMixerUtil\nLightMixerUtil.build()" +STARTLINE}
+ addUserKnob {22 clear l Clear -STARTLINE T "from light_mixer import LightMixerUtil\n\nLightMixerUtil.clear()"}
+ addUserKnob {22 info l "Send Info" -STARTLINE T "from light_mixer import LightMixerUtil\n\nLightMixerUtil.send_to_maya()"}
+ addUserKnob {4 render_engine l "Render Engine" -STARTLINE M {Arnold Redshift V-Ray "" ""}}
+}
+ Input {
+  inputs 0
+  name In
+  xpos 73
+  ypos -664
+ }
+ Output {
+  name Out
+  xpos 73
+  ypos -103
+ }
+end_group
