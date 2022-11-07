@@ -9,8 +9,11 @@ plugin_dir = os.path.join(os.path.dirname(__file__), latest_version)
 # nuke.pluginAddPath(plugin_dir.replace('\\', '/'))
 
 load = [
+    "scripts",
     "tools/light_mixer",
     "tools/look_manager",
+    "tools/w_hotbox",
+    "tools/ddot",
     ]
 
 for ppath in load:
