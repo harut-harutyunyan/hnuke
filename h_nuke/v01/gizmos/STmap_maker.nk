@@ -1,0 +1,40 @@
+set cut_paste_input [stack 0]
+version 13.0 v6
+push $cut_paste_input
+Group {
+ name STmap_maker
+ tile_color 0xc0fd24ff
+ selected true
+ xpos -501
+ ypos -4
+ addUserKnob {20 User}
+ addUserKnob {3 overscan_x l "Overscan X"}
+ overscan_x 8500
+ addUserKnob {3 overscan_y l "Overscan Y"}
+ overscan_y 8500
+}
+ Input {
+  inputs 0
+  name format
+  xpos -370
+  ypos -177
+ }
+ Crop {
+  box {{-overscan_x} {-overscan_y} {width+overscan_x} {height+overscan_y}}
+  name Crop1
+  xpos -370
+  ypos -153
+ }
+ Expression {
+  expr0 "(x+.5) / width"
+  expr1 "(y+.5) / height"
+  name Expression1
+  xpos -370
+  ypos -129
+ }
+ Output {
+  name Output1
+  xpos -370
+  ypos -105
+ }
+end_group

@@ -1,3 +1,4 @@
+import os
 import nuke
 
 
@@ -6,6 +7,15 @@ import W_hotbox, W_hotboxManager
 import dDot
 
 
+# gizmos
+
+h_gizmos = os.path.join(os.path.dirname(os.path.dirname(__file__)), "gizmos")
+h_gizmos = h_gizmos.replace('\\', '/')
+toolbar = nuke.toolbar("Nodes")
+k = toolbar.addMenu("h_gizmos")
+for gizmo in os.listdir(h_gizmos):
+    name, _ = os.path.splitext(gizmo)
+    k.addCommand(name, "nuke.createNode(\"{}\")".format(gizmo))
 
 # W SmartAlign
 
