@@ -8,14 +8,22 @@ import dDot
 
 
 # gizmos
+def add_gizmos(menu, search_path):
+    for gizmo in os.listdir(search_path):
+        name, ext = os.path.splitext(gizmo)
+        if ext in [".gizmo", ".nk"]:
+            menu.addCommand(name, "nuke.createNode(\"{}\")".format(gizmo))
 
 h_gizmos = os.path.join(os.path.dirname(os.path.dirname(__file__)), "gizmos")
 h_gizmos = h_gizmos.replace('\\', '/')
 toolbar = nuke.toolbar("Nodes")
 k = toolbar.addMenu("h_gizmos")
-for gizmo in os.listdir(h_gizmos):
-    name, _ = os.path.splitext(gizmo)
-    k.addCommand(name, "nuke.createNode(\"{}\")".format(gizmo))
+
+for f in os.listdir(h_gizmos):
+  fpath = os.path.join(h_gizmos, f)
+  if os.path.isdir(fpath):
+    menu = k.addMenu(f)
+    add_gizmos(menu, fpath)
 
 # W SmartAlign
 
