@@ -12,6 +12,8 @@ def add_gizmos(menu, search_path):
     for gizmo in os.listdir(search_path):
         name, ext = os.path.splitext(gizmo)
         if ext in [".gizmo", ".nk"]:
+            gizmo = os.path.join(search_path, gizmo)
+            gizmo = gizmo.replace("\\", "/")
             menu.addCommand(name, "nuke.createNode(\"{}\")".format(gizmo))
 
 h_gizmos = os.path.join(os.path.dirname(os.path.dirname(__file__)), "gizmos")

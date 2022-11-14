@@ -30,7 +30,6 @@ Group {
  addUserKnob {26 ""}
  addUserKnob {20 GPU_Settings l "GPU Settings"}
  addUserKnob {41 maxGPUMemory l "Percentage of GPU memory to use" T BlinkScript1.maxGPUMemory}
- addUserKnob {41 maxTileLines l "Percentage of image height per tile" T BlinkScript1.maxTileLines}
  addUserKnob {20 about l About}
  addUserKnob {26 about_1 l "" t "A bunny:\n(\\(\\ \n( - -)\n((') (')" +STARTLINE T "<br>\n<b>Xavier Martín © 2017</b>"}
  addUserKnob {26 ""}
@@ -210,7 +209,6 @@ push $N22196000
   X_Aton_iterations {{parent.iterations}}
   X_Aton_decay {{parent.decay}}
   X_Aton_normalize_output {{parent.normalize}}
-  maxTileLines 100
   name BlinkScript2
   xpos -640
   ypos -116
@@ -232,7 +230,6 @@ push $N22196000
   X_Aton_iterations {{iterations}}
   X_Aton_decay {{decay}}
   X_Aton_normalize_output {{normalize}}
-  maxTileLines 100
   name BlinkScript1
   onCreate "n = nuke.thisNode()\nn\[\"X_Aton_center\"].setFlag(0x00008000)"
   selected true
@@ -275,7 +272,6 @@ set N2bc21880 [stack 0]
   X_Aton_decay {{decay}}
   X_Aton_normalize_output {{normalize}}
   X_Aton_mode {{(parent.mode!=3)?parent.mode:parent.mode*(parent.diffuse!=0)}}
-  maxTileLines 100
   name BlinkScript4
   xpos -940
   ypos -116
@@ -293,7 +289,6 @@ push $N2bc21880
   X_Aton_decay {{decay}}
   X_Aton_normalize_output {{normalize}}
   X_Aton_mode {{(parent.mode!=3)?parent.mode:parent.mode*(parent.diffuse!=0)}}
-  maxTileLines 100
   name BlinkScript3
   xpos -840
   ypos -116

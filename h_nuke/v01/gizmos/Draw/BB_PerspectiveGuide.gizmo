@@ -3,6 +3,7 @@
 
 #! /usr/bin/env nuke -nx
 Group {
+name "BB_PerspectiveGuide"
  tile_color 0x566d6dff
  addUserKnob {20 options l Options}
  addUserKnob {4 overlay l Overlay t "Choose layer operation." M {add over ""}}
@@ -118,7 +119,6 @@ Group {
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -218,7 +218,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -288,7 +287,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -359,7 +357,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -429,7 +426,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -499,7 +495,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -569,7 +564,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -639,7 +633,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1
@@ -709,7 +702,6 @@ set N7730f30 [stack 0]
 } }
   toolbar_autokey false
   toolbar_feather_link false
-  toolbar_show_transform_type false
   toolbar_ripple_range_type "to end"
   toolbar_ripple_range_from 1
   toolbar_ripple_range_to 1

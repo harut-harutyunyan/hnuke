@@ -1,4 +1,5 @@
 Group {
+name "Lightwrap_Exponential"
  inputs 3
  help "A lightwrap node with a more physical response than Nuke's default."
  tile_color 0xc97200ff

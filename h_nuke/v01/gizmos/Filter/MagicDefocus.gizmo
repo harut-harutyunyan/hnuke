@@ -1,4 +1,5 @@
 Group {
+name "MagicDefocus"
  tile_color 0xce8150ff
  addUserKnob {20 controls l Controls}
  addUserKnob {41 gpu l "Use GPU if available" T MagicDefocus_knobs.gpu}
