@@ -3,6 +3,7 @@
 import nuke
 
 FONT_SIZE = 42
+DISTANCE_FROM_NODE = 150
 UPDATE_UI = "node = nuke.toNode(nuke.thisNode().knob('label').getValue())\nif node:\n    nuke.thisNode().setInput(0, node)"
 
 def dDotParent():
@@ -23,6 +24,14 @@ def dDotParent():
         nuke.message('This is already a parent')
         return
 
+    # p = nuke.Panel('Create Parent')
+    # line_name = 'ParentName for: {}'.format(selected.name())
+    # p.addSingleLineInput(line_name,'')
+    # p.addRGBColorChip('Color', 0)
+    # ret = p.show()
+
+    # parentName = p.value(line_name)
+    # colorVal = p.value('Color')
     parentName = nuke.getInput('ParentName for: {}'.format(selected.name()),'')
     parentKnob = nuke.Text_Knob('parent', 'parent')
 
@@ -48,7 +57,8 @@ def dDotParent():
 
     else:
         newDot = nuke.createNode('Dot', inpanel=False)
-        newDot.setYpos(selected.ypos()-150)
+        newDot.setXpos(selected.xpos()+int(selected.screenWidth()/2-5))
+        newDot.setYpos(selected.ypos()+DISTANCE_FROM_NODE)
         newDot.knob('label').setValue('[value name]')
         newDot.knob('name').setValue(parentName)
         newDot.knob('tile_color').setValue(0)
