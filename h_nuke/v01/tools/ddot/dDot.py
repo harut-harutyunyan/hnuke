@@ -2,9 +2,28 @@
 
 import nuke
 
+FONT_SIZE = 42
+UPDATE_UI = "node = nuke.toNode(nuke.thisNode().knob('label').getValue())\nif node:\n    nuke.thisNode().setInput(0, node)"
+
 def dDotParent():
 
-    parentName = nuke.getInput('ParentName','')
+    selected = nuke.Root().selectedNode()
+
+    if selected == None:
+        nuke.message('Error:Nothing is selected.')
+
+    elif len(nuke.Root().selectedNodes()) > 1:
+        nuke.message('Error:Multiple nodes selected')
+
+    if len([n for n in selected.dependent() if n.Class() == 'Dot' and n.knob('parent')])!=0:
+        nuke.message('{} is already a parent'.format(selected.name()))
+        return
+
+    if selected.knob('parent'):
+        nuke.message('This is already a parent')
+        return
+
+    parentName = nuke.getInput('ParentName for: {}'.format(selected.name()),'')
     parentKnob = nuke.Text_Knob('parent', 'parent')
 
     if parentName == None:
@@ -14,31 +33,26 @@ def dDotParent():
         nuke.message('No parent name given.')
         return False
 
-    if nuke.Root().selectedNode() == None:
-        nuke.message('Error:Nothing is selected.')
-
-    elif len(nuke.selectedNodes()) > 1:
-        nuke.message('Error:Multiple nodes selected')
-
-    elif nuke.selectedNode().Class() == 'Dot':
-        if nuke.selectedNode().knob('child'):
+    elif selected.Class() == 'Dot':
+        if selected.knob('child'):
             nuke.message("Error:It's a child.")
         else:
-                nuke.selectedNode().knob('label').setValue('[value name]')
-                nuke.selectedNode().knob('name').setValue(parentName)
-                nuke.selectedNode().knob('tile_color').setValue(0)
-                nuke.selectedNode().knob('note_font_size').setValue(33)
-                if nuke.selectedNode().knob('parent'):
-                    pass
-                else:
-                    nuke.selectedNode().addKnob(parentKnob)
+            nuke.selectedNode().knob('label').setValue('[value name]')
+            nuke.selectedNode().knob('name').setValue(parentName)
+            nuke.selectedNode().knob('tile_color').setValue(0)
+            nuke.selectedNode().knob('note_font_size').setValue(FONT_SIZE)
+            if nuke.selectedNode().knob('parent'):
+                pass
+            else:
+                nuke.selectedNode().addKnob(parentKnob)
 
     else:
-        newDot = nuke.createNode('Dot')
+        newDot = nuke.createNode('Dot', inpanel=False)
+        newDot.setYpos(selected.ypos()-150)
         newDot.knob('label').setValue('[value name]')
         newDot.knob('name').setValue(parentName)
         newDot.knob('tile_color').setValue(0)
-        newDot.knob('note_font_size').setValue(33)
+        newDot.knob('note_font_size').setValue(FONT_SIZE)
         newDot.addKnob(parentKnob)
 
 def dDotConnect():
@@ -71,7 +85,8 @@ def dDotConnect():
                 n.knob('tile_color').setValue(0)
                 n.knob('hide_input').setValue(True)
                 n.knob('note_font').setValue('italic')
-                n.knob('note_font_size').setValue(22)
+                n.knob('updateUI').setValue(UPDATE_UI)
+                n.knob('note_font_size').setValue(FONT_SIZE-10)
                 parentColor = n.input(0).knob('note_font_color').getValue()
                 parentColor = int(parentColor)
                 n.knob('note_font_color').setValue(parentColor)
@@ -85,12 +100,13 @@ def dDotConnect():
                 else:
                     n.addKnob(childKnob)
     else:
-        nuke.createNode("Dot").connectInput(0, parent)
+        nuke.createNode("Dot", inpanel=False).connectInput(0, parent)
         nuke.selectedNode().knob('label').setValue(selectedParent)
         nuke.selectedNode().knob('tile_color').setValue(0)
         nuke.selectedNode().knob('hide_input').setValue(True)
         nuke.selectedNode().knob('note_font').setValue('italic')
-        nuke.selectedNode().knob('note_font_size').setValue(22)
+        nuke.selectedNode().knob('note_font_size').setValue(FONT_SIZE-10)
+        nuke.selectedNode().knob('updateUI').setValue(UPDATE_UI)
         nuke.selectedNode().addKnob(childKnob)
         parentColor = nuke.selectedNode().input(0).knob('note_font_color').getValue()
         parentColor = int(parentColor)
@@ -113,7 +129,7 @@ def dDotConnectSelected():
             n.knob('tile_color').setValue(0)
             n.knob('hide_input').setValue(True)
             n.knob('note_font').setValue('italic')
-            n.knob('note_font_size').setValue(22)
+            n.knob('note_font_size').setValue(FONT_SIZE-10)
             parentColor = n.input(0).knob('note_font_color').getValue()
             parentColor = int(parentColor)
             n.knob('note_font_color').setValue(parentColor)
@@ -162,14 +178,14 @@ def dDotAutoConnect():
             if d.input(0) == None:
                 d.connectInput(0, parent)
                 d['tile_color'].setValue(0)
-                d.knob('note_font_size').setValue(22)
+                d.knob('note_font_size').setValue(FONT_SIZE-10)
                 d.knob('note_font_color').setValue(parentColor)
             else:
                 parentName = d.input(0).knob('name').getValue()
                 if childLabel != parentName:
                     d.connectInput(0, parent)
                     d['tile_color'].setValue(0)
-                    d.knob('note_font_size').setValue(22)
+                    d.knob('note_font_size').setValue(FONT_SIZE-10)
                     d.knob('note_font_color').setValue(parentColor)
     dDotCheckInput()
 
@@ -223,50 +239,52 @@ def dDotSelectChildren():
         if n.knob('child') and n.knob('label'). getValue() == childName:
             n.setSelected(True)
 
+def unselect_all():
+    for node in nuke.selectedNodes():
+        node.setSelected(False)
+
+def dDotStart():
+    sel_list = nuke.selectedNodes()
+    if len(sel_list) == 0:
+        dDotConnect()
+    elif sel_list[0].knob('child'):
+        dDotAutoConnect()
+    else:
+        for node in sel_list:
+            unselect_all()
+            node.setSelected(True)
+            dDotParent()
+
+
+
 
 # Add backpack
 toolbar = nuke.menu('Nodes')
-backpackToolbar = toolbar.addMenu('backpack' , icon = 'backpack.png')
+backpackToolbar = toolbar.addMenu('dDot')
 
-fileMenu = nuke.menu('Nuke')
-backpackMenu = fileMenu.addMenu('backpack')
-
-#dDotParent
-backpackToolbar.addCommand("dDot/dDotParent", "dDot.dDotParent()", "shift+.")
-backpackMenu.addCommand("dDot/dDotParent", "dDot.dDotParent()", "shift+.")
-
-#dDotConnect
-backpackToolbar.addCommand("dDot/dDotConnect", "dDot.dDotConnect()",  "ctrl+.")
-backpackMenu.addCommand("dDot/dDotConnect", "dDot.dDotConnect()", "ctrl+.")
+#dDotStart
+backpackToolbar.addCommand("dDot", "dDot.dDotStart()", "shift+D")
 
 #dDotConnectSelected
-backpackToolbar.addCommand("dDot/dDotConnectSelected", "dDot.dDotConnectSelected()", "ctrl+,")
-backpackMenu.addCommand("dDot/dDotConnectSelected", "dDot.dDotConnectSelected()", "ctrl+,")
+backpackToolbar.addCommand("dDotConnectSelected", "dDot.dDotConnectSelected()", "ctrl+,")
 
 #dDotCheckInput
-backpackToolbar.addCommand("dDot/dDotCheckInput", "dDot.dDotCheckInput()", "ctrl+shift+,")
-backpackMenu.addCommand("dDot/dDotCheckInput", "dDot.dDotCheckInput()", "ctrl+shift+,")
+backpackToolbar.addCommand("dDotCheckInput", "dDot.dDotCheckInput()", "ctrl+shift+,")
 
 #dDotAutoConnect
-backpackToolbar.addCommand("dDot/dDotAutoConnect", "dDot.dDotAutoConnect()", "ctrl+shift+.")
-backpackMenu.addCommand("dDot/dDotAutoConnect", "dDot.dDotAutoConnect()", "ctrl+shift+.")
+backpackToolbar.addCommand("dDotAutoConnect", "dDot.dDotAutoConnect()", "ctrl+shift+.")
 
 #dDotShowChildren
-backpackToolbar.addCommand("dDot/dDotShowChildren", "dDot.dDotShowChildren()", "alt+,")
-backpackMenu.addCommand("dDot/dDotShowChildren", "dDot.dDotShowChildren()", "alt+,")
+backpackToolbar.addCommand("dDotShowChildren", "dDot.dDotShowChildren()", "alt+,")
 
 #dDotToggleConnectionsVisibility
-backpackToolbar.addCommand("dDot/dDotToggleConnectionsVisibility", "dDot.dDotToggleConnectionsVisibility()", "alt+.")
-backpackMenu.addCommand("dDot/dDotToggleConnectionsVisibility", "dDot.dDotToggleConnectionsVisibility()", "alt+.")
+backpackToolbar.addCommand("dDotToggleConnectionsVisibility", "dDot.dDotToggleConnectionsVisibility()", "alt+.")
 
 #dDotRollDownNameChange
-backpackToolbar.addCommand("dDot/dDotRollDownNameChange", "dDot.dDotRollDownNameChange()","alt+shift+,")
-backpackMenu.addCommand("dDot/dDotRollDownNameChange", "dDot.dDotRollDownNameChange()","alt+shift+,")
+backpackToolbar.addCommand("dDotRollDownNameChange", "dDot.dDotRollDownNameChange()","alt+shift+,")
 
 #dDotGrabParentName
-backpackToolbar.addCommand("dDot/dDotGrabParentName", "dDot.dDotGrabParentName()","alt+shift+.")
-backpackMenu.addCommand("dDot/dDotGrabParentName", "dDot.dDotGrabParentName()","alt+shift+.")
+backpackToolbar.addCommand("dDotGrabParentName", "dDot.dDotGrabParentName()","alt+shift+.")
 
 #dDotSelectChildren
-backpackToolbar.addCommand("dDot/dDotSelectChildren", "dDot.dDotSelectChildren()")
-backpackMenu.addCommand("dDot/dDotSelectChildren", "dDot.dDotSelectChildren()")
+backpackToolbar.addCommand("dDotSelectChildren", "dDot.dDotSelectChildren()")
