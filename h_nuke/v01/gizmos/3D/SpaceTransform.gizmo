@@ -1,6 +1,7 @@
 #! /Applications/Nuke9.0v7/Nuke9.0v7.app/Contents/MacOS//libnuke-9.0.7.dylib -nx
 
 Group {
+name "SpaceTransform"
  inputs 2
  help "Transforms position and normal passes between camera and world space.\n\nv1.1 Adrian Herr 2016"
  label "(\[value space_transform])"
