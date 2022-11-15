@@ -36,3 +36,12 @@ menuBar.addCommand("Edit/Node/Align/Left", 'W_smartAlign.alignNodes("left")', "A
 menuBar.addCommand("Edit/Node/Align/Right", 'W_smartAlign.alignNodes("right")', "Alt+right", shortcutContext=2)
 menuBar.addCommand("Edit/Node/Align/Up", 'W_smartAlign.alignNodes("up")', "Alt+up", shortcutContext=2)
 menuBar.addCommand("Edit/Node/Align/Down", 'W_smartAlign.alignNodes("down")', "Alt+down", shortcutContext=2)
+
+# knob defaults
+nuke.knobDefault("Read.postage_stamp", "False")
+nuke.knobDefault("CheckerBoard.postage_stamp", "False")
+nuke.knobDefault("Constant.postage_stamp", "False")
+nuke.knobDefault("ColorWheel.postage_stamp", "False")
+nuke.knobDefault("ColorBars.postage_stamp", "False")
+nuke.knobDefault("Views.views_colours true")
+nuke.knobDefault("Blur.label", "[value size]")
