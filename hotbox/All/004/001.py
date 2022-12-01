@@ -2,8 +2,9 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Count Selection
+# NAME: In
 #
 #----------------------------------------------------------------------------------------------------------
 
-nuke.message('%s / %s nodes selected'%(len(nuke.selectedNodes()),len(nuke.allNodes())))
+cm = nuke.createNode("ChannelMerge", inpanel=False)
+cm["operation"].setValue("in")

@@ -2,12 +2,11 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 3
-# COLOR: #111111
-# TEXTCOLOR: #ff5555
+# NAME: Toggle RGBA
 #
 #----------------------------------------------------------------------------------------------------------
 
-from look_manager import LookManagerUtil
-for node in nuke.selectedNodes():
-    LookManagerUtil.set_look(node, 3)
+m = ["rgb", "rgba", "alpha", "rgb"]
+for i in nuke.selectedNodes():
+    cur = i["channels"].value()
+    i["channels"].setValue(m[m.index(cur)%3+1])

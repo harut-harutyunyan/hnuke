@@ -2,12 +2,14 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 4
-# COLOR: #111111
-# TEXTCOLOR: #ff5555
+# NAME: Copy Class
 #
 #----------------------------------------------------------------------------------------------------------
 
-from look_manager import LookManagerUtil
-for node in nuke.selectedNodes():
-    LookManagerUtil.set_look(node, 4)
+from PySide import QtGui
+
+nodeClasses = ' '.join(sorted([i.Class() for i in nuke.selectedNodes()]))
+
+QtGui.QApplication.clipboard().setText(nodeClasses)
+
+	

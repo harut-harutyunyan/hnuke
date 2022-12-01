@@ -2,12 +2,8 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 1
-# COLOR: #111111
-# TEXTCOLOR: #ff5555
+# NAME: Count Selection
 #
 #----------------------------------------------------------------------------------------------------------
 
-from look_manager import LookManagerUtil
-for node in nuke.selectedNodes():
-    LookManagerUtil.set_look(node, 1)
+nuke.message('%s / %s nodes selected'%(len(nuke.selectedNodes()),len(nuke.allNodes())))

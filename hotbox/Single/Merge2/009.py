@@ -2,26 +2,13 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Convert to...
+# NAME: Convert to ChannelMerge
 #
 #----------------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------------------------------------
-# Wouter Gilsing
-# woutergilsing@hotmail.com
-# January 2016
-# v1.0
-#----------------------------------------------------------------------------------------------------------
-
-#launch panel to define nodeclass
-nodeclassPanel = nuke.Panel('Convert to...')
-nodeclassPanel.addSingleLineInput('NodeClass', '')
-nodeclassPanel.show()
-
-nodeClass = nodeclassPanel.value('NodeClass')
+nodeClass = 'ChannelMerge'
 
 selection = nuke.selectedNodes()
-newNodes = []
 
 for node in selection:
 
@@ -54,8 +41,7 @@ for node in selection:
 
     #create new node
     newNode = nuke.createNode(nodeClass, inpanel = False)
-    newNodes.append(newNode)
-
+            
     newNode.knob('selected').setValue(False)
 
     #check whether new node has a mask input
@@ -78,7 +64,6 @@ for node in selection:
             except:
                 pass
             counter += 1
-
     #reconnect outputs
     node.knob('selected').setValue(True)
     tmpDotNode = nuke.createNode('Dot')
@@ -86,12 +71,10 @@ for node in selection:
     
     tmpDotNode.setInput(0,newNode)
     nuke.delete(tmpDotNode)
-
+        
     #delete original
     nuke.delete(node)
         
     newNode.setXpos(position[0])
     newNode.setYpos(position[1])
 
-for i in newNodes:
-    i.knob('selected').setValue(True)
