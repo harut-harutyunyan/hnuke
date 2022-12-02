@@ -1,430 +1,671 @@
 set cut_paste_input [stack 0]
-version 13.0 v6
+version 11.0 v1
 push $cut_paste_input
 Group {
  name HH_ChromaClean
- tile_color 0x4d06ff
+ tile_color 0x119e11ff
  selected true
- xpos 3173
- ypos -560
- addUserKnob {20 Chroma}
- addUserKnob {68 Method M {"Blue-Green Select" "Pick Color" ""}}
- addUserKnob {26 ""}
- addUserKnob {26 BlueGreenSelect l "Blue-Green Select"}
- addUserKnob {41 Screen_Color l "Screen Color" T IBKColourV3_20.screen_type}
- addUserKnob {41 DarkValue l "Dark value" T IBKColourV3_20.off}
- addUserKnob {41 LightValue l "Light value" T IBKColourV3_20.mult}
- addUserKnob {26 ""}
- addUserKnob {41 PickColor l "Pick Color" T Keylight1.screenColour}
- addUserKnob {6 PickingDone l "Picking Done" +STARTLINE}
- addUserKnob {26 ""}
- addUserKnob {7 erode l Erode R 0 5}
+ xpos -810
+ ypos 279
+ addUserKnob {20 ChromaClean l "Chroma Clean"}
+ addUserKnob {22 double_out l "Split output" -STARTLINE T "node = nuke.thisNode()\nnode.end()\nCHNAME = \"h_screenprep\"\n\n\nsh = nuke.nodes.Shuffle(name = CHNAME)\nsh\[\"in\"].setValue(CHNAME)\nsh.setXYpos(node.xpos()+80, node.ypos()+100)\nsh.setInput(0, node)\nsh\[\"tile_color\"].setValue(295571967)\n\neven = nuke.nodes.Remove(name=\"Even Screen\")\n\neven\[\"channels\"].value()\n\neven\[\"channels\"].setValue(CHNAME)\neven.setInput(0, sh)\neven.setXYpos(node.xpos()+80, node.ypos()+130)\n\neven\[\"tile_color\"].setValue(295571967)\n\nclear = nuke.nodes.Remove(name=\"Clear Screen\")\nclear\[\"channels\"].value()\n\nclear\[\"channels\"].setValue(CHNAME)\nclear.setInput(0, node)\nclear.setXYpos(node.xpos()-80, node.ypos()+130)\nclear\[\"tile_color\"].setValue(295571967)"}
  addUserKnob {26 "" +STARTLINE}
- addUserKnob {41 clean l Clean T Switch1.which}
+ addUserKnob {41 screen_type l "screen type" T colour.screen_type}
+ addUserKnob {41 off l darks T colour.off}
+ addUserKnob {41 mult l lights T colour.mult}
+ addUserKnob {26 ""}
+ addUserKnob {41 erode T colour.erode}
+ addUserKnob {26 ""}
+ addUserKnob {41 which l "patch black" T Switch1.which}
+ addUserKnob {20 advanced l Advanced}
+ addUserKnob {7 even_edge l "even screen edge" R 0 0.5}
+ addUserKnob {7 even_screen_blur l "even screen blur" R 1 5}
+ even_screen_blur 3
+ addUserKnob {6 use_average l "average color" -STARTLINE}
+ use_average true
 }
  Input {
   inputs 0
-  name clean_mask
-  xpos -221
+  name additional_matte
+  xpos -920
   ypos 12
   number 1
  }
- Clamp {
-  maximum 0
-  MinClampTo_enable true
-  MaxClampTo_enable true
-  name Clamp2
-  xpos -221
-  ypos 91
+ Expression {
+  expr3 a>0?1:0
+  name Expression11
+  xpos -920
+  ypos 63
+ }
+ Dot {
+  name Dot1
+  xpos -886
+  ypos 105
  }
  Input {
   inputs 0
-  name Denoised_Plate
-  xpos 147
-  ypos -494
+  name custom_matte
+  xpos -913
+  ypos -112
+  number 2
  }
  Dot {
-  name Dot3
-  xpos 181
-  ypos -431
+  name Dot10
+  xpos -879
+  ypos -50
  }
- Shuffle2 {
-  fromInput1 {{0} B}
-  fromInput2 {{0} B}
-  mappings "4 rgba.red 0 0 rgba.red 0 0 rgba.green 0 1 rgba.green 0 1 rgba.blue 0 2 rgba.blue 0 2 white -1 -1 rgba.alpha 0 3"
-  name Shuffle1
-  xpos 147
-  ypos -390
- }
-set N563b6400 [stack 0]
- OFXuk.co.thefoundry.keylight.keylight_v201 {
-  show "Final Result"
-  unPreMultiply false
-  screenColour {0 0 0}
-  screenGain 1
-  screenBalance 0.5
-  alphaBias {0.5 0.5 0.5}
-  despillBias {0.5 0.5 0.5}
-  gangBiases true
-  preBlur 0
-  "Screen Matte" 1
-  screenClipMin 0.5
-  screenClipMax 0.51
-  screenClipRollback 0
-  screenGrowShrink 0
-  screenSoftness 0
-  screenDespotBlack 0
-  screenDespotWhite 0
-  screenReplaceMethod "Soft Colour"
-  screenReplaceColour {0.5 0.5 0.5}
-  Tuning 0
-  midPoint 0.5
-  lowGain 1
-  midGain 1
-  highGain 1
-  "Inside Mask" 0
-  sourceAlphaHandling Ignore
-  insideReplaceMethod "Soft Colour"
-  insideReplaceColour {0.5 0.5 0.5}
-  Crops 0
-  SourceXMethod Colour
-  SourceYMethod Colour
-  SourceEdgeColour 0
-  SourceCropL 0
-  SourceCropR 1
-  SourceCropB 0
-  SourceCropT 1
-  balanceSet true
-  insideComponent None
-  outsideComponent None
-  cacheBreaker true
-  name Keylight1
-  xpos 147
-  ypos -302
- }
- FilterErode {
-  size -5
-  name FilterErode1
-  xpos 147
-  ypos -233
- }
-set N563b5c00 [stack 0]
- Invert {
-  channels alpha
-  name Invert1
-  xpos 257
-  ypos -138
- }
-push $N563b5c00
- Switch {
-  inputs 2
-  which {{parent.PickingDone}}
-  name Pick
-  xpos 147
-  ypos -132
- }
- Clamp {
-  channels alpha
-  minimum 1
-  MinClampTo_enable true
-  MaxClampTo_enable true
-  name Clamp1
-  xpos 147
-  ypos -79
- }
-push $N563b6400
- Dot {
-  name Dot1
-  xpos 365
-  ypos -387
+ Input {
+  inputs 0
+  name plate
+  xpos -721
+  ypos -170
  }
  Dot {
   name Dot2
-  xpos 365
-  ypos -29
+  xpos -687
+  ypos -130
  }
- Copy {
+set N54b85000 [stack 0]
+ Group {
   inputs 2
-  from0 rgba.alpha
-  to0 rgba.alpha
-  name Copy1
-  xpos 147
-  ypos -38
+  name colour
+  help "This node provides IBKGizmo a colour reference in which to base its keying algorithm on a per pixel basis.\nThe idea is to remove the foreground image and only leave the shades and hues of the original blue/greenscreen.\nAttach the output of this node to the 'c' input of a default IBKGizmo. Attach the input of this node along with the 'fg' input of the IBKGizmo to the original screen.\nPick which colour your screen type is in both nodes and then while viewing the alpha output from the IBKGizmo lower the darks.b (if a bluescreen - adjust darks.g if a greenscreen) in this node \nuntil you see a change in the garbage area of the matte. Once you see a change then you have gone too far -back off a step. If you are still left with discoloured edges you can use the other colours in the lights and darks to eliminate them. Remember the idea is \nto be left with the original shades of the screen and the foreground blacked out. While swapping between viewing the matte from the IBKGizmo and the rgb output of this IBKColour adjust the other colours \nuntil you see a change in the garbage area of the matte. Simple rule of thumb - if you have a light red discoloured area increase the lights.r - if you have a dark green discoloured area increase darks.g. If your screen does not have a very saturated hue you may still be left\n with areas of discolouration after the above process. The 'erode' slider can help with this - while viewing the rgb output adjust the erode until those areas disappear.\nThe 'patch black' slider allows you to fill in the black areas with screen colour. This is not always necessary but if you see blue squares in your composite increase this value and it'll fix it.\nThe above is the only real workflow for this node - working from the top parameter to the bottom parameter- going back to tweak darks/lights with 'erode' and 'patch black' activated isn't really gonna work. "
+  tile_color 0x990000
+  xpos -721
+  ypos -53
+  addUserKnob {20 "" l Parameters}
+  addUserKnob {41 screen_type l "screen type" T IBK2.screen_type}
+  addUserKnob {16 Size l size t "size of colour expansion" R 0 100}
+  addUserKnob {18 off l darks t "adjust the colour values to get the best separation between black and the screen type colour.\nYou want to be left with only shades of the screen colour and black. \nIf a green screen is selected start by bringing down darks->green\nIf a blue screen is selected start by bringing down darks->blue" R -1 1}
+  off {0 0 0}
+  addUserKnob {6 off_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 mult l lights t "adjust the colour values to get the best separation between black and the screen type colour.\nYou want to be left with only shades of the screen colour and black. \nIf a green screen is selected start by bringing down darks->green\nIf a blue screen is selected start by bringing down darks->blue" R 0 2}
+  mult {1 1 1}
+  addUserKnob {6 mult_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {7 erode t "increase this value if you still see traces of the foreground edge colour in the output" R 0 5}
+  addUserKnob {26 ""}
+  addUserKnob {7 multi l "patch black" t "increase this to optionally remove the black from the output.\nThis should only be used once the the above darks/lights have been set" R 0 5}
+  addUserKnob {6 filt l INVISIBLE -STARTLINE +INVISIBLE}
+  filt true
+  addUserKnob {26 ""}
+  addUserKnob {7 level l INVISIBLE t "multiply the rgb output. Helps remove noise from main key" +INVISIBLE}
+  level 1
  }
-push $N563b6400
- Dot {
-  name Dot4
-  xpos -3
-  ypos -387
- }
- IBKColourV3 {
-  name IBKColourV3_20
-  xpos -37
-  ypos -276
-  screen_type green
-  Size 1
-  erode 5
- }
- Switch {
-  inputs 2
-  which {{parent.Method}}
-  name Method
-  xpos -37
-  ypos -32
- }
+  Input {
+   inputs 0
+   name Input2
+   xpos -586
+   ypos 91
+   number 1
+  }
+  Dot {
+   name Dot2
+   xpos -552
+   ypos 164
+  }
+  Input {
+   inputs 0
+   name Input1
+   xpos -31
+   ypos -112
+  }
+  Dot {
+   name Dot16
+   xpos 3
+   ypos -58
+  }
+set N54b1bc00 [stack 0]
+  Dot {
+   name Dot1
+   tile_color 0x9597bf00
+   xpos -304
+   ypos -58
+  }
+  Grade {
+   multiply {{mult.r} {mult.g} {mult.b} {curve}}
+   add {{off.r} {off.g} {off.b} {curve}}
+   name Grade11
+   tile_color 0x7aa9ff00
+   xpos -338
+   ypos -7
+  }
+  Clamp {
+   maximum_enable false
+   name Clamp2
+   xpos -338
+   ypos 54
+  }
+set N54b1b000 [stack 0]
+push $N54b1b000
+push $N54b1b000
+  IBK {
+   inputs 3
+   screen_type green
+   blue_green_weight 1
+   luma 1
+   name IBK2
+   tile_color 0xff00
+   xpos -338
+   ypos 110
+  }
+  Switch {
+   inputs 2
+   which {{"\[exists input2]"}}
+   name Switch2
+   xpos -338
+   ypos 161
+  }
+  Invert {
+   channels alpha
+   name Invert1
+   tile_color 0x7aa9ff00
+   xpos -338
+   ypos 206
+  }
+  Erode {
+   size {{erode}}
+   name Erode1
+   xpos -18
+   ypos 206
+  }
+set N54b1a000 [stack 0]
+  Dot {
+   name Dot3
+   tile_color 0x9597bf00
+   xpos 16
+   ypos 686
+  }
+push $N54b1a000
+push $N54b1bc00
+  Dot {
+   name Dot17
+   xpos 126
+   ypos -58
+  }
+  Copy {
+   inputs 2
+   from0 rgba.alpha
+   to0 rgba.alpha
+   channels alpha
+   name Copy3
+   tile_color 0x9e3c6300
+   xpos 92
+   ypos 200
+  }
+  Premult {
+   name Premult3
+   xpos 92
+   ypos 259
+  }
+  Blur {
+   size {{Size}}
+   name Blur4
+   tile_color 0xcc804e00
+   xpos 92
+   ypos 283
+  }
+  Unpremult {
+   name Unpremult4
+   xpos 92
+   ypos 321
+  }
+set N54b18800 [stack 0]
+  Clamp {
+   channels {rgba.red rgba.green rgba.blue -rgba.alpha}
+   maximum 0
+   MinClampTo_enable true
+   MaxClampTo_enable true
+   name Clamp1
+   xpos 212
+   ypos 321
+  }
+set N54b18400 [stack 0]
+  Dot {
+   name Dot5
+   xpos 366
+   ypos 325
+  }
+push $N54b18400
+push $N54b18800
+  Dot {
+   name Dot4
+   xpos 126
+   ypos 370
+  }
+set N8477800 [stack 0]
+  Copy {
+   inputs 2
+   from0 rgba.red
+   to0 rgba.alpha
+   name Copy1
+   xpos 212
+   ypos 359
+  }
+  Blur {
+   channels rgba
+   size {{Size*3*multi}}
+   name Blur1
+   xpos 212
+   ypos 411
+  }
+  Unpremult {
+   name Unpremult1
+   xpos 212
+   ypos 449
+  }
+  Copy {
+   inputs 2
+   from0 rgba.red
+   to0 rgba.alpha
+   name Copy2
+   xpos 332
+   ypos 442
+  }
+  Invert {
+   channels alpha
+   name Invert2
+   xpos 334
+   ypos 494
+  }
+set N8476400 [stack 0]
+  FilterErode {
+   channels alpha
+   size {{(-Size/5)}}
+   filter gaussian
+   name FilterErode2
+   xpos 334
+   ypos 592
+  }
+push $N8476400
+  FilterErode {
+   channels alpha
+   size {{(-Size/5)*multi*2}}
+   filter gaussian
+   name FilterErode1
+   xpos 217
+   ypos 494
+  }
+  Switch {
+   inputs 2
+   which {{1-filt}}
+   name Switch1
+   xpos 217
+   ypos 599
+  }
+  Premult {
+   name Premult1
+   xpos 217
+   ypos 637
+  }
+push $N8477800
+  Merge {
+   inputs 2
+   name Merge1
+   xpos 92
+   ypos 637
+  }
+  Copy {
+   inputs 2
+   from0 rgba.alpha
+   to0 rgba.alpha
+   name ChannelCopy2
+   tile_color 0x9e3c6300
+   xpos 92
+   ypos 675
+  }
+  Grade {
+   multiply {{level}}
+   name Grade1
+   xpos 92
+   ypos 727
+  }
+  Output {
+   name Output1
+   xpos 92
+   ypos 764
+  }
+ end_group
  ChannelMerge {
   inputs 2
   operation stencil
   name ChannelMerge1
-  xpos -37
-  ypos 85
- }
- Dilate {
-  channels alpha
-  size {{-erode}}
-  name Dilate1
-  xpos -37
-  ypos 161
+  xpos -721
+  ypos 90
  }
  Premult {
-  name Premult2
-  xpos -37
-  ypos 203
+  name Premult1
+  xpos -721
+  ypos 186
  }
  EdgeBlur {
   channels rgba
   size 1
   name EdgeBlur1
-  xpos -37
-  ypos 237
- }
- Unpremult {
-  name Unpremult2
-  xpos -37
-  ypos 273
+  xpos -721
+  ypos 210
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression1
-  xpos -37
-  ypos 297
+  xpos -721
+  ypos 246
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set N9cbc3c00 [stack 0]
+set N8413000 [stack 0]
  EdgeBlur {
   channels rgba
-  size 2
+  size {{input.size*2}}
   name EdgeBlur2
-  xpos -37
-  ypos 321
- }
- Unpremult {
-  name Unpremult3
-  xpos -37
-  ypos 357
+  xpos -721
+  ypos 270
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression2
-  xpos -37
-  ypos 381
+  xpos -721
+  ypos 306
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set Nb38cfc00 [stack 0]
+set N8412800 [stack 0]
  EdgeBlur {
   channels rgba
-  size 4
+  size {{input.size*2}}
   name EdgeBlur3
-  xpos -37
-  ypos 405
- }
- Unpremult {
-  name Unpremult4
-  xpos -37
-  ypos 441
+  xpos -721
+  ypos 330
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression3
-  xpos -37
-  ypos 465
+  xpos -721
+  ypos 366
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set Nb38cf000 [stack 0]
+set N8412000 [stack 0]
  EdgeBlur {
   channels rgba
-  size 8
+  size {{input.size*2}}
   name EdgeBlur4
-  xpos -37
-  ypos 489
- }
- Unpremult {
-  name Unpremult5
-  xpos -37
-  ypos 525
+  xpos -721
+  ypos 390
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression4
-  xpos -37
-  ypos 549
+  xpos -721
+  ypos 426
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set Nb38ce400 [stack 0]
+set N8411800 [stack 0]
  EdgeBlur {
   channels rgba
-  size 16
+  size {{input.size*2}}
   name EdgeBlur5
-  xpos -37
-  ypos 573
- }
- Unpremult {
-  name Unpremult6
-  xpos -37
-  ypos 609
+  xpos -721
+  ypos 450
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression5
-  xpos -37
-  ypos 633
+  xpos -721
+  ypos 486
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set Nb38cd800 [stack 0]
+set N8411000 [stack 0]
  EdgeBlur {
   channels rgba
-  size 32
+  size {{input.size*2}}
   name EdgeBlur6
-  xpos -37
-  ypos 657
- }
- Unpremult {
-  name Unpremult7
-  xpos -37
-  ypos 693
+  xpos -721
+  ypos 510
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression6
-  xpos -37
-  ypos 717
+  xpos -721
+  ypos 546
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set Nb38ccc00 [stack 0]
+set N8410800 [stack 0]
  EdgeBlur {
   channels rgba
-  size 64
+  size {{input.size*2}}
   name EdgeBlur7
-  xpos -37
-  ypos 741
- }
- Unpremult {
-  name Unpremult8
-  xpos -37
-  ypos 777
+  xpos -721
+  ypos 570
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression7
-  xpos -37
-  ypos 801
+  xpos -721
+  ypos 606
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set N1dd33400 [stack 0]
+set N877fc00 [stack 0]
  EdgeBlur {
   channels rgba
-  size 128
+  size {{input.size*2}}
   name EdgeBlur8
-  xpos -37
-  ypos 825
- }
- Unpremult {
-  name Unpremult9
-  xpos -37
-  ypos 861
+  xpos -721
+  ypos 630
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression8
-  xpos -37
-  ypos 885
+  xpos -721
+  ypos 666
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set N1dd32800 [stack 0]
+set N877f400 [stack 0]
  EdgeBlur {
   channels rgba
-  size 256
+  size {{input.size*2}}
   name EdgeBlur9
-  xpos -37
-  ypos 909
- }
- Unpremult {
-  name Unpremult10
-  xpos -37
-  ypos 945
+  xpos -721
+  ypos 690
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression9
-  xpos -37
-  ypos 969
+  xpos -721
+  ypos 726
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set N1dd31c00 [stack 0]
+set N877ec00 [stack 0]
  EdgeBlur {
   channels rgba
-  size 512
+  size {{input.size*2}}
   name EdgeBlur10
-  xpos -37
-  ypos 993
- }
- Unpremult {
-  name Unpremult11
-  xpos -37
-  ypos 1029
+  xpos -721
+  ypos 750
  }
  Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
   expr3 a>0?1:0
   name Expression10
-  xpos -37
-  ypos 1053
+  xpos -721
+  ypos 786
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
  }
-set N1dd31000 [stack 0]
- EdgeBlur {
-  channels rgba
-  size 1024
-  name EdgeBlur11
-  xpos -37
-  ypos 1077
+push $N877ec00
+push $N877f400
+push $N877fc00
+push $N8410800
+push $N8411000
+push $N8411800
+push $N8412000
+push $N8412800
+push $N8413000
+ Switch {
+  inputs 10
+  name Switch1
+  xpos -475
+  ypos 786
  }
- Unpremult {
-  name Unpremult12
-  xpos -37
-  ypos 1113
+set N877e000 [stack 0]
+ Dot {
+  name Dot5
+  xpos -339
+  ypos 789
+ }
+set N877dc00 [stack 0]
+ Dot {
+  name Dot4
+  xpos -215
+  ypos 789
+ }
+set N877d800 [stack 0]
+ Dot {
+  name Dot6
+  xpos 26
+  ypos 789
+ }
+push $N54b85000
+ Dot {
+  name Dot3
+  xpos -134
+  ypos -130
+ }
+ Dot {
+  name Dot7
+  xpos -134
+  ypos 875
+ }
+set N877cc00 [stack 0]
+ IBKGizmoV3 {
+  inputs 2
+  name IBKGizmoV3_1
+  selected false
+  xpos -8
+  ypos 872
+  st C-green
+ }
+ Grade {
+  channels alpha
+  blackpoint {{even_edge}}
+  whitepoint {{1-blackpoint}}
+  white_clamp true
+  name Grade2
+  xpos -8
+  ypos 979
+ }
+push $N877dc00
+ Blur {
+  channels rgb
+  size {{1000*even_screen_blur}}
+  name Blur1
+  label "\[value size]"
+  xpos -373
+  ypos 835
  }
  Expression {
-  expr3 a>0?1:0
-  name Expression11
-  xpos -37
-  ypos 1137
- }
-push $N1dd31000
-push $N1dd31c00
-push $N1dd32800
-push $N1dd33400
-push $Nb38ccc00
-push $Nb38cd800
-push $Nb38ce400
-push $Nb38cf000
-push $Nb38cfc00
-push $N9cbc3c00
- Switch {
-  inputs 11
-  name Switch1
-  xpos -379
-  ypos 1137
- }
- Crop {
-  box {0 0 {input.width} {input.height}}
-  name Crop1
+  expr0 "(r(width/1.5, height/1.5) + r(width/2, height/2) + r(width/2.5, height/2.5) + r(width/3, height/3))/4"
+  expr1 "(g(width/1.5, height/1.5) + g(width/2, height/2) + g(width/2.5, height/2.5) + g(width/3, height/3))/4"
+  expr2 "(b(width/1.5, height/1.5) + b(width/2, height/2) + b(width/2.5, height/2.5) + b(width/3, height/3))/4"
+  name Expression12
   selected true
-  xpos -379
-  ypos 1171
+  xpos -373
+  ypos 893
+  disable {{1-use_average}}
+ }
+push $N877d800
+ Merge2 {
+  inputs 2
+  operation minus
+  name Merge1
+  xpos -249
+  ypos 893
+ }
+ Merge2 {
+  inputs 2
+  operation stencil
+  name Merge3
+  xpos -249
+  ypos 985
+ }
+ Dot {
+  name Dot8
+  xpos -215
+  ypos 1070
+ }
+push $N877cc00
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge2
+  xpos -168
+  ypos 1067
+ }
+ Dot {
+  name Dot9
+  xpos -134
+  ypos 1155
+ }
+push $N877e000
+add_layer {h_screenprep h_screenprep.red h_screenprep.green h_screenprep.blue h_screenprep.alpha}
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  out h_screenprep
+  name ShuffleCopy1
+  xpos -475
+  ypos 1152
  }
  Output {
   name Output1
-  xpos -362
-  ypos 1337
+  xpos -475
+  ypos 1206
  }
 end_group
