@@ -5,23 +5,20 @@ push $cut_paste_input
 Group {
  inputs 2
  name Shot_QC
- knobChanged "\ndef hide_knobs():\n    kk = \[k for k in n.knobs() if k.startswith(\"__\")]\n    for i in kk:\n        nuke.thisNode()\[i].setVisible(False)\n\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"qc_view\":\n    v = k.value()\n    hide_knobs()\n    if v == \"Difference\":\n        n\[\"__show_changed\"].setVisible(True)\n    if v == \"Black Levels(Gamma Up)\":\n        n\[\"__gamma_up\"].setVisible(True)\n    if v == \"Highlights(Exposure Down)\":\n        n\[\"__exp_down\"].setVisible(True)\n    if v == \"Shadows(Exposure Up)\":\n        n\[\"__exp_up\"].setVisible(True)\n    if v == \"Color(Saturation Up)\":\n        n\[\"__sat_up\"].setVisible(True)\n    if v == \"Noise\":\n        n\[\"__noise_mode\"].setVisible(True)\n        n\[\"__noise_size\"].setVisible(True)\n    if v == \"HSV\":\n        n\[\"__hsv_mode\"].setVisible(True)\n        if n\[\"__hsv_mode\"].value() == \"mono\":\n            n\[\"__hsv_ch\"].setVisible(True)\n            n\[\"__hsv_3d\"].setVisible(True)\n    if v == \"Negative Pixels\":\n        n\[\"__neg_per_ch\"].setVisible(True)\n    if v == \"Alpha Channel\":\n        n\[\"__alpha_over\"].setVisible(True)\nif k.name() == \"__hsv_mode\":\n    if k.value() == \"mono\":\n        n\[\"__hsv_ch\"].setVisible(True)\n        n\[\"__hsv_3d\"].setVisible(True)\n    else:\n        n\[\"__hsv_ch\"].setVisible(False)\n        n\[\"__hsv_3d\"].setVisible(False)\nif k.name() == \"contact_sheet\":\n    if k.value() == 1:\n        n\[\"tile_size\"].setEnabled(True)\n    else:\n        n\[\"tile_size\"].setEnabled(False)\n"
+ knobChanged "\ndef hide_knobs():\n    kk = \[k for k in n.knobs() if k.startswith(\"__\")]\n    for i in kk:\n        nuke.thisNode()\[i].setVisible(False)\n\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"qc_view\":\n    v = k.value()\n    hide_knobs()\n    if v == \"Difference\":\n        n\[\"__show_changed\"].setVisible(True)\n    if v == \"Black Levels(Gamma Up)\":\n        n\[\"__gamma_up\"].setVisible(True)\n    if v == \"Highlights(Exposure Down)\":\n        n\[\"__exp_down\"].setVisible(True)\n    if v == \"Shadows(Exposure Up)\":\n        n\[\"__exp_up\"].setVisible(True)\n    if v == \"Color(Saturation Up)\":\n        n\[\"__sat_up\"].setVisible(True)\n    if v == \"Noise\":\n        n\[\"__noise_mode\"].setVisible(True)\n        n\[\"__noise_size\"].setVisible(True)\n    if v == \"HSV\":\n        n\[\"__hsv_mode\"].setVisible(True)\n        if n\[\"__hsv_mode\"].value() == \"mono\":\n            n\[\"__hsv_ch\"].setVisible(True)\n            n\[\"__hsv_3d\"].setVisible(True)\n    if v == \"Negative Pixels\":\n        n\[\"__neg_per_ch\"].setVisible(True)\n    if v == \"Alpha Channel\":\n        n\[\"__alpha_over\"].setVisible(True)\nif k.name() == \"__hsv_mode\":\n    if k.value() == \"mono\":\n        n\[\"__hsv_ch\"].setVisible(True)\n        n\[\"__hsv_3d\"].setVisible(True)\n    else:\n        n\[\"__hsv_ch\"].setVisible(False)\n        n\[\"__hsv_3d\"].setVisible(False)\nif k.name() == \"contact_sheet\":\n    if k.value() == 1:\n        n\[\"tile_size\"].setVisible(True)\n    else:\n        n\[\"tile_size\"].setVisible(False)\n"
  tile_color 0xff5594ff
  label "in <font size = 4 color =\"blue\">\[value cmp] </font>\nview <font size = 4 color =\"green\">\[value qc_view]"
- note_font "Verdana Bold"
- selected true
- xpos 331
- ypos 310
  addUserKnob {20 User l "Shot QC"}
  addUserKnob {4 cmp l compare M {COMP SCAN "EDIT REF"}}
  addUserKnob {4 to -STARTLINE M {COMP SCAN "EDIT REF"}}
  to SCAN
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {4 qc_view l view M {Difference "Black Levels(Gamma Up)" "Shadows(Exposure Up)" "Highlights(Exposure Down)" Luminance "Color(Saturation Up)" Noise HSV "Negative Pixels" "NaN Pixels" "inf Pixels" "Alpha Channel"}}
  qc_view Luminance
  addUserKnob {6 contact_sheet l "contact sheet" -STARTLINE}
- addUserKnob {41 tile_size l "" -STARTLINE T Reformat2.format}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {4 tile_size l "img size" -STARTLINE +HIDDEN M {256 512 1024 2048 "" "" "" "" "" ""}}
+ tile_size 1024
+ addUserKnob {26 ""}
  addUserKnob {6 __neg_per_ch l "per channel" +HIDDEN +STARTLINE}
  addUserKnob {6 __alpha_over l "over src" +HIDDEN +STARTLINE}
  addUserKnob {6 __show_changed l "show changed" +HIDDEN +STARTLINE}
@@ -129,7 +126,7 @@ Group {
   xpos 41
   ypos -203
  }
-set Nc57bfc00 [stack 0]
+set N1f8ce000 [stack 0]
  Input {
   inputs 0
   name scan
@@ -137,7 +134,7 @@ set Nc57bfc00 [stack 0]
   ypos -227
   number 1
  }
-set Nbe2a1000 [stack 0]
+set N1f8cd800 [stack 0]
  Input {
   inputs 0
   name comp
@@ -150,7 +147,7 @@ set Nbe2a1000 [stack 0]
   xpos -424
   ypos -203
  }
-set Nc57bf400 [stack 0]
+set N1f8cd000 [stack 0]
  Switch {
   inputs 3
   which {{cmp}}
@@ -164,26 +161,26 @@ set Nc57bf400 [stack 0]
   xpos -130
   ypos 69
  }
-set N46815000 [stack 0]
+set N1f8cc800 [stack 0]
  Dot {
   name Dot1
   xpos 293
   ypos 69
  }
-set N46814c00 [stack 0]
+set N1f8cc400 [stack 0]
  Dot {
   name Dot101
   xpos 519
   ypos 69
  }
-set Nc795f400 [stack 0]
+set Ndfd67c00 [stack 0]
  Dot {
   name Dot10
   xpos 861
   ypos 69
  }
-set Nc795e000 [stack 0]
-push $Nc795e000
+set Ndfd67800 [stack 0]
+push $Ndfd67800
  Shuffle {
   in alpha
   green red
@@ -207,19 +204,22 @@ push $Nc795e000
   ypos 267
   disable {{1-__alpha_over}}
  }
-set Nc6557800 [stack 0]
+set Ndfd66c00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle12
-  xpos 1274
-  ypos 1316
+  xpos 1626
+  ypos 1288
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat14
-  xpos 1274
-  ypos 1340
+  name Reformat13
+  xpos 1626
+  ypos 1312
  }
  Text {
   message "Alpha Channel"
@@ -230,10 +230,10 @@ set Nc6557800 [stack 0]
   box {0 {input.height/6} {input.width} {size}}
   center {2048 1080}
   name Text13
-  xpos 1274
-  ypos 1376
+  xpos 1626
+  ypos 1348
  }
-push $Nc795f400
+push $Ndfd67c00
  Expression {
   expr0 isinf(r)?1:0
   expr1 isinf(g)?1:0
@@ -261,19 +261,22 @@ push $Nc795f400
   xpos 485
   ypos 302
  }
-set Nc795e400 [stack 0]
+set Ndfd64800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle13
-  xpos 1219
-  ypos 1191
+  xpos 1436
+  ypos 1129
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat13
-  xpos 1219
-  ypos 1215
+  name Reformat12
+  xpos 1436
+  ypos 1153
  }
  Text {
   message inf
@@ -284,10 +287,10 @@ set Nc795e400 [stack 0]
   box {0 {input.height/6} {input.width} {size}}
   center {2048 1080}
   name Text12
-  xpos 1219
-  ypos 1251
+  xpos 1436
+  ypos 1191
  }
-push $N46814c00
+push $N1f8cc400
  Expression {
   expr0 isnan(r)?1:0
   expr1 isnan(g)?1:0
@@ -315,7 +318,7 @@ push $N46814c00
   xpos 259
   ypos 306
  }
-set Nc795f800 [stack 0]
+set N68b8a000 [stack 0]
  Shuffle {
   alpha white
   name Shuffle14
@@ -323,9 +326,12 @@ set Nc795f800 [stack 0]
   ypos 1084
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat12
+  name Reformat11
   xpos 1270
   ypos 1108
  }
@@ -341,49 +347,49 @@ set Nc795f800 [stack 0]
   xpos 1270
   ypos 1144
  }
-push $Nc795e000
+push $Ndfd67800
  Dot {
   name Dot100
   xpos 1031
   ypos 69
  }
-set Nc795dc00 [stack 0]
+set N68b88800 [stack 0]
  Dot {
   name Dot102
   xpos 1243
   ypos 69
  }
-set Nc795d800 [stack 0]
+set N68b88400 [stack 0]
  Dot {
   name Dot17
   xpos 1434
   ypos 69
  }
-set Nc795d400 [stack 0]
+set Nffa57c00 [stack 0]
  Dot {
   name Dot4
   xpos 1647
   ypos 69
  }
-set Nc795d000 [stack 0]
+set Nffa57800 [stack 0]
  Dot {
   name Dot18
   xpos 1854
   ypos 69
  }
-set Nc795cc00 [stack 0]
+set Nffa57400 [stack 0]
  Dot {
   name Dot3
   xpos 2433
   ypos 69
  }
-set Nc795c800 [stack 0]
+set Nffa57000 [stack 0]
  Dot {
   name Dot103
   xpos 2433
   ypos 135
  }
-set Nc6556000 [stack 0]
+set Nffa56c00 [stack 0]
  Dot {
   name Dot104
   xpos 2243
@@ -397,8 +403,8 @@ set Nc6556000 [stack 0]
   xpos 2209
   ypos 178
  }
-set Nc6555800 [stack 0]
-push $Nc6555800
+set Nffa56400 [stack 0]
+push $Nffa56400
  Expression {
   expr0 clamp(r+g+b)
   name Expression6
@@ -426,14 +432,14 @@ push $Nc6555800
   xpos 2209
   ypos 232
  }
-set Nc6554800 [stack 0]
+set Nffa55400 [stack 0]
  Dot {
   name Dot2
   xpos 2243
   ypos 390
  }
-push $Nc6554800
-push $Nc6556000
+push $Nffa55400
+push $Nffa56c00
  Merge2 {
   inputs 2
   operation plus
@@ -448,19 +454,22 @@ push $Nc6556000
   xpos 2399
   ypos 387
  }
-set N16a3f800 [stack 0]
+set Nffa54800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle15
-  xpos 1158
-  ypos 1050
+  xpos 1148
+  ypos 1085
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat11
-  xpos 1158
-  ypos 1074
+  name Reformat10
+  xpos 1148
+  ypos 1109
  }
  Text {
   message "Negative Pixels"
@@ -471,23 +480,23 @@ set N16a3f800 [stack 0]
   box {0 {input.height/6} {input.width} {size}}
   center {2048 1080}
   name Text10
-  xpos 1158
-  ypos 1110
+  xpos 1148
+  ypos 1145
  }
-push $Nc795c800
+push $Nffa57000
  Dot {
   name Dot5
   xpos 2994
   ypos 69
  }
-set Nc795c400 [stack 0]
+set Nffce6c00 [stack 0]
  Colorspace {
   colorspace_out HSV
   name Colorspace1
   xpos 2783
   ypos 133
  }
-set Nc75c3c00 [stack 0]
+set Nffce6800 [stack 0]
  Shuffle {
   red blue
   green blue
@@ -496,7 +505,7 @@ set Nc75c3c00 [stack 0]
   xpos 2868
   ypos 189
  }
-push $Nc75c3c00
+push $Nffce6800
  Shuffle {
   red green
   blue green
@@ -505,7 +514,7 @@ push $Nc75c3c00
   xpos 2783
   ypos 189
  }
-push $Nc75c3c00
+push $Nffce6800
  Shuffle {
   green red
   blue red
@@ -521,7 +530,7 @@ push $Nc75c3c00
   xpos 2783
   ypos 285
  }
-set Nc75c2400 [stack 0]
+set Nffce5800 [stack 0]
  Expression {
   channel0 {rgba.red -rgba.green -rgba.blue none}
   expr0 "x / width * (width/height)"
@@ -539,7 +548,7 @@ set Nc75c2400 [stack 0]
   xpos 2783
   ypos 414
  }
-push $Nc795c400
+push $Nffce6c00
 add_layer {P P.x P.y P.z}
  ShuffleCopy {
   inputs 2
@@ -567,7 +576,7 @@ add_layer {P P.x P.y P.z}
   xpos 2960
   ypos 523
  }
-push $Nc75c3c00
+push $Nffce6800
  Dot {
   name Dot8
   xpos 3079
@@ -578,7 +587,7 @@ push $Nc75c3c00
   xpos 3079
   ypos 620
  }
-push $Nc75c2400
+push $Nffce5800
  Dot {
   name Dot6
   xpos 2701
@@ -603,19 +612,22 @@ push $Nc75c2400
   xpos 2960
   ypos 653
  }
-set Nbe2a2c00 [stack 0]
+set N642da800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle16
-  xpos 1041
-  ypos 1038
+  xpos 1007
+  ypos 1092
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat10
-  xpos 1041
-  ypos 1062
+  name Reformat9
+  xpos 1007
+  ypos 1116
  }
  Text {
   message HSV
@@ -626,10 +638,10 @@ set Nbe2a2c00 [stack 0]
   box {0 {input.height/6} {input.width} {size}}
   center {2048 1080}
   name Text9
-  xpos 1041
-  ypos 1098
+  xpos 1007
+  ypos 1152
  }
-push $Nc795c400
+push $Nffce6c00
  Dot {
   name Dot19
   xpos 3623
@@ -641,7 +653,7 @@ push $Nc795c400
   xpos 3589
   ypos 170
  }
-set Nab9aa800 [stack 0]
+set N642d8c00 [stack 0]
  Dot {
   name Dot11
   xpos 3755
@@ -653,13 +665,13 @@ set Nab9aa800 [stack 0]
   xpos 3721
   ypos 574
  }
-push $Nab9aa800
+push $N642d8c00
  Dot {
   name Dot12
   xpos 3479
   ypos 173
  }
-set Nab9a9c00 [stack 0]
+set N6292bc00 [stack 0]
  Dot {
   name Dot13
   xpos 3369
@@ -671,14 +683,14 @@ set Nab9a9c00 [stack 0]
   xpos 3335
   ypos 456
  }
-push $Nab9aa800
+push $N642d8c00
  Blur {
   size {{__noise_size}}
   name Blur1
   xpos 3589
   ypos 243
  }
-push $Nab9a9c00
+push $N6292bc00
  Dot {
   name Dot14
   xpos 3479
@@ -718,7 +730,7 @@ push $Nab9a9c00
   xpos 3589
   ypos 689
  }
-set Nbe2a3400 [stack 0]
+set N62929800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle17
@@ -726,9 +738,12 @@ set Nbe2a3400 [stack 0]
   ypos 1080
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat9
+  name Reformat8
   xpos 867
   ypos 1104
  }
@@ -744,14 +759,14 @@ set Nbe2a3400 [stack 0]
   xpos 867
   ypos 1140
  }
-push $Nc795d000
+push $Nffa57800
  Saturation {
   saturation {{__sat_up}}
   name Saturation1
   xpos 1613
   ypos 222
  }
-set Nc6556400 [stack 0]
+set Nd7d4bc00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle18
@@ -759,9 +774,12 @@ set Nc6556400 [stack 0]
   ypos 1026
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat8
+  name Reformat7
   xpos 741
   ypos 1050
  }
@@ -777,14 +795,14 @@ set Nc6556400 [stack 0]
   xpos 741
   ypos 1086
  }
-push $Nc795cc00
+push $Nffa57400
  Saturation {
   saturation 0
   name Saturation3
   xpos 1820
   ypos 221
  }
-set Nc6556800 [stack 0]
+set Nd7d4a400 [stack 0]
  Shuffle {
   alpha white
   name Shuffle19
@@ -792,9 +810,12 @@ set Nc6556800 [stack 0]
   ypos 1019
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat7
+  name Reformat6
   xpos 624
   ypos 1043
  }
@@ -810,26 +831,29 @@ set Nc6556800 [stack 0]
   xpos 624
   ypos 1079
  }
-push $Nc795d400
+push $Nffa57c00
  Multiply {
   value {{"pow(2, __exp_down)"}}
   name Multiply3
   xpos 1400
   ypos 216
  }
-set Nc6556c00 [stack 0]
+set Nd7d48c00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle11
   xpos 526
-  ypos 1036
+  ypos 1038
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat6
+  name Reformat5
   xpos 526
-  ypos 1060
+  ypos 1062
  }
  Text {
   message Highlights
@@ -843,14 +867,14 @@ set Nc6556c00 [stack 0]
   xpos 526
   ypos 1096
  }
-push $Nc795d800
+push $N68b88400
  Multiply {
   value {{"pow(2, __exp_up)"}}
   name Multiply6
   xpos 1209
   ypos 216
  }
-set Nc6557000 [stack 0]
+set N3f643000 [stack 0]
  Shuffle {
   alpha white
   name Shuffle10
@@ -858,9 +882,12 @@ set Nc6557000 [stack 0]
   ypos 1061
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat5
+  name Reformat4
   xpos 432
   ypos 1085
  }
@@ -876,14 +903,14 @@ set Nc6557000 [stack 0]
   xpos 432
   ypos 1121
  }
-push $Nc795dc00
+push $N68b88800
  Gamma {
   value {{__gamma_up}}
   name Gamma1
   xpos 997
   ypos 216
  }
-set Nc6557400 [stack 0]
+set N3f641800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle9
@@ -891,7 +918,10 @@ set Nc6557400 [stack 0]
   ypos 1060
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
   name Reformat3
   xpos 317
@@ -909,9 +939,9 @@ set Nc6557400 [stack 0]
   xpos 317
   ypos 1120
  }
-push $Nc57bfc00
-push $Nbe2a1000
-push $Nc57bf400
+push $N1f8ce000
+push $N1f8cd800
+push $N1f8cd000
  Switch {
   inputs 3
   which {{to}}
@@ -925,14 +955,14 @@ push $Nc57bf400
   xpos -436
   ypos 568
  }
-set Nc57bec00 [stack 0]
-push $N46815000
+set Nff3f800 [stack 0]
+push $N1f8cc800
  Dot {
   name Dot21
   xpos -141
   ypos 517
  }
-set Nc57be800 [stack 0]
+set Nff3f400 [stack 0]
  MergeExpression {
   inputs 2
   expr3 Ar!=Br||Ag!=Bg||Ab!=Bb?1:0
@@ -940,7 +970,7 @@ set Nc57be800 [stack 0]
   xpos -311
   ypos 648
  }
-push $Nc57be800
+push $Nff3f400
  Grade {
   inputs 1+1
   multiply 0
@@ -949,8 +979,8 @@ push $Nc57be800
   xpos -175
   ypos 648
  }
-push $Nc57bec00
-push $Nc57be800
+push $Nff3f800
+push $Nff3f400
  Merge2 {
   inputs 2
   operation difference
@@ -965,7 +995,7 @@ push $Nc57be800
   xpos -343
   ypos 795
  }
-set Nc57bd800 [stack 0]
+set Nff3e400 [stack 0]
  Shuffle {
   alpha white
   name Shuffle7
@@ -973,9 +1003,12 @@ set Nc57bd800 [stack 0]
   ypos 1156
  }
  Reformat {
-  format {{{parent.Reformat2.format}}}
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
-  name Reformat4
+  name Reformat15
   xpos 110
   ypos 1180
  }
@@ -991,7 +1024,7 @@ set Nc57bd800 [stack 0]
   xpos 110
   ypos 1216
  }
-push $N46815000
+push $N1f8cc800
  Shuffle {
   alpha white
   name Shuffle8
@@ -999,7 +1032,10 @@ push $N46815000
   ypos 1050
  }
  Reformat {
-  format "1024 1024 0 0 1024 1024 1 square_1K"
+  type "to box"
+  box_width {{"\[value tile_size]"}}
+  box_height {{"\[value tile_size]"}}
+  box_fixed true
   black_outside true
   name Reformat2
   xpos 202
@@ -1022,7 +1058,7 @@ push $N46815000
   width {{input.height*4}}
   height {{input.width*4}}
   rows 4
-  gap 25
+  gap {{floor(input.width/50)}}
   center true
   roworder TopBottom
   startframe 1
@@ -1031,7 +1067,7 @@ push $N46815000
   xpos 777
   ypos 1316
  }
-set Na67f1400 [stack 0]
+set N63cbf400 [stack 0]
  Grade {
   multiply 0
   add 0.045
@@ -1039,7 +1075,7 @@ set Na67f1400 [stack 0]
   xpos 619
   ypos 1390
  }
-push $Na67f1400
+push $N63cbf400
  Merge2 {
   inputs 2
   operation under
@@ -1067,24 +1103,24 @@ push $Na67f1400
   xpos 777
   ypos 1462
  }
-push $Nc6557800
-push $Nc795e400
-push $Nc795f800
-push $N16a3f800
-push $Nbe2a2c00
-push $Nbe2a3400
-push $Nc6556400
-push $Nc6556800
-push $Nc6556c00
-push $Nc6557000
-push $Nc6557400
-push $Nc57bd800
+push $Ndfd66c00
+push $Ndfd64800
+push $N68b8a000
+push $Nffa54800
+push $N642da800
+push $N62929800
+push $Nd7d4bc00
+push $Nd7d4a400
+push $Nd7d48c00
+push $N3f643000
+push $N3f641800
+push $Nff3e400
  Switch {
   inputs 12
   which {{qc_view}}
   name Switch5
-  xpos 1689
-  ypos 1410
+  xpos 2101
+  ypos 1146
  }
  Switch {
   inputs 2
