@@ -1,10 +1,8 @@
 set cut_paste_input [stack 0]
 version 11.0 v1
-push 0
 push $cut_paste_input
 Group {
- inputs 2
- name Shot_QC
+ name HH_Shot_QC
  knobChanged "\ndef hide_knobs():\n    kk = \[k for k in n.knobs() if k.startswith(\"__\")]\n    for i in kk:\n        nuke.thisNode()\[i].setVisible(False)\n\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"qc_view\":\n    v = k.value()\n    hide_knobs()\n    if v == \"Difference\":\n        n\[\"__show_changed\"].setVisible(True)\n    if v == \"Black Levels(Gamma Up)\":\n        n\[\"__gamma_up\"].setVisible(True)\n    if v == \"Highlights(Exposure Down)\":\n        n\[\"__exp_down\"].setVisible(True)\n    if v == \"Shadows(Exposure Up)\":\n        n\[\"__exp_up\"].setVisible(True)\n    if v == \"Color(Saturation Up)\":\n        n\[\"__sat_up\"].setVisible(True)\n    if v == \"Noise\":\n        n\[\"__noise_mode\"].setVisible(True)\n        n\[\"__noise_size\"].setVisible(True)\n    if v == \"HSV\":\n        n\[\"__hsv_mode\"].setVisible(True)\n        if n\[\"__hsv_mode\"].value() == \"mono\":\n            n\[\"__hsv_ch\"].setVisible(True)\n            n\[\"__hsv_3d\"].setVisible(True)\n    if v == \"Negative Pixels\":\n        n\[\"__neg_per_ch\"].setVisible(True)\n    if v == \"Alpha Channel\":\n        n\[\"__alpha_over\"].setVisible(True)\nif k.name() == \"__hsv_mode\":\n    if k.value() == \"mono\":\n        n\[\"__hsv_ch\"].setVisible(True)\n        n\[\"__hsv_3d\"].setVisible(True)\n    else:\n        n\[\"__hsv_ch\"].setVisible(False)\n        n\[\"__hsv_3d\"].setVisible(False)\nif k.name() == \"contact_sheet\":\n    if k.value() == 1:\n        n\[\"tile_size\"].setVisible(True)\n    else:\n        n\[\"tile_size\"].setVisible(False)\n"
  tile_color 0xff5594ff
  label "in <font size = 4 color =\"blue\">\[value cmp] </font>\nview <font size = 4 color =\"green\">\[value qc_view]"
@@ -20,6 +18,7 @@ Group {
  tile_size 1024
  addUserKnob {26 ""}
  addUserKnob {6 __neg_per_ch l "per channel" +HIDDEN +STARTLINE}
+ __neg_per_ch true
  addUserKnob {6 __alpha_over l "over src" +HIDDEN +STARTLINE}
  addUserKnob {6 __show_changed l "show changed" +HIDDEN +STARTLINE}
  addUserKnob {7 __gamma_up l amount +HIDDEN R 1 5}
@@ -126,7 +125,7 @@ Group {
   xpos 41
   ypos -203
  }
-set N1f8ce000 [stack 0]
+set Nbbbad400 [stack 0]
  Input {
   inputs 0
   name scan
@@ -134,7 +133,7 @@ set N1f8ce000 [stack 0]
   ypos -227
   number 1
  }
-set N1f8cd800 [stack 0]
+set Nbbbacc00 [stack 0]
  Input {
   inputs 0
   name comp
@@ -147,7 +146,7 @@ set N1f8cd800 [stack 0]
   xpos -424
   ypos -203
  }
-set N1f8cd000 [stack 0]
+set Nbbbac400 [stack 0]
  Switch {
   inputs 3
   which {{cmp}}
@@ -161,26 +160,26 @@ set N1f8cd000 [stack 0]
   xpos -130
   ypos 69
  }
-set N1f8cc800 [stack 0]
+set N29227800 [stack 0]
  Dot {
   name Dot1
   xpos 293
   ypos 69
  }
-set N1f8cc400 [stack 0]
+set N29227400 [stack 0]
  Dot {
   name Dot101
   xpos 519
   ypos 69
  }
-set Ndfd67c00 [stack 0]
+set N29227000 [stack 0]
  Dot {
   name Dot10
   xpos 861
   ypos 69
  }
-set Ndfd67800 [stack 0]
-push $Ndfd67800
+set N29226c00 [stack 0]
+push $N29226c00
  Shuffle {
   in alpha
   green red
@@ -204,7 +203,7 @@ push $Ndfd67800
   ypos 267
   disable {{1-__alpha_over}}
  }
-set Ndfd66c00 [stack 0]
+set N29226000 [stack 0]
  Shuffle {
   alpha white
   name Shuffle12
@@ -221,19 +220,36 @@ set Ndfd66c00 [stack 0]
   xpos 1626
   ypos 1312
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message "Alpha Channel"
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text13
+  old_message {{65 108 112 104 97 32 67 104 97 110 110 101 108}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1 9 1 10 1 11 1 12 1}
+    }
+  cursor_position 13
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text23
   xpos 1626
-  ypos 1348
+  ypos 1372
  }
-push $Ndfd67c00
+push $N29227000
  Expression {
   expr0 isinf(r)?1:0
   expr1 isinf(g)?1:0
@@ -261,7 +277,7 @@ push $Ndfd67c00
   xpos 485
   ypos 302
  }
-set Ndfd64800 [stack 0]
+set N6019bc00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle13
@@ -278,19 +294,36 @@ set Ndfd64800 [stack 0]
   xpos 1436
   ypos 1153
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message inf
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text12
+  old_message {{105 110 102}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1}
+    }
+  cursor_position 3
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text22
   xpos 1436
-  ypos 1191
+  ypos 1216
  }
-push $N1f8cc400
+push $N29227400
  Expression {
   expr0 isnan(r)?1:0
   expr1 isnan(g)?1:0
@@ -318,7 +351,7 @@ push $N1f8cc400
   xpos 259
   ypos 306
  }
-set N68b8a000 [stack 0]
+set N60199c00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle14
@@ -335,61 +368,78 @@ set N68b8a000 [stack 0]
   xpos 1270
   ypos 1108
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message NaN
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text11
+  old_message {{78 97 78}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1}
+    }
+  cursor_position 3
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text21
   xpos 1270
-  ypos 1144
+  ypos 1168
  }
-push $Ndfd67800
+push $N29226c00
  Dot {
   name Dot100
   xpos 1031
   ypos 69
  }
-set N68b88800 [stack 0]
+set N60198800 [stack 0]
  Dot {
   name Dot102
   xpos 1243
   ypos 69
  }
-set N68b88400 [stack 0]
+set N60198400 [stack 0]
  Dot {
   name Dot17
   xpos 1434
   ypos 69
  }
-set Nffa57c00 [stack 0]
+set N5103bc00 [stack 0]
  Dot {
   name Dot4
   xpos 1647
   ypos 69
  }
-set Nffa57800 [stack 0]
+set N5103b800 [stack 0]
  Dot {
   name Dot18
   xpos 1854
   ypos 69
  }
-set Nffa57400 [stack 0]
+set N5103b400 [stack 0]
  Dot {
   name Dot3
   xpos 2433
   ypos 69
  }
-set Nffa57000 [stack 0]
+set N5103b000 [stack 0]
  Dot {
   name Dot103
   xpos 2433
   ypos 135
  }
-set Nffa56c00 [stack 0]
+set N5103ac00 [stack 0]
  Dot {
   name Dot104
   xpos 2243
@@ -403,8 +453,8 @@ set Nffa56c00 [stack 0]
   xpos 2209
   ypos 178
  }
-set Nffa56400 [stack 0]
-push $Nffa56400
+set N5103a400 [stack 0]
+push $N5103a400
  Expression {
   expr0 clamp(r+g+b)
   name Expression6
@@ -432,14 +482,14 @@ push $Nffa56400
   xpos 2209
   ypos 232
  }
-set Nffa55400 [stack 0]
+set N51039400 [stack 0]
  Dot {
   name Dot2
   xpos 2243
   ypos 390
  }
-push $Nffa55400
-push $Nffa56c00
+push $N51039400
+push $N5103ac00
  Merge2 {
   inputs 2
   operation plus
@@ -454,7 +504,7 @@ push $Nffa56c00
   xpos 2399
   ypos 387
  }
-set Nffa54800 [stack 0]
+set N51038800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle15
@@ -471,32 +521,49 @@ set Nffa54800 [stack 0]
   xpos 1148
   ypos 1109
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message "Negative Pixels"
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text10
+  old_message {{78 101 103 97 116 105 118 101 32 80 105 120 101 108 115}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1 9 1 10 1 11 1 12 1 13 1 14 1}
+    }
+  cursor_position 15
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text20
   xpos 1148
-  ypos 1145
+  ypos 1169
  }
-push $Nffa57000
+push $N5103b000
  Dot {
   name Dot5
   xpos 2994
   ypos 69
  }
-set Nffce6c00 [stack 0]
+set N9fc27000 [stack 0]
  Colorspace {
   colorspace_out HSV
   name Colorspace1
   xpos 2783
   ypos 133
  }
-set Nffce6800 [stack 0]
+set N9fc26c00 [stack 0]
  Shuffle {
   red blue
   green blue
@@ -505,7 +572,7 @@ set Nffce6800 [stack 0]
   xpos 2868
   ypos 189
  }
-push $Nffce6800
+push $N9fc26c00
  Shuffle {
   red green
   blue green
@@ -514,7 +581,7 @@ push $Nffce6800
   xpos 2783
   ypos 189
  }
-push $Nffce6800
+push $N9fc26c00
  Shuffle {
   green red
   blue red
@@ -530,7 +597,7 @@ push $Nffce6800
   xpos 2783
   ypos 285
  }
-set Nffce5800 [stack 0]
+set N9fc25c00 [stack 0]
  Expression {
   channel0 {rgba.red -rgba.green -rgba.blue none}
   expr0 "x / width * (width/height)"
@@ -548,7 +615,7 @@ set Nffce5800 [stack 0]
   xpos 2783
   ypos 414
  }
-push $Nffce6c00
+push $N9fc27000
 add_layer {P P.x P.y P.z}
  ShuffleCopy {
   inputs 2
@@ -576,7 +643,7 @@ add_layer {P P.x P.y P.z}
   xpos 2960
   ypos 523
  }
-push $Nffce6800
+push $N9fc26c00
  Dot {
   name Dot8
   xpos 3079
@@ -587,7 +654,7 @@ push $Nffce6800
   xpos 3079
   ypos 620
  }
-push $Nffce5800
+push $N9fc25c00
  Dot {
   name Dot6
   xpos 2701
@@ -612,7 +679,7 @@ push $Nffce5800
   xpos 2960
   ypos 653
  }
-set N642da800 [stack 0]
+set N52b86c00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle16
@@ -629,19 +696,36 @@ set N642da800 [stack 0]
   xpos 1007
   ypos 1116
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message HSV
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text9
+  old_message {{72 83 86}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1}
+    }
+  cursor_position 3
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text19
   xpos 1007
-  ypos 1152
+  ypos 1176
  }
-push $Nffce6c00
+push $N9fc27000
  Dot {
   name Dot19
   xpos 3623
@@ -653,7 +737,7 @@ push $Nffce6c00
   xpos 3589
   ypos 170
  }
-set N642d8c00 [stack 0]
+set N52b85400 [stack 0]
  Dot {
   name Dot11
   xpos 3755
@@ -665,13 +749,13 @@ set N642d8c00 [stack 0]
   xpos 3721
   ypos 574
  }
-push $N642d8c00
+push $N52b85400
  Dot {
   name Dot12
   xpos 3479
   ypos 173
  }
-set N6292bc00 [stack 0]
+set N52b84800 [stack 0]
  Dot {
   name Dot13
   xpos 3369
@@ -683,14 +767,14 @@ set N6292bc00 [stack 0]
   xpos 3335
   ypos 456
  }
-push $N642d8c00
+push $N52b85400
  Blur {
   size {{__noise_size}}
   name Blur1
   xpos 3589
   ypos 243
  }
-push $N6292bc00
+push $N52b84800
  Dot {
   name Dot14
   xpos 3479
@@ -730,7 +814,7 @@ push $N6292bc00
   xpos 3589
   ypos 689
  }
-set N62929800 [stack 0]
+set N9f09e000 [stack 0]
  Shuffle {
   alpha white
   name Shuffle17
@@ -747,26 +831,43 @@ set N62929800 [stack 0]
   xpos 867
   ypos 1104
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message Noise
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text8
+  old_message {{78 111 105 115 101}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1}
+    }
+  cursor_position 5
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text18
   xpos 867
-  ypos 1140
+  ypos 1165
  }
-push $Nffa57800
+push $N5103b800
  Saturation {
   saturation {{__sat_up}}
   name Saturation1
   xpos 1613
   ypos 222
  }
-set Nd7d4bc00 [stack 0]
+set N9f09cc00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle18
@@ -783,26 +884,43 @@ set Nd7d4bc00 [stack 0]
   xpos 741
   ypos 1050
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message Color
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text7
+  old_message {{67 111 108 111 114}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1}
+    }
+  cursor_position 5
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text17
   xpos 741
-  ypos 1086
+  ypos 1110
  }
-push $Nffa57400
+push $N5103b400
  Saturation {
   saturation 0
   name Saturation3
   xpos 1820
   ypos 221
  }
-set Nd7d4a400 [stack 0]
+set N523ab400 [stack 0]
  Shuffle {
   alpha white
   name Shuffle19
@@ -819,26 +937,43 @@ set Nd7d4a400 [stack 0]
   xpos 624
   ypos 1043
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message Luminance
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text6
+  old_message {{76 117 109 105 110 97 110 99 101}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1}
+    }
+  cursor_position 9
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text16
   xpos 624
-  ypos 1079
+  ypos 1103
  }
-push $Nffa57c00
+push $N5103bc00
  Multiply {
   value {{"pow(2, __exp_down)"}}
   name Multiply3
   xpos 1400
   ypos 216
  }
-set Nd7d48c00 [stack 0]
+set N523aa000 [stack 0]
  Shuffle {
   alpha white
   name Shuffle11
@@ -855,26 +990,43 @@ set Nd7d48c00 [stack 0]
   xpos 526
   ypos 1062
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message Highlights
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text5
+  old_message {{72 105 103 104 108 105 103 104 116 115}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1 9 1}
+    }
+  cursor_position 10
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text4
   xpos 526
-  ypos 1096
+  ypos 1120
  }
-push $N68b88400
+push $N60198400
  Multiply {
   value {{"pow(2, __exp_up)"}}
   name Multiply6
   xpos 1209
   ypos 216
  }
-set N3f643000 [stack 0]
+set N523a8c00 [stack 0]
  Shuffle {
   alpha white
   name Shuffle10
@@ -891,26 +1043,43 @@ set N3f643000 [stack 0]
   xpos 432
   ypos 1085
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message Shadows
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text4
+  old_message {{83 104 97 100 111 119 115}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1}
+    }
+  cursor_position 7
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text3
   xpos 432
-  ypos 1121
+  ypos 1127
  }
-push $N68b88800
+push $N60198800
  Gamma {
   value {{__gamma_up}}
   name Gamma1
   xpos 997
   ypos 216
  }
-set N3f641800 [stack 0]
+set N863fb400 [stack 0]
  Shuffle {
   alpha white
   name Shuffle9
@@ -927,21 +1096,38 @@ set N3f641800 [stack 0]
   xpos 317
   ypos 1084
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message "Black Levels"
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text3
+  old_message {{66 108 97 99 107 32 76 101 118 101 108 115}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1 9 1 10 1 11 1}
+    }
+  cursor_position 12
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text2
   xpos 317
-  ypos 1120
+  ypos 1129
  }
-push $N1f8ce000
-push $N1f8cd800
-push $N1f8cd000
+push $Nbbbad400
+push $Nbbbacc00
+push $Nbbbac400
  Switch {
   inputs 3
   which {{to}}
@@ -955,14 +1141,14 @@ push $N1f8cd000
   xpos -436
   ypos 568
  }
-set Nff3f800 [stack 0]
-push $N1f8cc800
+set N863f9c00 [stack 0]
+push $N29227800
  Dot {
   name Dot21
   xpos -141
   ypos 517
  }
-set Nff3f400 [stack 0]
+set N863f9800 [stack 0]
  MergeExpression {
   inputs 2
   expr3 Ar!=Br||Ag!=Bg||Ab!=Bb?1:0
@@ -970,7 +1156,7 @@ set Nff3f400 [stack 0]
   xpos -311
   ypos 648
  }
-push $Nff3f400
+push $N863f9800
  Grade {
   inputs 1+1
   multiply 0
@@ -979,8 +1165,8 @@ push $Nff3f400
   xpos -175
   ypos 648
  }
-push $Nff3f800
-push $Nff3f400
+push $N863f9c00
+push $N863f9800
  Merge2 {
   inputs 2
   operation difference
@@ -995,12 +1181,12 @@ push $Nff3f400
   xpos -343
   ypos 795
  }
-set Nff3e400 [stack 0]
+set N863f8800 [stack 0]
  Shuffle {
   alpha white
   name Shuffle7
-  xpos 110
-  ypos 1156
+  xpos 69
+  ypos 1054
  }
  Reformat {
   type "to box"
@@ -1009,22 +1195,39 @@ set Nff3e400 [stack 0]
   box_fixed true
   black_outside true
   name Reformat15
-  xpos 110
-  ypos 1180
+  xpos 69
+  ypos 1078
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message Difference
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  name Text2
-  xpos 110
-  ypos 1216
+  old_message {{68 105 102 102 101 114 101 110 99 101}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1 9 1}
+    }
+  cursor_position 10
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text14
+  xpos 69
+  ypos 1127
  }
-push $N1f8cc800
+push $N29227800
  Shuffle {
   alpha white
   name Shuffle8
@@ -1041,17 +1244,36 @@ push $N1f8cc800
   xpos 202
   ypos 1074
  }
- Text {
-  message main
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.cmp]"
+  old_message {{67 79 77 80}
+    }
+  old_expression_markers {{0 3}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1}
+    }
+  cursor_position 18
+  global_font_scale {{input.width/10}}
+  font_size 1
+  scale {1 1}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
   name Text1
   xpos 202
-  ypos 1130
+  ypos 1124
  }
  ContactSheet {
   inputs 13
@@ -1067,7 +1289,7 @@ push $N1f8cc800
   xpos 777
   ypos 1316
  }
-set N63cbf400 [stack 0]
+set N811e2000 [stack 0]
  Grade {
   multiply 0
   add 0.045
@@ -1075,7 +1297,7 @@ set N63cbf400 [stack 0]
   xpos 619
   ypos 1390
  }
-push $N63cbf400
+push $N811e2000
  Merge2 {
   inputs 2
   operation under
@@ -1083,19 +1305,37 @@ push $N63cbf400
   xpos 777
   ypos 1390
  }
- Text {
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
   message "frame: \[value frame]"
-  font C:/Windows/Fonts/arial.ttf
-  size {{input.width/10}}
+  old_message {{102 114 97 109 101 58 32 49}
+    }
+  old_expression_markers {{7 7}
+    }
+  box {0 {input.height/6} {input.width} {input.width/10}}
   xjustify right
-  yjustify top
-  Transform 1
-  box {0 {input.height/6} {input.width} {size}}
-  center {2048 1080}
-  color {1 1 0 1}
-  name Text15
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1}
+    }
+  cursor_position 20
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color {1 0.5 0 1}
+  name Text5
   xpos 777
-  ypos 1438
+  ypos 1429
  }
  Shuffle {
   alpha white
@@ -1103,18 +1343,18 @@ push $N63cbf400
   xpos 777
   ypos 1462
  }
-push $Ndfd66c00
-push $Ndfd64800
-push $N68b8a000
-push $Nffa54800
-push $N642da800
-push $N62929800
-push $Nd7d4bc00
-push $Nd7d4a400
-push $Nd7d48c00
-push $N3f643000
-push $N3f641800
-push $Nff3e400
+push $N29226000
+push $N6019bc00
+push $N60199c00
+push $N51038800
+push $N52b86c00
+push $N9f09e000
+push $N9f09cc00
+push $N523ab400
+push $N523aa000
+push $N523a8c00
+push $N863fb400
+push $N863f8800
  Switch {
   inputs 12
   which {{qc_view}}
