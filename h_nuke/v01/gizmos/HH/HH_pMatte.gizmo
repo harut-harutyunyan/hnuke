@@ -1,0 +1,300 @@
+Group {
+ name HH_pMatte
+ help "<b>P_Matte</b> creates a sphere or cube shaped 3D matte based on a pass/layer containing position data"
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"add_noise\":\n    p_knobs = \[k for k in n.knobs() if k.startswith(\"p_\")]\n    for knob in p_knobs:\n        val = bool(k.getValue())\n        n\[knob].setVisible(val)\n"
+ tile_color 0x8535d5ff
+ addUserKnob {20 pmatte}
+ addUserKnob {41 in l "position data" t "Choose a layer from the input that contains position data" T Shuffle_Input_Channels.in}
+ addUserKnob {6 unpremultiply t "Check if your position layer is premultiplied" -STARTLINE}
+ addUserKnob {6 merge_alpha l "merge with incoming alpha" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {4 matteShape l "matte shape" t "Choose the shape of the 3D matte. Current options are \"Sphere\" and \"Cube\"" M {Sphere Cube "" ""}}
+ addUserKnob {18 center_pt l center}
+ center_pt {0 0 0}
+ addUserKnob {6 center_pt_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
+ addUserKnob {41 rotate T Axis1.rotate}
+ addUserKnob {41 scaling l scale T Axis1.scaling}
+ addUserKnob {7 uniform_scale l "uniform scale" R 1 500}
+ uniform_scale 10
+ addUserKnob {26 ""}
+ addUserKnob {4 falloffType l "falloff type" M {None Linear Smooth Quadratic Cubic "" "" ""}}
+ falloffType Linear
+ addUserKnob {6 add_noise l "add noise" -STARTLINE}
+ addUserKnob {7 falloff}
+ falloff 1
+ addUserKnob {7 p_contrast l contrast +HIDDEN R 0 0.5}
+ p_contrast 0.2
+ addUserKnob {7 p_gamma l gamma +HIDDEN R 0.2 2}
+ p_gamma 1
+ addUserKnob {26 p_div l "" +STARTLINE +HIDDEN}
+ addUserKnob {13 p_noise_scale l "noise scale" +HIDDEN}
+ p_noise_scale {1 1 1}
+ addUserKnob {3 p_noise_turb l turbulance -STARTLINE +HIDDEN}
+ p_noise_turb 5
+ addUserKnob {7 p_noise_uniform_scale l "noise uniform scale" +HIDDEN R 1 1000}
+ p_noise_uniform_scale 100
+ addUserKnob {7 p_noise_gain l "noise gain" +HIDDEN}
+ p_noise_gain 0.7
+ addUserKnob {7 p_noise_lac l "noise lacunarity" +HIDDEN R 0 5}
+ p_noise_lac 2.38
+}
+ Input {
+  inputs 0
+  name in
+  xpos -828
+  ypos -683
+ }
+ AddChannels {
+  channels alpha
+  color 1
+  name AddChannels1
+  xpos -828
+  ypos -589
+ }
+ Shuffle {
+  in rgb
+  alpha blue
+  out rgb
+  name Shuffle_Input_Channels
+  xpos -828
+  ypos -528
+ }
+set N7bbbe000 [stack 0]
+ Unpremult {
+  name Unpremult1
+  xpos -646
+  ypos -528
+  disable {{!parent.unpremultiply i}}
+ }
+ Dot {
+  name Dot2
+  xpos -326
+  ypos -523
+ }
+set N7bbbd800 [stack 0]
+ Add {
+  channels rgb
+  value {{center_pt.r*-1} {center_pt.g*-1} {center_pt.b*-1} 1}
+  name center
+  xpos -360
+  ypos -471
+ }
+ ColorMatrix {
+  matrix {
+      {{Axis1.world_matrix.0} {Axis1.world_matrix.1} {Axis1.world_matrix.2}}
+      {{Axis1.world_matrix.4} {Axis1.world_matrix.5} {Axis1.world_matrix.6}}
+      {{Axis1.world_matrix.8} {Axis1.world_matrix.9} {Axis1.world_matrix.10}}
+    }
+  invert true
+  name Rotate_Scale_Skew
+  xpos -360
+  ypos -418
+  disable {{hasError x200 1}}
+ }
+set N7bbbd000 [stack 0]
+ Expression {
+  expr3 1-max(abs(r),abs(g),abs(b))
+  name CubeMatte
+  xpos -285
+  ypos -341
+ }
+push $N7bbbd000
+ Expression {
+  expr3 1-(sqrt((r*r)+(g*g)+(b*b)))
+  name SphereMatte
+  xpos -442
+  ypos -342
+ }
+ Switch {
+  inputs 2
+  which {{matteShape i}}
+  name Switch1
+  xpos -366
+  ypos -272
+ }
+ Grade {
+  channels alpha
+  whitepoint {{falloffType?falloff:0}}
+  white_clamp true
+  name Falloff
+  xpos -366
+  ypos -206
+ }
+set N7bb6bc00 [stack 0]
+ Expression {
+  expr3 clamp((a**3),0,1)
+  name Cubic
+  xpos -175
+  ypos -102
+ }
+push $N7bb6bc00
+ Expression {
+  expr3 clamp(pow2(a),0,1)
+  name Quadratic
+  xpos -269
+  ypos -103
+ }
+push $N7bb6bc00
+ Expression {
+  expr3 smoothstep(0,1,a)
+  name Smooth
+  xpos -366
+  ypos -100
+ }
+push $N7bb6bc00
+ NoOp {
+  name Linear
+  xpos -457
+  ypos -99
+ }
+push $N7bb6bc00
+ NoOp {
+  name None
+  xpos -557
+  ypos -99
+ }
+ Switch {
+  inputs 5
+  which {{falloffType i}}
+  name Switch2
+  xpos -366
+  ypos -12
+ }
+ Remove {
+  operation keep
+  channels alpha
+  name Remove1
+  xpos -366
+  ypos 48
+ }
+set N7bb6a000 [stack 0]
+ Invert {
+  channels alpha
+  name Invert1
+  xpos -159
+  ypos 127
+ }
+push $N7bbbd800
+ Dot {
+  name Dot3
+  xpos 166
+  ypos -523
+ }
+ Expression {
+  temp_name0 gain
+  temp_expr0 p_noise_gain
+  temp_name1 turb
+  temp_expr1 p_noise_turb
+  temp_name2 lac
+  temp_expr2 p_noise_lac
+  expr3 "clamp(turbulence(r/s.x, g/s.y, b/s.z, turb, lac, gain))"
+  name turbulence_noise
+  xpos 132
+  ypos 252
+  addUserKnob {20 User}
+  addUserKnob {13 s l "" +STARTLINE}
+  s {{p_noise_scale.x*p_noise_uniform_scale} {p_noise_scale.y*p_noise_uniform_scale} {p_noise_scale.z*p_noise_uniform_scale}}
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name Merge1
+  xpos -159
+  ypos 252
+ }
+ Invert {
+  channels alpha
+  name Invert2
+  xpos -159
+  ypos 314
+ }
+push $N7bb6a000
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge2
+  xpos -366
+  ypos 320
+ }
+ Grade {
+  channels alpha
+  blackpoint {{p_contrast}}
+  whitepoint {{1-p_contrast}}
+  gamma {{p_gamma}}
+  white_clamp true
+  name Grade1
+  xpos -366
+  ypos 344
+ }
+push $N7bb6a000
+ Dot {
+  name Dot5
+  xpos -403
+  ypos 57
+ }
+ Dot {
+  name Dot4
+  xpos -403
+  ypos 527
+ }
+ Switch {
+  inputs 2
+  which {{add_noise}}
+  name Switch4
+  xpos -366
+  ypos 524
+ }
+ Shuffle {
+  in alpha
+  out alpha
+  name OutChannel
+  xpos -366
+  ypos 702
+ }
+set N7beeb000 [stack 0]
+push $N7bbbe000
+ Dot {
+  name Dot1
+  xpos -794
+  ypos 779
+ }
+set N7beeac00 [stack 0]
+ ChannelMerge {
+  inputs 2
+  name ChannelMerge1
+  xpos -258
+  ypos 764
+ }
+push $N7beeb000
+push $N7beeac00
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy2
+  xpos -491
+  ypos 770
+ }
+ Switch {
+  inputs 2
+  which {{merge_alpha}}
+  name Switch3
+  xpos -366
+  ypos 887
+ }
+ Output {
+  name Output1
+  xpos -366
+  ypos 994
+ }
+ Axis2 {
+  inputs 0
+  xform_order STR
+  rot_order ZYX
+  uniform_scale {{parent.uniform_scale}}
+  name Axis1
+  xpos -86
+  ypos -432
+ }
+end_group
