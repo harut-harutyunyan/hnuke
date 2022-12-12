@@ -3,7 +3,7 @@ Group {
  help "<b>P_Matte</b> creates a sphere or cube shaped 3D matte based on a pass/layer containing position data"
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"add_noise\":\n    p_knobs = \[k for k in n.knobs() if k.startswith(\"p_\")]\n    for knob in p_knobs:\n        val = bool(k.getValue())\n        n\[knob].setVisible(val)\n"
  tile_color 0x8535d5ff
- addUserKnob {20 pmatte}
+ addUserKnob {20 pMatte}
  addUserKnob {41 in l "position data" t "Choose a layer from the input that contains position data" T Shuffle_Input_Channels.in}
  addUserKnob {6 unpremultiply t "Check if your position layer is premultiplied" -STARTLINE}
  addUserKnob {6 merge_alpha l "merge with incoming alpha" +STARTLINE}

@@ -1,16 +1,10 @@
-set cut_paste_input [stack 0]
-version 11.0 v6
-push $cut_paste_input
 Group {
- name STmap_maker
- tile_color 0xc0fd24ff
- selected true
- xpos -501
- ypos -4
- addUserKnob {20 User}
- addUserKnob {3 overscan_x l "Overscan X"}
+ name HH_STmap
+ tile_color 0x8535d5ff
+ addUserKnob {20 STMap}
+ addUserKnob {3 overscan_x l "overscan x"}
  overscan_x 100
- addUserKnob {3 overscan_y l "Overscan Y"}
+ addUserKnob {3 overscan_y l "y"  -STARTLINE}
  overscan_y 100
 }
  Input {
