@@ -1,0 +1,153 @@
+Group {
+ name HH_EdgeMatte
+ tile_color 0x8535d5ff
+ addUserKnob {20 edge_matte l "Edge Matte"}
+ addUserKnob {4 mode l filter M {dilate blur "" "" ""}}
+ mode blur
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {7 blur_size l size R 1 100}
+ blur_size 10
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {7 blur_inside l "blur inside" R 0 100}
+ addUserKnob {7 blur_outside l "blur outside" R 0 100}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {7 core_hardness l "core hardness"}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x388e8eff
+  label dialate
+  note_font_size 42
+  xpos -530
+  ypos -262
+  bdwidth 245
+  bdheight 337
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode2
+  tile_color 0x388e8eff
+  label blur
+  note_font_size 42
+  xpos -152
+  ypos -258
+  bdwidth 245
+  bdheight 337
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -260
+  ypos -386
+ }
+ Dot {
+  name Dot1
+  xpos -226
+  ypos -248
+ }
+set N247a7800 [stack 0]
+ Erode {
+  size {{blur_size}}
+  blur {{blur_inside/100}}
+  name Erode1
+  xpos -133
+  ypos -148
+ }
+push $N247a7800
+ Erode {
+  size {{blur_size*-1}}
+  blur {{blur_outside/100}}
+  name Erode2
+  xpos -11
+  ypos -154
+ }
+ ChannelMerge {
+  inputs 2
+  operation stencil
+  name ChannelMerge1
+  xpos -74
+  ypos -26
+ }
+ Grade {
+  channels alpha
+  whitepoint {{1-core_hardness}}
+  white_clamp true
+  name Grade4
+  xpos -74
+  ypos 22
+  disable {{core_hardness<=0}}
+ }
+push $N247a7800
+ FilterErode {
+  size {{blur_size}}
+  name FilterErode1
+  xpos -520
+  ypos -181
+ }
+ Blur {
+  channels alpha
+  size {{blur_inside}}
+  name Blur2
+  xpos -520
+  ypos -145
+ }
+ Grade {
+  channels alpha
+  whitepoint 0.5
+  white_clamp true
+  name Grade2
+  xpos -520
+  ypos -109
+ }
+push $N247a7800
+ FilterErode {
+  size {{blur_size*-1}}
+  name FilterErode2
+  xpos -395
+  ypos -182
+ }
+ Blur {
+  channels alpha
+  size {{blur_outside}}
+  name Blur3
+  xpos -395
+  ypos -146
+ }
+ Grade {
+  channels alpha
+  blackpoint 0.5
+  white_clamp true
+  name Grade1
+  xpos -395
+  ypos -103
+ }
+ ChannelMerge {
+  inputs 2
+  operation stencil
+  name ChannelMerge2
+  xpos -433
+  ypos -23
+ }
+ Grade {
+  channels alpha
+  whitepoint {{1-core_hardness}}
+  white_clamp true
+  name Grade3
+  xpos -433
+  ypos 25
+  disable {{core_hardness<=0}}
+ }
+ Switch {
+  inputs 2
+  which {{mode}}
+  name Switch1
+  xpos -233
+  ypos 120
+ }
+ Output {
+  name Output1
+  xpos -233
+  ypos 194
+ }
+end_group
