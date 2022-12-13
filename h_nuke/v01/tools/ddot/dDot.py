@@ -15,10 +15,96 @@ QLabel:hover{
 }
 """
 
+def tilecolor2rgb(tile_col):
+    """
+    converts nuke tile color to rgb
+    @args:
+        tile_col: int tile color
+    @return:
+        list r, g, b
+    """
+    return [round((0xFF & int(tile_col) >> i) / 255.0, 3) for i in [24, 16, 8]]
+
+def rgb2tilecolor(rgb):
+    """
+    converts rgb color to nuke tile color
+    @args:
+        rgb: list r, g, b
+    @return:
+        int tile color
+    """
+    tile_col = int('%02x%02x%02x%02x' %
+                   (rgb[0]*255, rgb[1]*255, rgb[2]*255, 1), 16)
+
+    return tile_col
+
+def _get_default_color(node):
+    """
+    looks in preferences for nodes default color
+    and returns tile color
+    @args:
+        node: node to get color
+    @return:
+        int tile color
+    """
+    nodeclass = camelcase_to_list(node.Class())[0].lower()
+    prefs = nuke.toNode("preferences")
+    default_colors_dict = {}
+    default_colors_dict['NodeColourClassCache'] = [
+        prefs['NodeColourClassCache'].value(), 'NodeColourCacheColor']
+    default_colors_dict['NodeColourClassDeep'] = [
+        prefs['NodeColourClassDeep'].value(), 'NodeColourDeepColor']
+
+    for i in range(1, 13):
+        color_class = "NodeColourClass%02d" % i
+        default_colors_dict[color_class] = [
+            prefs[color_class].value(), "NodeColour%02dColor" % i]
+
+    tile_col = prefs['NodeColor'].value()
+    for color_class, classes in default_colors_dict.items():
+        if nodeclass in classes[0]:
+            tile_col = prefs[classes[1]].value()
+        elif 'deep' in nodeclass:
+            tile_col = prefs['NodeColourDeepColor'].value()
+
+    return int(tile_col)
+
+def get_default_color(node):
+    """
+    looks in preferences for nodes default color
+    @args:
+        node: node to get color
+    @return:
+        int tile color
+    """
+    return nuke.defaultNodeColor(node.Class())
+
+def get_tile_color(node, mode='hex'):
+    """
+    gets nodes tile color
+
+    @args:
+        node: node to get color
+        mode:   if set to 'hex'(tile_color) color.
+                if set to 'rgb' returns rgb color.
+    @return:
+        list rgb or int hex color
+    """
+
+    tile_col = node['tile_color'].getValue()
+    if tile_col == 0.0:
+        tile_col = get_default_color(node)
+
+    if mode == 'hex':
+        return int(tile_col)
+    elif mode == 'rgb':
+        return tilecolor2rgb(tile_col)
+
 
 class DDot(object):
 
     FONT_SIZE = 42
+    ERROR_COL = 4278190335
     DISTANCE_FROM_NODE = 150
     UPDATE_UI_ON = True
     UPDATE_UI = "node = nuke.toNode(nuke.thisNode().knob('label').getValue())\nif node:\n    nuke.thisNode().setInput(0, node)"
@@ -52,6 +138,7 @@ class DDot(object):
 
         parentName = nuke.getInput('ParentName for: {}'.format(selected.name()),'')
         parentKnob = nuke.Text_Knob('parent', 'parent')
+        tile_col = get_tile_color(selected)
 
         if parentName == None:
             return False
@@ -60,35 +147,25 @@ class DDot(object):
             nuke.message('No parent name given.')
             return False
 
-        elif selected.Class() == 'Dot':
-            if selected.knob('child'):
-                nuke.message("Error:It's a child.")
-            else:
-                nuke.selectedNode().knob('label').setValue('[value name]')
-                nuke.selectedNode().knob('name').setValue(parentName)
-                nuke.selectedNode().knob('tile_color').setValue(0)
-                nuke.selectedNode().knob('note_font_size').setValue(cls.FONT_SIZE)
-                if nuke.selectedNode().knob('parent'):
-                    pass
-                else:
-                    nuke.selectedNode().addKnob(parentKnob)
+        if selected.Class() == 'Dot' and selected.knob('child'):
+            nuke.message("Error:It's a child.")
+            return False
 
-        else:
-            newDot = nuke.createNode('Dot', inpanel=False)
-            newDot.setXpos(selected.xpos()+int(selected.screenWidth()/2-5))
-            newDot.setYpos(selected.ypos()+cls.DISTANCE_FROM_NODE)
-            newDot.knob('label').setValue('[value name]')
-            newDot.knob('name').setValue(parentName)
-            newDot.knob('tile_color').setValue(0)
-            newDot.knob('note_font_size').setValue(cls.FONT_SIZE)
-            newDot.addKnob(parentKnob)
+        newDot = nuke.createNode('Dot', inpanel=False)
+        newDot.setXpos(selected.xpos()+int(selected.screenWidth()/2-5))
+        newDot.setYpos(selected.ypos()+cls.DISTANCE_FROM_NODE)
+        newDot.knob('label').setValue('[value name]')
+        newDot.knob('name').setValue(parentName)
+        newDot.knob('tile_color').setValue(tile_col)
+        newDot.knob('note_font_color').setValue(tile_col)
+        newDot.knob('note_font_size').setValue(cls.FONT_SIZE)
+        newDot.addKnob(parentKnob)
 
     @classmethod
     def connect(cls, parent):
         dot = nuke.createNode("Dot", inpanel=False)
         dot.connectInput(0, parent)
         dot.knob('label').setValue(parent.name())
-        dot.knob('tile_color').setValue(0)
         dot.knob('hide_input').setValue(True)
         dot.knob('note_font').setValue('italic')
         dot.knob('note_font_size').setValue(cls.FONT_SIZE-10)
@@ -98,25 +175,24 @@ class DDot(object):
         dot.addKnob(child_knob)
         parent_color = int(parent.knob('note_font_color').getValue())
         dot.knob('note_font_color').setValue(parent_color)
+        dot.knob('tile_color').setValue(parent_color)
 
     @classmethod
     def check_input(cls):
         brokenConnections = []
         for d in nuke.allNodes('Dot'):
             if d.input(0) == None:
-                d['tile_color'].setValue(4278190335)
+                d['tile_color'].setValue(cls.ERROR_COL)
+                d['note_font_color'].setValue(cls.ERROR_COL)
                 brokenConnections.append(d.knob('name').getValue())
             else:
                 if d.knob('child'):
                     childLabel = d.knob('label').getValue()
                     parentName = d.input(0).knob('name').getValue()
-                    if childLabel == parentName:
-                        d['tile_color'].setValue(0)
-                    else:
-                        d['tile_color'].setValue(4278190335)
+                    if childLabel != parentName:
+                        d['tile_color'].setValue(cls.ERROR_COL)
+                        d['note_font_color'].setValue(cls.ERROR_COL)
                         brokenConnections.append(d.knob('name').getValue())
-                else:
-                    d['tile_color'].setValue(0)
         if len(brokenConnections) > 0:
             brokenConnections.sort()
             nuke.message('{} connection(s) broken: \n{}'.format(len(brokenConnections), "\n".join(brokenConnections)))
@@ -127,23 +203,28 @@ class DDot(object):
             if d.knob('child'):
                 childLabel = d.knob('label').getValue()
                 parent = nuke.toNode(childLabel)
+                if not parent:
+                    if d.input(0) != None:
+                        d['label'].setValue(d.input(0).knob('name').getValue())
+                        col = get_tile_color(d.input(0))
+                        d['tile_color'].setValue(col)
+                        d.knob('note_font_size').setValue(cls.FONT_SIZE-10)
+                        d.knob('note_font_color').setValue(col)
+                        continue
+
+                    nuke.message("no parent node for child {} - \"{}\"".format(d.name(), childLabel))
+                    continue
                 try:
                     parentColor = parent.knob('note_font_color').getValue()
                     parentColor = int(parentColor)
                 except:
-                    parentColor = 4278190335
+                    parentColor = cls.ERROR_COL
                 if d.input(0) == None:
                     d.connectInput(0, parent)
-                    d['tile_color'].setValue(0)
+                    d['tile_color'].setValue(get_tile_color(parent))
                     d.knob('note_font_size').setValue(cls.FONT_SIZE-10)
                     d.knob('note_font_color').setValue(parentColor)
-                else:
-                    parentName = d.input(0).knob('name').getValue()
-                    if childLabel != parentName:
-                        d.connectInput(0, parent)
-                        d['tile_color'].setValue(0)
-                        d.knob('note_font_size').setValue(cls.FONT_SIZE-10)
-                        d.knob('note_font_color').setValue(parentColor)
+
         cls.check_input()
 
     @classmethod
@@ -219,6 +300,31 @@ class DDotManager(QtWidgets.QDialog):
             cls.dlg_instance.raise_()
             cls.dlg_instance.activateWindow()
 
+    @staticmethod
+    def fit_node(node):
+        """
+        Centeres node in node graph.
+        @args:
+            node: node to fit
+        @return
+            bool
+        """
+        if node:
+            nuke.zoom(2, [node.xpos(), node.ypos()-80])
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def spacer(type='horizontal'):
+        """Makes horizontal or vertical QtWidgets.QSpacerItem."""
+        if type == 'vertical':
+            return QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        elif type == 'horizontal':
+            return QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        else:
+            return None
+
     def __init__(self):
         super(DDotManager, self).__init__()
         # parent to main nuke interface
@@ -239,34 +345,43 @@ class DDotManager(QtWidgets.QDialog):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint |
                             QtCore.Qt.Popup)  # popup window
 
-        self.setFixedSize(674, 260)
+        self.setFixedSize(674, 220)
         self.setWindowOpacity(0.9)
 
     def create_widgets(self):
-        self.shortcuts_list = ShortcutList()
         self.close_btn = QtWidgets.QPushButton("Close")
+        self.shortcuts_list = ShortcutList()
 
     def create_layout(self):
         self.manager_layout = QtWidgets.QVBoxLayout(self)
+        self.btn_layout = QtWidgets.QHBoxLayout()
 
         self.manager_layout.addWidget(self.shortcuts_list)
-        self.manager_layout.addWidget(self.close_btn)
+        self.btn_layout.addItem(self.spacer())
+        self.btn_layout.addWidget(self.close_btn)
+
+        self.manager_layout.addLayout(self.btn_layout)
 
     def create_connections(self):
         self.close_btn.clicked.connect(self.close)
+        self.shortcuts_list.itemDoubleClicked.connect(self.frame_on_link)
 
     def populate(self):
         self.shortcuts_list.clear()
         parents = DDot.get_parent_nodes()
-        print(parents)
         for parent in parents:
             parent_item = QtWidgets.QListWidgetItem()
             parent_item.setSizeHint(QtCore.QSize(ICON_SIZE, ICON_SIZE))
             parent_item.setData(QtCore.Qt.UserRole, parent.name())
             klass = parent.input(0).Class()
-            custom_item = NodeShape(parent.name(), circle=klass in self.nodes_3d)
+            custom_item = NodeShape(parent.name(), color=get_tile_color(parent, mode="rgb"), circle=klass in self.nodes_3d)
             self.shortcuts_list.addItem(parent_item)
             self.shortcuts_list.setItemWidget(parent_item, custom_item)
+
+    def frame_on_link(self):
+        item = self.shortcuts_list.currentItem()
+        node = nuke.toNode(str(item.data(QtCore.Qt.UserRole)))
+        self.fit_node(node)
 
     def showEvent(self, event):
         """populate shortcuts after showing the dialog window"""
