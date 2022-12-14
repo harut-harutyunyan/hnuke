@@ -1,0 +1,204 @@
+Group {
+ name HH_RadialDilate
+ tile_color 0x8535d5ff
+ addUserKnob {20 Dilate l RadialDilate}
+ addUserKnob {3 color_id l color}
+ addUserKnob {26 t l "" -STARTLINE T "  - try different colors to get better matte"}
+ addUserKnob {6 premult_in l "premultiply input" +STARTLINE}
+ premult_in true
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 screenClipMin l "clip black" T Keylight1.screenClipMin}
+ addUserKnob {41 screenClipMax l "clip white" T Keylight1.screenClipMax}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 screenGrowShrink l dilate T Keylight1.screenGrowShrink}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 screenDespotBlack l "despot black" T Keylight1.screenDespotBlack}
+ addUserKnob {41 screenDespotWhite l "despot white" T Keylight1.screenDespotWhite}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannel l mask T Keymix1.maskChannel}
+ addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
+}
+ Input {
+  inputs 0
+  name mask
+  xpos -614
+  ypos 154
+  number 1
+ }
+ Invert {
+  channels rgba
+  name Invert1
+  xpos -614
+  ypos 213
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -795
+  ypos -205
+ }
+ Dot {
+  name Dot1
+  xpos -761
+  ypos -165
+ }
+set N1e4608f0 [stack 0]
+ Dot {
+  name Dot3
+  xpos -651
+  ypos -165
+ }
+ Dot {
+  name Dot2
+  xpos -658
+  ypos 153
+ }
+set N12a53520 [stack 0]
+push $N12a53520
+push $N1e4608f0
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha black
+  name Shuffle1
+  xpos -1180
+  ypos -175
+ }
+set N1d211fa0 [stack 0]
+ Add {
+  channels rgb
+  value {{random(color_id+566)} {random(color_id+666)} {random(color_id)} 0}
+  name random
+  xpos -1180
+  ypos -76
+ }
+push $N1d211fa0
+ Add {
+  channels rgb
+  value {1 0 0 0}
+  name red
+  xpos -1290
+  ypos -76
+ }
+push $N1d211fa0
+ Add {
+  channels rgb
+  value {1 1 0 0}
+  name yellow
+  xpos -1400
+  ypos -76
+ }
+push $N1d211fa0
+ Add {
+  channels rgb
+  value {0 1 1 0}
+  name cyan
+  xpos -1510
+  ypos -76
+ }
+push $N1d211fa0
+ Add {
+  channels rgb
+  value {0 1 0 0}
+  name green
+  xpos -1730
+  ypos -76
+ }
+push $N1d211fa0
+ Add {
+  channels rgb
+  value {0 0 1 0}
+  name blue
+  xpos -1620
+  ypos -76
+ }
+ Switch {
+  inputs 6
+  which {{color_id}}
+  name Switch1
+  xpos -1180
+  ypos 21
+ }
+push $N1e4608f0
+ Premult {
+  name Premult1
+  xpos -795
+  ypos -60
+  disable {{1-premult_in}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  name Merge1
+  xpos -795
+  ypos 21
+ }
+ OFXuk.co.thefoundry.keylight.keylight_v201 {
+  show "Final Result"
+  unPreMultiply false
+  screenColour {{"\[sample \[node Switch1] red input.width/2 input.height/2]"} {"\[sample \[node Switch1] green input.width/2 input.height/2]"} {"\[sample \[node Switch1] blue input.width/2 input.height/2]"}}
+  screenGain 1
+  screenBalance 0.5
+  alphaBias {0.5 0.5 0.5}
+  despillBias {0.5 0.5 0.5}
+  gangBiases true
+  preBlur 0
+  "Screen Matte" 1
+  screenClipMin 0
+  screenClipMax 1
+  screenClipRollback 0
+  screenGrowShrink 0
+  screenSoftness 0
+  screenDespotBlack 0
+  screenDespotWhite 0
+  screenReplaceMethod "Soft Colour"
+  screenReplaceColour {0.5 0.5 0.5}
+  Tuning 0
+  midPoint 0.5
+  lowGain 1
+  midGain 1
+  highGain 1
+  "Inside Mask" 0
+  sourceAlphaHandling Ignore
+  insideReplaceMethod "Soft Colour"
+  insideReplaceColour {0.5 0.5 0.5}
+  Crops 0
+  SourceXMethod Colour
+  SourceYMethod Colour
+  SourceEdgeColour 0
+  SourceCropL 0
+  SourceCropR 1
+  SourceCropB 0
+  SourceCropT 1
+  balanceSet false
+  insideComponent None
+  outsideComponent None
+  cacheBreaker true
+  name Keylight1
+  xpos -795
+  ypos 99
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha alpha2
+  name ShuffleCopy1
+  xpos -795
+  ypos 143
+ }
+ Keymix {
+  inputs 3
+  bbox B
+  name Keymix1
+  xpos -795
+  ypos 207
+ }
+ Output {
+  name Output1
+  xpos -795
+  ypos 279
+ }
+end_group
