@@ -2,81 +2,108 @@ Group {
  name HH_ChannelMonochrome
  tile_color 0x8535d5ff
  addUserKnob {20 ChannelMonochrome l "Channel Monochrome"}
- addUserKnob {41 "Local GPU: " T BlinkScript2.gpuName}
- addUserKnob {41 "Use GPU if Available" T BlinkScript2.useGPUIfAvailable}
+ addUserKnob {41 weight T Expression1.weight}
+ addUserKnob {41 source T Expression1.source}
+ addUserKnob {41 target T Expression1.target}
+ addUserKnob {41 multiply T Expression1.multiply}
+ addUserKnob {41 sourceFromTarget l "use weighted target as source" T Expression1.sourceFromTarget}
+ addUserKnob {22 calculateWeights l "calculate weights from source and target" T "monochromeNode = nuke.thisNode()      \n        \ndef zeros_matrix(rows, cols):\n    A = \[]\n    for i in range(rows):\n        A.append(\[])\n        for j in range(cols):\n            A\[-1].append(0.0)\n\n    return A\n\ndef copy_matrix(M):\n    rows = len(M)\n    cols = len(M\[0])\n\n    MC = zeros_matrix(rows, cols)\n\n    for i in range(rows):\n        for j in range(cols):\n            MC\[i]\[j] = M\[i]\[j]\n\n    return MC\n\nA = \[monochromeNode\['source'].value(),monochromeNode\['target'].value(),\[1,1,1]]\nB = \[\[1],\[1],\[1]]\n\nAM = copy_matrix(A)\nn = len(A)\nBM = copy_matrix(B)\n\nindices = list(range(n)) # allow flexible row referencing ***\nfor fd in range(n): # fd stands for focus diagonal\n    fdScaler = 1.0 / AM\[fd]\[fd]\n    # FIRST: scale fd row with fd inverse. \n    for j in range(n): # Use j to indicate column looping.\n        AM\[fd]\[j] *= fdScaler\n    BM\[fd]\[0] *= fdScaler    \n\n    \n    # SECOND: operate on all rows except fd row.\n    for i in indices\[0:fd] + indices\[fd+1:]: # *** skip fd row.\n        crScaler = AM\[i]\[fd] # cr stands for \"current row\".\n        for j in range(n): # cr - crScaler*fdRow.\n            AM\[i]\[j] = AM\[i]\[j] - crScaler * AM\[fd]\[j]\n        BM\[i]\[0] = BM\[i]\[0] - crScaler * BM\[fd]\[0]       \n\nmonochromeNode\['weight'].setValue(\[float(BM\[0]\[0]),float(BM\[1]\[0]),float(BM\[2]\[0])])\nmonochromeNode\['source'].setValue(\[1,1,1])" +STARTLINE}
  addUserKnob {26 ""}
- addUserKnob {41 weigth T BlinkScript2.ChannelMonochromeKernel_weigth}
- addUserKnob {41 source T BlinkScript2.ChannelMonochromeKernel_source}
- addUserKnob {41 target T BlinkScript2.ChannelMonochromeKernel_target}
- addUserKnob {41 multiply T BlinkScript2.ChannelMonochromeKernel_multiply}
- addUserKnob {41 "use weighted targets" T "BlinkScript2.ChannelMonochromeKernel_use weighted targets"}
- addUserKnob {26 "" +STARTLINE}
- addUserKnob {41 maskChannel l "mask channel" T Keymix1.maskChannel}
- addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
- addUserKnob {41 which l mix T Dissolve1.which}
+ addUserKnob {41 maskChannelInput l mask -STARTLINE T Merge1.maskChannelInput}
+ addUserKnob {41 inject -STARTLINE T Merge1.inject}
+ addUserKnob {41 invert_mask l invert -STARTLINE T Merge1.invert_mask}
+ addUserKnob {41 fringe -STARTLINE T Merge1.fringe}
+ addUserKnob {41 mix T Merge1.mix}
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
 }
  Input {
   inputs 0
-  name mask
-  xpos 35
-  ypos -251
+  name Inputmask
+  xpos 506
+  ypos 454
   number 1
  }
- Invert {
-  name Invert1
-  xpos 35
-  ypos -208
+ Dot {
+  name Dot4
+  xpos 540
+  ypos 664
  }
  Input {
   inputs 0
   name Input
-  xpos -107
-  ypos -307
+  xpos 359
+  ypos 452
  }
-set N7f8ad000 [stack 0]
  Dot {
   name Dot2
-  xpos -202
-  ypos -304
+  xpos 393
+  ypos 519
  }
+set N37056c00 [stack 0]
+ Expression {
+  expr0 "(weight.r*r + weight.g*g + weight.b*b) * multiply"
+  name Expression1
+  note_font "Bitstream Vera Sans"
+  xpos 359
+  ypos 549
+  addUserKnob {20 User}
+  addUserKnob {6 sourceFromTarget l "use weighted target as source" +STARTLINE}
+  sourceFromTarget true
+  addUserKnob {6 source_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 weight}
+  weight {0.2126 0.7152 0.0722}
+  addUserKnob {6 weight_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  weight_panelDropped true
+  addUserKnob {18 source}
+  source {1 1 1}
+  addUserKnob {18 target}
+  target {1 1 1}
+  addUserKnob {18 multiply R 0 2}
+  multiply 1
+ }
+ Shuffle {
+  green red
+  blue red
+  name Shuffle1
+  tile_color 0xffffff00
+  label "\[value in]-->\[value out]"
+  note_font "Bitstream Vera Sans"
+  xpos 359
+  ypos 573
+ }
+ Grade {
+  whitepoint {{"Expression1.sourceFromTarget == 0 ? parent.Expression1.source : parent.Expression1.target.r*Expression1.weight.r+parent.Expression1.target.g*Expression1.weight.g+parent.Expression1.target.b*Expression1.weight.b"} {"Expression1.sourceFromTarget == 0 ? parent.Expression1.source : parent.Expression1.target.r*Expression1.weight.r+parent.Expression1.target.g*Expression1.weight.g+parent.Expression1.target.b*Expression1.weight.b"} {"Expression1.sourceFromTarget == 0 ? parent.Expression1.source : parent.Expression1.target.r*Expression1.weight.r+parent.Expression1.target.g*Expression1.weight.g+parent.Expression1.target.b*Expression1.weight.b"} {"Expression1.sourceFromTarget == 0 ? parent.Expression1.source : parent.Expression1.target.r*Expression1.weight.r+parent.Expression1.target.g*Expression1.weight.g+parent.Expression1.target.b*Expression1.weight.b"}}
+  white {{parent.Expression1.target} {parent.Expression1.target} {parent.Expression1.target} {parent.Expression1.target}}
+  multiply {{parent.Expression1.multiply} {parent.Expression1.multiply} {parent.Expression1.multiply} {parent.Expression1.multiply}}
+  black_clamp false
+  name Grade1
+  note_font "Bitstream Vera Sans"
+  xpos 359
+  ypos 609
+ }
+push $N37056c00
  Dot {
   name Dot1
-  xpos -202
-  ypos -159
+  xpos 294
+  ypos 519
  }
-push $N7f8ad000
- BlinkScript {
-  recompileCount 2
-  ProgramGroup 1
-  KernelDescription "2 \"ChannelMonochromeKernel\" iterate pixelWise 40803ab051a6048edc88f9ef6d44a09b51a66bddbe651946ec8e61ababe1e008 2 \"src\" Read Point \"dst\" Write Point 5 \"weigth\" Float 4 0LNZPlkXNz+Y3ZM9AAAAAA== \"source\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"target\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"multiply\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"use weighted targets\" Bool 1 AQ== 5 \"weight\" 4 1 \"sourceColor\" 4 1 \"targetColor\" 4 1 \"multiply\" 4 1 \"useWeightedTargets\" 1 1 1 \"output\" Float 4 1 AAAAAAAAAAAAAAAAAAAAAA=="
-  kernelSource "\nkernel ChannelMonochromeKernel : ImageComputationKernel<ePixelWise> \{\n  Image<eRead, eAccessPoint, eEdgeClamped> src; // the input image\n  Image<eWrite> dst; // the output image\n  param:\n    float4 weight;\n    float4 sourceColor;\n    float4 targetColor;\n    float4 multiply;\n    bool useWeightedTargets;\n  local:\n    float4 output;\n  void define() \{\n    defineParam(weight, \"weigth\", float4(.2126f, .7152f, .0722f, 0.0f));\n    defineParam(sourceColor, \"source\", float4(1.0f));\n    defineParam(targetColor, \"target\", float4(1.0f));\n    defineParam(multiply, \"multiply\", float4(1.0f));\n    defineParam(useWeightedTargets, \"use weighted targets\", true);\n  \}\n  void init() \{\n  \}\n  void process() \{\n    output = src().x*weight.x;\n    output += src().y*weight.y;\n    output += src().z*weight.z;\n    if(useWeightedTargets==1) \{\n      sourceColor = targetColor.x*weight.x;\n      sourceColor += targetColor.y*weight.y;\n      sourceColor += targetColor.z*weight.z;\n    \}\n    output = (output/sourceColor)*targetColor;\n    output *= multiply;\n    // alpha from src\n    output.w = src().w;\n    dst() = output;\n  \}\n\};\n"
-  rebuild ""
-  ChannelMonochromeKernel_weigth {0.2125999928 0.715200007 0.07220000029 0}
-  rebuild_finalise ""
-  name BlinkScript2
-  xpos -170
-  ypos -258
+ Dot {
+  name Dot3
+  xpos 294
+  ypos 664
  }
-push $N7f8ad000
- Dissolve {
-  inputs 2
-  which 1
-  name Dissolve1
+ Merge2 {
+  inputs 2+1
+  operation copy
+  name Merge1
   selected true
-  xpos -107
-  ypos -209
- }
- Keymix {
-  inputs 3
-  name Keymix1
-  xpos -107
-  ypos -168
+  xpos 359
+  ypos 661
  }
  Output {
   name Output1
-  xpos -107
-  ypos -112
+  xpos 359
+  ypos 709
  }
 end_group
