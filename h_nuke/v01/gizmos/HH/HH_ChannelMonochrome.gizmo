@@ -14,6 +14,8 @@ Group {
  addUserKnob {41 maskChannel l "mask channel" T Keymix1.maskChannel}
  addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
  addUserKnob {41 which l mix T Dissolve1.which}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
 }
  Input {
   inputs 0

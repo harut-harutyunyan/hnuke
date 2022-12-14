@@ -12,6 +12,8 @@ Group {
  addUserKnob {7 blur_outside l "blur outside" R 0 100}
  addUserKnob {26 "" +STARTLINE}
  addUserKnob {7 core_hardness l "core hardness"}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
 }
  BackdropNode {
   inputs 0
