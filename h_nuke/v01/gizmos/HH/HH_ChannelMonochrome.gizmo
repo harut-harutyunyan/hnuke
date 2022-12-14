@@ -1,0 +1,80 @@
+Group {
+ name HH_ChannelMonochrome
+ tile_color 0x8535d5ff
+ addUserKnob {20 ChannelMonochrome l "Channel Monochrome"}
+ addUserKnob {41 "Local GPU: " T BlinkScript2.gpuName}
+ addUserKnob {41 "Use GPU if Available" T BlinkScript2.useGPUIfAvailable}
+ addUserKnob {26 ""}
+ addUserKnob {41 weigth T BlinkScript2.ChannelMonochromeKernel_weigth}
+ addUserKnob {41 source T BlinkScript2.ChannelMonochromeKernel_source}
+ addUserKnob {41 target T BlinkScript2.ChannelMonochromeKernel_target}
+ addUserKnob {41 multiply T BlinkScript2.ChannelMonochromeKernel_multiply}
+ addUserKnob {41 "use weighted targets" T "BlinkScript2.ChannelMonochromeKernel_use weighted targets"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannel l "mask channel" T Keymix1.maskChannel}
+ addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
+ addUserKnob {41 which l mix T Dissolve1.which}
+}
+ Input {
+  inputs 0
+  name mask
+  xpos 35
+  ypos -251
+  number 1
+ }
+ Invert {
+  name Invert1
+  xpos 35
+  ypos -208
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -107
+  ypos -307
+ }
+set N7f8ad000 [stack 0]
+ Dot {
+  name Dot2
+  xpos -202
+  ypos -304
+ }
+ Dot {
+  name Dot1
+  xpos -202
+  ypos -159
+ }
+push $N7f8ad000
+ BlinkScript {
+  recompileCount 2
+  ProgramGroup 1
+  KernelDescription "2 \"ChannelMonochromeKernel\" iterate pixelWise 40803ab051a6048edc88f9ef6d44a09b51a66bddbe651946ec8e61ababe1e008 2 \"src\" Read Point \"dst\" Write Point 5 \"weigth\" Float 4 0LNZPlkXNz+Y3ZM9AAAAAA== \"source\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"target\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"multiply\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"use weighted targets\" Bool 1 AQ== 5 \"weight\" 4 1 \"sourceColor\" 4 1 \"targetColor\" 4 1 \"multiply\" 4 1 \"useWeightedTargets\" 1 1 1 \"output\" Float 4 1 AAAAAAAAAAAAAAAAAAAAAA=="
+  kernelSource "\nkernel ChannelMonochromeKernel : ImageComputationKernel<ePixelWise> \{\n  Image<eRead, eAccessPoint, eEdgeClamped> src; // the input image\n  Image<eWrite> dst; // the output image\n  param:\n    float4 weight;\n    float4 sourceColor;\n    float4 targetColor;\n    float4 multiply;\n    bool useWeightedTargets;\n  local:\n    float4 output;\n  void define() \{\n    defineParam(weight, \"weigth\", float4(.2126f, .7152f, .0722f, 0.0f));\n    defineParam(sourceColor, \"source\", float4(1.0f));\n    defineParam(targetColor, \"target\", float4(1.0f));\n    defineParam(multiply, \"multiply\", float4(1.0f));\n    defineParam(useWeightedTargets, \"use weighted targets\", true);\n  \}\n  void init() \{\n  \}\n  void process() \{\n    output = src().x*weight.x;\n    output += src().y*weight.y;\n    output += src().z*weight.z;\n    if(useWeightedTargets==1) \{\n      sourceColor = targetColor.x*weight.x;\n      sourceColor += targetColor.y*weight.y;\n      sourceColor += targetColor.z*weight.z;\n    \}\n    output = (output/sourceColor)*targetColor;\n    output *= multiply;\n    // alpha from src\n    output.w = src().w;\n    dst() = output;\n  \}\n\};\n"
+  rebuild ""
+  ChannelMonochromeKernel_weigth {0.2125999928 0.715200007 0.07220000029 0}
+  rebuild_finalise ""
+  name BlinkScript2
+  xpos -170
+  ypos -258
+ }
+push $N7f8ad000
+ Dissolve {
+  inputs 2
+  which 1
+  name Dissolve1
+  selected true
+  xpos -107
+  ypos -209
+ }
+ Keymix {
+  inputs 3
+  name Keymix1
+  xpos -107
+  ypos -168
+ }
+ Output {
+  name Output1
+  xpos -107
+  ypos -112
+ }
+end_group
