@@ -14,7 +14,7 @@ Group {
  addUserKnob {41 fringe -STARTLINE T Merge1.fringe}
  addUserKnob {41 mix T Merge1.mix}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  Input {
   inputs 0

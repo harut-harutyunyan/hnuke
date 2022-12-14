@@ -39,7 +39,7 @@ Group {
  addUserKnob {7 p_noise_lac l "noise lacunarity" +HIDDEN R 0 5}
  p_noise_lac 2.38
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  Input {
   inputs 0

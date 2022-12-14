@@ -18,7 +18,7 @@ Group {
  addUserKnob {6 use_average l "average color" -STARTLINE}
  use_average true
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  Input {
   inputs 0

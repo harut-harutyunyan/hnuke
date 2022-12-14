@@ -35,7 +35,7 @@ Group {
  __hsv_ch saturation
  addUserKnob {6 __hsv_3d l "3D view" -STARTLINE +HIDDEN}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\nhar8unyan@gmail.com\n"}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  BackdropNode {
   inputs 0
