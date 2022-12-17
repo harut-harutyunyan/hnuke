@@ -1,9 +1,10 @@
 Group {
  name HH_ChromaClean
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"inputChange\":\n    n.begin()\n    in2 = nuke.toNode(\"additional_matte\")\n    n.end()\n    if n.input(1):\n        n.setInput(2, None)\n        if in2:\n            nuke.delete(in2)\n    else:\n        if in2 == None:\n            n.begin()\n            inpt = nuke.createNode(\"Input\", inpanel=False)\n            inpt.setName(\"additional_matte\")\n            inpt.setXYpos(-920, -7)\n            nuke.toNode(\"Expression11\").setInput(0, inpt)\n            n.end()\n"
  tile_color 0x8535d5ff
  addUserKnob {20 ChromaClean l "Chroma Clean"}
- addUserKnob {22 double_out l "Split output" -STARTLINE T "node = nuke.thisNode()\nnode.end()\nCHNAME = \"h_screenprep\"\n\n\nsh = nuke.nodes.Shuffle(name = CHNAME)\nsh\[\"in\"].setValue(CHNAME)\nsh.setXYpos(node.xpos()+80, node.ypos()+100)\nsh.setInput(0, node)\nsh\[\"tile_color\"].setValue(295571967)\n\neven = nuke.nodes.Remove(name=\"Even Screen\")\n\neven\[\"channels\"].value()\n\neven\[\"channels\"].setValue(CHNAME)\neven.setInput(0, sh)\neven.setXYpos(node.xpos()+80, node.ypos()+130)\n\neven\[\"tile_color\"].setValue(295571967)\n\nclear = nuke.nodes.Remove(name=\"Clear Screen\")\nclear\[\"channels\"].value()\n\nclear\[\"channels\"].setValue(CHNAME)\nclear.setInput(0, node)\nclear.setXYpos(node.xpos()-80, node.ypos()+130)\nclear\[\"tile_color\"].setValue(295571967)"}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {22 double_out l "Split output" -STARTLINE T "node = nuke.thisNode()\nnode.end()\nCHNAME = \"h_screenprep\"\n\nnuke.Layer(CHNAME, \[CHNAME+\".red\", CHNAME+\".green\", CHNAME+\".blue\", CHNAME+\".alpha\"])\nnode.begin()\nshc = nuke.toNode(\"ShuffleCopy1\")\nshc\[\"disable\"].setValue(0)\nshc\[\"out\"].setValue(CHNAME)\nnode.end()\nsh = nuke.nodes.Shuffle(name = CHNAME)\nsh\[\"in\"].setValue(CHNAME)\nsh.setXYpos(node.xpos()+80, node.ypos()+100)\nsh.setInput(0, node)\nsh\[\"tile_color\"].setValue(295571967)\n\neven = nuke.nodes.Remove(name=\"Even Screen\")\n\neven\[\"channels\"].value()\n\neven\[\"channels\"].setValue(CHNAME)\neven.setInput(0, sh)\neven.setXYpos(node.xpos()+80, node.ypos()+130)\n\neven\[\"tile_color\"].setValue(295571967)\n\nclear = nuke.nodes.Remove(name=\"Clear Screen\")\nclear\[\"channels\"].value()\n\nclear\[\"channels\"].setValue(CHNAME)\nclear.setInput(0, node)\nclear.setXYpos(node.xpos()-80, node.ypos()+130)\nclear\[\"tile_color\"].setValue(295571967)"}
+ addUserKnob {26 ""}
  addUserKnob {41 screen_type l "screen type" T colour.screen_type}
  addUserKnob {41 off l darks T colour.off}
  addUserKnob {41 mult l lights T colour.mult}
@@ -11,21 +12,21 @@ Group {
  addUserKnob {41 erode T colour.erode}
  addUserKnob {26 ""}
  addUserKnob {41 which l "patch black" T Switch1.which}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
  addUserKnob {20 advanced l Advanced}
  addUserKnob {7 even_edge l "even screen edge" R 0 0.5}
  addUserKnob {7 even_screen_blur l "even screen blur" R 1 5}
  even_screen_blur 3
  addUserKnob {6 use_average l "average color" -STARTLINE}
  use_average true
- addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  Input {
   inputs 0
   name additional_matte
   xpos -920
   ypos 12
-  number 1
+  number 2
  }
  Expression {
   expr3 a>0?1:0
@@ -43,7 +44,7 @@ Group {
   name custom_matte
   xpos -913
   ypos -112
-  number 2
+  number 1
  }
  Dot {
   name Dot10
@@ -67,6 +68,7 @@ set N54b85000 [stack 0]
   name colour
   help "This node provides IBKGizmo a colour reference in which to base its keying algorithm on a per pixel basis.\nThe idea is to remove the foreground image and only leave the shades and hues of the original blue/greenscreen.\nAttach the output of this node to the 'c' input of a default IBKGizmo. Attach the input of this node along with the 'fg' input of the IBKGizmo to the original screen.\nPick which colour your screen type is in both nodes and then while viewing the alpha output from the IBKGizmo lower the darks.b (if a bluescreen - adjust darks.g if a greenscreen) in this node \nuntil you see a change in the garbage area of the matte. Once you see a change then you have gone too far -back off a step. If you are still left with discoloured edges you can use the other colours in the lights and darks to eliminate them. Remember the idea is \nto be left with the original shades of the screen and the foreground blacked out. While swapping between viewing the matte from the IBKGizmo and the rgb output of this IBKColour adjust the other colours \nuntil you see a change in the garbage area of the matte. Simple rule of thumb - if you have a light red discoloured area increase the lights.r - if you have a dark green discoloured area increase darks.g. If your screen does not have a very saturated hue you may still be left\n with areas of discolouration after the above process. The 'erode' slider can help with this - while viewing the rgb output adjust the erode until those areas disappear.\nThe 'patch black' slider allows you to fill in the black areas with screen colour. This is not always necessary but if you see blue squares in your composite increase this value and it'll fix it.\nThe above is the only real workflow for this node - working from the top parameter to the bottom parameter- going back to tweak darks/lights with 'erode' and 'patch black' activated isn't really gonna work. "
   tile_color 0x990000
+  disable {{"1-\[exists parent.input0]"}}
   xpos -721
   ypos -53
   addUserKnob {20 "" l Parameters}
@@ -147,7 +149,7 @@ push $N54b1b000
   }
   Switch {
    inputs 2
-   which {{"\[exists input2]"}}
+   which {{"\[exists parent.parent.input1]"}}
    name Switch2
    xpos -338
    ypos 161
@@ -648,7 +650,6 @@ push $N877cc00
   ypos 1155
  }
 push $N877e000
-add_layer {h_screenprep h_screenprep.red h_screenprep.green h_screenprep.blue h_screenprep.alpha}
  ShuffleCopy {
   inputs 2
   red red
@@ -658,6 +659,7 @@ add_layer {h_screenprep h_screenprep.red h_screenprep.green h_screenprep.blue h_
   name ShuffleCopy1
   xpos -475
   ypos 1152
+  disable true
  }
  Output {
   name Output1

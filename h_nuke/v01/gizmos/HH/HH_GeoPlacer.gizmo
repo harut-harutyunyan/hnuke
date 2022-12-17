@@ -3,12 +3,14 @@ Group {
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"only_p\":\n    if k.getValue() == 0:\n        n\[\"in_1\"].setEnabled(True)\n    if k.getValue() == 1:\n        n\[\"in_1\"].setEnabled(False)\n"
  tile_color 0x8535d5ff
  addUserKnob {20 GeoPlacer l "Geo Placer"}
- addUserKnob {41 in l position T P.in}
- addUserKnob {41 in_1 l normal T N.in}
+ addUserKnob {41 in l "position data" T P.in}
+ addUserKnob {41 in_1 l "normal data" T N.in}
  addUserKnob {26 ""}
  addUserKnob {6 only_p l "position only" +STARTLINE}
  addUserKnob {12 pt l position}
- addUserKnob {22 export -STARTLINE T "this_node = nuke.thisNode()\n\np = nuke.Panel('my custom panel')\np.addSingleLineInput('Frame Range', '\{\}-\{\}'.format(int(nuke.Root()\['first_frame'].getValue()), int(nuke.Root()\['last_frame'].getValue())))\np.addEnumerationPulldown('Export', 'Axis TransformGeo')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_obj = p.value('Export')\nif export_obj:\n    frames = nuke.FrameRange(p.value('Frame Range'))\n    \n    this_node.begin()\n    xform = nuke.toNode(\"xform\")\n    this_node.end()\n    \n    node_class = \{\"TransformGeo\": \"TransformGeo\", \"Axis\": \"Axis2\"\}\[export_obj]\n    axis = nuke.createNode(node_class)\n    axis.setXYpos(this_node.xpos()+150, this_node.ypos())\n    if node_class==\"TransformGeo\":\n        axis.setInput(0, this_node.input(1))\n    axis\[\"useMatrix\"].setValue(True)\n    knob = axis\['matrix']\n    knob.setAnimated()\n    task = nuke.ProgressTask(\"Self Destructing\")\n    for i in range(frames.first(), frames.last()+1):\n        task.setProgress(i)\n        xform_matrix = xform\['matrix'].getValueAt(i)\n        for j in range(16):\n            knob.setValueAt(xform_matrix\[j], i, j)\n    del task"}
+ addUserKnob {22 export -STARTLINE T "this_node = nuke.thisNode()\n\np = nuke.Panel('my custom panel')\np.addSingleLineInput('Frame Range', '\{\}'.format(int(nuke.frame())))\np.addEnumerationPulldown('Export', 'TransformGeo Axis')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_obj = p.value('Export')\nif export_obj:\n    frames = nuke.FrameRange(p.value('Frame Range'))\n    \n    this_node.begin()\n    xform = nuke.toNode(\"xform\")\n    this_node.end()\n    \n    node_class = \{\"TransformGeo\": \"TransformGeo\", \"Axis\": \"Axis2\"\}\[export_obj]\n    axis = nuke.createNode(node_class)\n    axis.setXYpos(this_node.xpos()+150, this_node.ypos())\n    if node_class==\"TransformGeo\":\n        axis.setInput(0, this_node.input(1))\n    axis\[\"useMatrix\"].setValue(True)\n    knob = axis\['matrix']\n    knob.setAnimated()\n    task = nuke.ProgressTask(\"Self Destructing\")\n    for i in range(frames.first(), frames.last()+1):\n        task.setProgress(i)\n        xform_matrix = xform\['matrix'].getValueAt(i)\n        for j in range(16):\n            knob.setValueAt(xform_matrix\[j], i, j)\n    del task"}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
  addUserKnob {41 world_matrix l "" +STARTLINE +INVISIBLE T Axis_orient.world_matrix}
 }
  Input {
