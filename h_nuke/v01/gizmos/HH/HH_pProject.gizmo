@@ -1,0 +1,250 @@
+Group {
+ name HH_pProject
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"mask_normal\":\n    val = k.getValue() == 1\n    n\[\"in_1\"].setEnabled(val)\n    n\[\"invert_n\"].setVisible(val)\n    n\[\"normal_contrast\"].setVisible(val)\n    n\[\"normal_mult\"].setVisible(val)"
+ tile_color 0x8535d5ff
+ addUserKnob {20 User}
+ addUserKnob {41 in l "position data" T P.in}
+ addUserKnob {41 in_1 l "normal data" T N.in}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {3 prj_frame l "projection frame"}
+ prj_frame 1001
+ addUserKnob {22 set_prj_frame l "set to current" -STARTLINE T "nuke.thisNode()\[\"prj_frame\"].setValue(int(nuke.frame()))"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {6 mask_normal l "mask by normal" +STARTLINE}
+ mask_normal true
+ addUserKnob {6 invert_n l "invert normal" -STARTLINE}
+ addUserKnob {7 normal_contrast l "mask contrast"}
+ addUserKnob {7 normal_mult l "mask multiply" R 1 4}
+ normal_mult 1
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x8e388e00
+  label "cam\nspace"
+  note_font_size 42
+  xpos -178
+  ypos 31
+  bdwidth 175
+  bdheight 212
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode2
+  tile_color 0x7171c600
+  label "proj\nspace"
+  note_font_size 42
+  xpos -176
+  ypos 354
+  bdwidth 181
+  bdheight 356
+ }
+ Input {
+  inputs 0
+  name img
+  xpos -138
+  ypos -55
+ }
+set N95046c00 [stack 0]
+ Dot {
+  name Dot2
+  xpos -576
+  ypos -52
+ }
+ Dot {
+  name Dot4
+  xpos -576
+  ypos 1065
+ }
+set N8319f800 [stack 0]
+ Dot {
+  name Dot3
+  xpos -382
+  ypos 1065
+ }
+set N831ec800 [stack 0]
+ Shuffle {
+  in rgb
+  red black
+  green black
+  blue black
+  alpha black
+  name Shuffle2
+  xpos -416
+  ypos 1157
+ }
+ Add {
+  channels rgb
+  value {{parent.input1.world_matrix.2} {parent.input1.world_matrix.6} {parent.input1.world_matrix.10} 0}
+  name color
+  xpos -416
+  ypos 1213
+ }
+push $N831ec800
+ Shuffle {
+  in N
+  alpha blue
+  name N
+  xpos -295
+  ypos 1159
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge1
+  xpos -295
+  ypos 1213
+ }
+ Clamp {
+  channels rgb
+  name Clamp1
+  xpos -295
+  ypos 1250
+ }
+ Saturation {
+  saturation 0
+  name Saturation1
+  xpos -295
+  ypos 1274
+ }
+ Grade {
+  blackpoint 0.5
+  whitepoint 0
+  name invert
+  xpos -295
+  ypos 1298
+  disable {{!invert_n}}
+ }
+ Grade {
+  blackpoint {{"lerp(0, 0, 1, 0.5, parent.normal_contrast)"}}
+  whitepoint {{1-blackpoint}}
+  multiply {{normal_mult}}
+  white_clamp true
+  name Grade1
+  xpos -295
+  ypos 1399
+ }
+push $N95046c00
+ Shuffle {
+  in P
+  name P
+  xpos -138
+  ypos -9
+ }
+ Add {
+  value {{parent.input1.world_matrix.3(prj_frame)*-1} {parent.input1.world_matrix.7(prj_frame)*-1} {parent.input1.world_matrix.11(prj_frame)*-1} 0}
+  name Add2
+  xpos -138
+  ypos 148
+ }
+ ColorMatrix {
+  matrix {
+      {{parent.input1.world_matrix.0(prj_frame)} {parent.input1.world_matrix.1(prj_frame)} {parent.input1.world_matrix.2(prj_frame)}}
+      {{parent.input1.world_matrix.4(prj_frame)} {parent.input1.world_matrix.5(prj_frame)} {parent.input1.world_matrix.6(prj_frame)}}
+      {{parent.input1.world_matrix.8(prj_frame)} {parent.input1.world_matrix.9(prj_frame)} {parent.input1.world_matrix.10(prj_frame)}}
+    }
+  invert true
+  name ColorMatrix2
+  xpos -138
+  ypos 195
+ }
+ NoOp {
+  name fov
+  xpos -138
+  ypos 483
+  addUserKnob {20 User}
+  addUserKnob {7 v_fov}
+  v_fov {{atan(parent.input1.vaperture(prj_frame)/(2*parent.input1.focal(prj_frame)))}}
+  addUserKnob {7 h_fov}
+  h_fov {{atan(parent.input1.haperture(prj_frame)/(2*parent.input1.focal(prj_frame)))}}
+ }
+ ColorMatrix {
+  matrix {
+      {{1/tan(input.h_fov)} 0 0}
+      {0 {1/tan(input.v_fov)} 0}
+      {0 0 {((parent.input1.far(prj_frame)+parent.input1.near(prj_frame))/(parent.input1.far(prj_frame)-parent.input1.near(prj_frame)))*-1}}
+    }
+  name ColorMatrix1
+  xpos -138
+  ypos 532
+ }
+ Add {
+  value {0 0 {((2*(parent.input1.far(prj_frame)*parent.input1.near(prj_frame)))/(parent.input1.far(prj_frame)-parent.input1.near(prj_frame)))*-1} 0}
+  name Add1
+  xpos -138
+  ypos 574
+ }
+ Expression {
+  expr0 r/b
+  expr1 g/b
+  expr2 0
+  name Expression1
+  xpos -138
+  ypos 636
+ }
+ Expression {
+  expr0 (r+1)/2
+  expr1 (g+1)/2
+  name Expression2
+  xpos -138
+  ypos 676
+ }
+ Input {
+  inputs 0
+  name patch
+  xpos 294
+  ypos 852
+  number 2
+ }
+ BlackOutside {
+  name BlackOutside1
+  xpos 294
+  ypos 930
+ }
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap1
+  xpos -138
+  ypos 924
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge2
+  xpos -138
+  ypos 1399
+  disable {{!parent.mask_normal}}
+ }
+push $N8319f800
+ Dot {
+  name Dot1
+  xpos -576
+  ypos 1596
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch1
+  selected true
+  xpos -138
+  ypos 1593
+ }
+ Output {
+  name Output1
+  xpos -138
+  ypos 1722
+ }
+ Input {
+  inputs 0
+  name cam
+  xpos -9
+  ypos -55
+  number 1
+ }
+end_group
