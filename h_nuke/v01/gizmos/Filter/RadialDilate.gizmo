@@ -1,6 +1,5 @@
 Group {
- name HH_RadialDilate
- tile_color 0x8535d5ff
+ name RadialDilate
  addUserKnob {20 Radial Dilate}
  addUserKnob {41 "Local GPU: " T BlinkScript4.gpuName}
  addUserKnob {41 "Use GPU if Available" T BlinkScript4.useGPUIfAvailable}
@@ -14,7 +13,7 @@ Group {
  addUserKnob {41 fringe -STARTLINE T Merge1.fringe}
  addUserKnob {41 mix T Merge1.mix}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "Chris Fryer"}
 }
  Input {
   inputs 0

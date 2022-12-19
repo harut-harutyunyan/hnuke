@@ -1,36 +1,75 @@
 Group {
  name HH_STmap
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name()== \"to_idistort\":\n    val = int(k.getValue())\n    n\[\"overscan_x\"].setVisible(val==0)\n    n\[\"overscan_y\"].setVisible(val==0)\n    colors = \[2234897919, 3426014719]\n    n\[\"tile_color\"].setValue(colors\[val])\n    n.begin()\n    inpt = nuke.allNodes(\"Input\")\[0]\n    names = \[\"format\", \"stmap\"]\n    inpt.setName(names\[val])\n    n.end()\n"
  tile_color 0x8535d5ff
+ label "\[if \{\[value to_idistort]==true\} \{return \"DISTORTION\"\} \{return \"\"\}]"
  addUserKnob {20 STMap}
  addUserKnob {3 overscan_x l "overscan x"}
- overscan_x 100
- addUserKnob {3 overscan_y l "y"  -STARTLINE}
- overscan_y 100
+ overscan_x {100}
+ addUserKnob {3 overscan_y l y -STARTLINE}
+ overscan_y {100}
+ addUserKnob {6 to_idistort l "output vectors" t "Convert connected STMap to distortion vectors to use with IDistort" +STARTLINE}
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  Input {
   inputs 0
   name format
+  selected true
   xpos -370
-  ypos -177
+  ypos -225
+ }
+set N55959800 [stack 0]
+ Remove {
+  name Remove1
+  xpos -370
+  ypos -201
  }
  Crop {
   box {{-overscan_x} {-overscan_y} {width+overscan_x} {height+overscan_y}}
   name Crop1
   xpos -370
-  ypos -153
+  ypos -165
+  disable {{parent.to_idistort}}
  }
  Expression {
   expr0 "(x+.5) / width"
   expr1 "(y+.5) / height"
   name Expression1
   xpos -370
-  ypos -129
+  ypos -119
+ }
+set N55958c00 [stack 0]
+push $N55959800
+ Dot {
+  name Dot1
+  xpos -506
+  ypos -222
+ }
+ Merge2 {
+  inputs 2
+  operation from
+  name Merge1
+  xpos -540
+  ypos -119
+ }
+ Multiply {
+  value {{input.width} {input.height} 1 1}
+  name Multiply1
+  xpos -540
+  ypos -66
+ }
+push $N55958c00
+ Switch {
+  inputs 2
+  which {{parent.to_idistort}}
+  name Switch1
+  xpos -370
+  ypos -60
  }
  Output {
   name Output1
   xpos -370
-  ypos -105
+  ypos 17
  }
 end_group

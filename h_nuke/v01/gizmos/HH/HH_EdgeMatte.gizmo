@@ -4,13 +4,13 @@ Group {
  addUserKnob {20 edge_matte l "Edge Matte"}
  addUserKnob {4 mode l filter M {dilate blur "" "" ""}}
  mode blur
- addUserKnob {26 "" +STARTLINE}
- addUserKnob {7 blur_size l size R 1 100}
- blur_size 10
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {14 filter_size l size R 0 100}
+ filter_size 10
+ addUserKnob {26 ""}
  addUserKnob {7 blur_inside l "blur inside" R 0 100}
  addUserKnob {7 blur_outside l "blur outside" R 0 100}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {7 core_hardness l "core hardness"}
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
@@ -48,17 +48,17 @@ Group {
   xpos -226
   ypos -248
  }
-set N247a7800 [stack 0]
+set Nc4380800 [stack 0]
  Erode {
-  size {{blur_size}}
+  size {{filter_size.w}}
   blur {{blur_inside/100}}
   name Erode1
   xpos -133
   ypos -148
  }
-push $N247a7800
+push $Nc4380800
  Erode {
-  size {{blur_size*-1}}
+  size {{filter_size.h*-1}}
   blur {{blur_outside/100}}
   name Erode2
   xpos -11
@@ -80,9 +80,9 @@ push $N247a7800
   ypos 22
   disable {{core_hardness<=0}}
  }
-push $N247a7800
+push $Nc4380800
  FilterErode {
-  size {{blur_size}}
+  size {{filter_size.w}}
   name FilterErode1
   xpos -520
   ypos -181
@@ -102,9 +102,9 @@ push $N247a7800
   xpos -520
   ypos -109
  }
-push $N247a7800
+push $Nc4380800
  FilterErode {
-  size {{blur_size*-1}}
+  size {{filter_size.h*-1}}
   name FilterErode2
   xpos -395
   ypos -182

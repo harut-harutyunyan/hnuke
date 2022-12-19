@@ -1,14 +1,17 @@
 Group {
  name HH_GeoPlacer
- knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"only_p\":\n    if k.getValue() == 0:\n        n\[\"in_1\"].setEnabled(True)\n    if k.getValue() == 1:\n        n\[\"in_1\"].setEnabled(False)\n"
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"only_p\":\n    n\[\"in_1\"].setEnabled(k.getValue() == 0)\nif k.name() == \"update_pt\":\n    n\[\"set_pt\"].setVisible(k.getValue()==0)\n"
  tile_color 0x8535d5ff
  addUserKnob {20 GeoPlacer l "Geo Placer"}
  addUserKnob {41 in l "position data" T P.in}
  addUserKnob {41 in_1 l "normal data" T N.in}
  addUserKnob {26 ""}
  addUserKnob {6 only_p l "position only" +STARTLINE}
+ addUserKnob {6 update_pt l "auto update position" -STARTLINE}
+ update_pt true
  addUserKnob {12 pt l position}
- addUserKnob {22 export -STARTLINE T "this_node = nuke.thisNode()\n\np = nuke.Panel('my custom panel')\np.addSingleLineInput('Frame Range', '\{\}'.format(int(nuke.frame())))\np.addEnumerationPulldown('Export', 'TransformGeo Axis')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_obj = p.value('Export')\nif export_obj:\n    frames = nuke.FrameRange(p.value('Frame Range'))\n    \n    this_node.begin()\n    xform = nuke.toNode(\"xform\")\n    this_node.end()\n    \n    node_class = \{\"TransformGeo\": \"TransformGeo\", \"Axis\": \"Axis2\"\}\[export_obj]\n    axis = nuke.createNode(node_class)\n    axis.setXYpos(this_node.xpos()+150, this_node.ypos())\n    if node_class==\"TransformGeo\":\n        axis.setInput(0, this_node.input(1))\n    axis\[\"useMatrix\"].setValue(True)\n    knob = axis\['matrix']\n    knob.setAnimated()\n    task = nuke.ProgressTask(\"Self Destructing\")\n    for i in range(frames.first(), frames.last()+1):\n        task.setProgress(i)\n        xform_matrix = xform\['matrix'].getValueAt(i)\n        for j in range(16):\n            knob.setValueAt(xform_matrix\[j], i, j)\n    del task"}
+ addUserKnob {22 set_pt l set -STARTLINE +HIDDEN T "n = nuke.thisNode()\nn.begin()\nnuke.toNode(\"FrameHold1\")\[\"firstFrame\"].setValue(nuke.frame())\nn.end()"}
+ addUserKnob {22 export -STARTLINE T "this_node = nuke.thisNode()\n\np = nuke.Panel('my custom panel')\np.addSingleLineInput('Frame Range', '\{\}'.format(int(nuke.frame())))\np.addEnumerationPulldown('Export', 'TransformGeo Axis')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_obj = p.value('Export')\nif export_obj:\n    frames = nuke.FrameRange(p.value('Frame Range'))\n    \n    this_node.begin()\n    xform = nuke.toNode(\"xform\")\n    this_node.end()\n    \n    node_class = \{\"TransformGeo\": \"TransformGeo\", \"Axis\": \"Axis2\"\}\[export_obj]\n    axis = nuke.createNode(node_class)\n    axis.setXYpos(this_node.xpos()+100, this_node.ypos()+150)\n    if node_class==\"TransformGeo\":\n        axis.setInput(0, this_node.input(1))\n    axis\[\"useMatrix\"].setValue(True)\n    knob = axis\['matrix']\n    if this_node\[\"update_pt\"] == 1 or frames.first() != frames.last():\n        knob.setAnimated()\n    else:\n        frames = nuke.FrameRange(str(int(nuke.frame())))\n    if frames.first() == frames.last():\n        frames = nuke.FrameRange(str(int(nuke.frame())))\n\n    task = nuke.ProgressTask(\"Self Destructing\")\n    for i in range(frames.first(), frames.last()+1):\n        task.setProgress(i)\n        xform_matrix = xform\['matrix'].getValueAt(i)\n        for j in range(16):\n            knob.setValueAt(xform_matrix\[j], i, j)\n    del task"}
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
  addUserKnob {41 world_matrix l "" +STARTLINE +INVISIBLE T Axis_orient.world_matrix}
@@ -89,9 +92,9 @@ Group {
   inputs 0
   name img
   xpos 0
-  ypos -186
+  ypos -309
  }
-set N19b3a400 [stack 0]
+set N7ab3ac00 [stack 0]
  Merge2 {
   inputs 2
   name Merge1
@@ -102,20 +105,6 @@ set N19b3a400 [stack 0]
   name Output1
   xpos 0
   ypos 605
- }
-push $N19b3a400
- Shuffle {
-  in P
-  name P
-  xpos 140
-  ypos -186
- }
-push $N19b3a400
- Shuffle {
-  in N
-  name N
-  xpos 241
-  ypos -186
  }
  Axis2 {
   inputs 0
@@ -130,5 +119,27 @@ push 0
   name Axis_orient
   xpos 708
   ypos 131
+ }
+push $N7ab3ac00
+ FrameHold {
+  firstFrame 1001
+  name FrameHold1
+  xpos 158
+  ypos -315
+  disable {{update_pt}}
+ }
+set N1a16f200 [stack 0]
+ Shuffle {
+  in P
+  name P
+  xpos 106
+  ypos -269
+ }
+push $N1a16f200
+ Shuffle {
+  in N
+  name N
+  xpos 216
+  ypos -269
  }
 end_group

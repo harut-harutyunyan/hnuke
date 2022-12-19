@@ -11,7 +11,6 @@ plugin_dir = os.path.join(os.path.dirname(__file__), latest_version)
 load = [
     "gizmos",
     "scripts",
-    "tools/light_mixer",
     "tools/look_manager",
     "tools/w_hotbox",
     "tools/ddot",

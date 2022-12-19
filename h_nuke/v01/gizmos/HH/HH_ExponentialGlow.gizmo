@@ -1,5 +1,4 @@
 Group {
- inputs 2
  name HH_ExponentialGlow
  tile_color 0x8535d5ff
  addUserKnob {20 exponentialGlow l "Exponential Glow"}
@@ -13,12 +12,13 @@ Group {
  addUserKnob {41 multiply T PreGradeNode.multiply}
  addUserKnob {41 add l offset T PreGradeNode.add}
  addUserKnob {41 gamma T PreGradeNode.gamma}
+ addUserKnob {41 saturation T Saturation1.saturation}
  addUserKnob {41 black_clamp_1 l "black clamp" T PreGradeNode.black_clamp}
  addUserKnob {41 white_clamp l "white clamp" -STARTLINE T PreGradeNode.white_clamp}
  addUserKnob {20 endGroup_3 l endGroup n -1}
- addUserKnob {26 "" +STARTLINE}
- addUserKnob {7 size l exponent t "Gradually dials in exponential levels of glow. Defaults to 7 (2^7 = 128px glow), max is 13 (2^13 = 8192px glow)." R 0 13}
- size 6
+ addUserKnob {26 ""}
+ addUserKnob {7 size l exponent t "Gradually dials in exponential levels of glow." R 0 13}
+ size 10
  addUserKnob {7 stretch t "Positive values will stretch the glow horizontally, negative values vertically." R -10 10}
  addUserKnob {14 glowstretch l INVISIBLE t "Lets you stretch the blur horizontally/vertically. Works as a multiplier." +INVISIBLE R 0 100}
  glowstretch {1 1}
@@ -32,6 +32,7 @@ Group {
  addUserKnob {7 mix t "Adjust how much of the glow gets added to the image."}
  mix 1
  addUserKnob {6 effect_only l "effect only" -STARTLINE}
+ effect_only false
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
@@ -47,7 +48,7 @@ Group {
   xpos -384
   ypos 273
  }
-set N982b9400 [stack 0]
+set N9a77c400 [stack 0]
  Dot {
   name Dot16
   xpos -616
@@ -58,13 +59,13 @@ set N982b9400 [stack 0]
   xpos -616
   ypos 1688
  }
-set N982b8c00 [stack 0]
+set N37e1f800 [stack 0]
  Dot {
   name Dot7
   xpos -616
   ypos 1883
  }
-set N982b8800 [stack 0]
+set N37e1f400 [stack 0]
  Dot {
   name Dot13
   xpos -616
@@ -83,14 +84,14 @@ set N982b8800 [stack 0]
   ypos 494
   number 1
  }
-push $N982b9400
+push $N9a77c400
  Dot {
   name Dot8
   xpos -350
   ypos 432
  }
-set N1b13400 [stack 0]
-push $N1b13400
+set N37e1e400 [stack 0]
+push $N37e1e400
  Dot {
   name Dot10
   xpos -435
@@ -119,17 +120,21 @@ push $N1b13400
   ypos 488
  }
  Grade {
-  channels rgba
   name PreGradeNode
   xpos -384
-  ypos 675
+  ypos 644
+ }
+ Saturation {
+  name Saturation1
+  xpos -384
+  ypos 668
  }
  Dot {
   name Dot20
   xpos -350
   ypos 711
  }
-set N1b11c00 [stack 0]
+set N37e1cc00 [stack 0]
  Dot {
   name Dot17
   xpos -480
@@ -140,85 +145,85 @@ set N1b11c00 [stack 0]
   xpos -480
   ypos 2119
  }
-push $N1b11c00
+push $N37e1cc00
  Dot {
   name Dot146
   xpos -350
   ypos 927
  }
-set N1b11000 [stack 0]
+set N54d7c00 [stack 0]
  Dot {
   name Dot150
   xpos -350
   ypos 963
  }
-set N1b10c00 [stack 0]
+set N54d7800 [stack 0]
  Dot {
   name Dot149
   xpos -350
   ypos 999
  }
-set N1b10800 [stack 0]
+set N54d7400 [stack 0]
  Dot {
   name Dot148
   xpos -350
   ypos 1035
  }
-set N1b10400 [stack 0]
+set N54d7000 [stack 0]
  Dot {
   name Dot152
   xpos -350
   ypos 1071
  }
-set N48133c00 [stack 0]
+set N54d6c00 [stack 0]
  Dot {
   name Dot151
   xpos -350
   ypos 1107
  }
-set N48133800 [stack 0]
+set N54d6800 [stack 0]
  Dot {
   name Dot153
   xpos -350
   ypos 1143
  }
-set N48133400 [stack 0]
+set N54d6400 [stack 0]
  Dot {
   name Dot147
   xpos -350
   ypos 1179
  }
-set N48133000 [stack 0]
+set N54d6000 [stack 0]
  Dot {
   name Dot1
   xpos -350
   ypos 1215
  }
-set N48132c00 [stack 0]
+set N54d5c00 [stack 0]
  Dot {
   name Dot2
   xpos -350
   ypos 1251
  }
-set N48132800 [stack 0]
+set N54d5800 [stack 0]
  Dot {
   name Dot3
   xpos -350
   ypos 1286
  }
-set N48132400 [stack 0]
+set N54d5400 [stack 0]
  Dot {
   name Dot4
   xpos -350
   ypos 1323
  }
-set N48132000 [stack 0]
+set N54d5000 [stack 0]
  Dot {
   name Dot5
   xpos -350
   ypos 1361
  }
-set N48131c00 [stack 0]
+set N54d4c00 [stack 0]
  Dot {
   name Dot6
   xpos -350
@@ -232,7 +237,7 @@ set N48131c00 [stack 0]
   xpos -298
   ypos 1396
  }
-push $N48131c00
+push $N54d4c00
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*4096:4096" i} {"stretch < 0 ? (1-stretch)*4096:4096" i}}
@@ -241,7 +246,7 @@ push $N48131c00
   xpos -298
   ypos 1358
  }
-push $N48132000
+push $N54d5000
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*2048:2048" i} {"stretch < 0 ? (1-stretch)*2048:2048" i}}
@@ -250,7 +255,7 @@ push $N48132000
   xpos -298
   ypos 1320
  }
-push $N48132400
+push $N54d5400
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*1024:1024" i} {"stretch < 0 ? (1-stretch)*1024:1024" i}}
@@ -259,7 +264,7 @@ push $N48132400
   xpos -298
   ypos 1283
  }
-push $N48132800
+push $N54d5800
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*512:512" i} {"stretch < 0 ? (1-stretch)*512:512" i}}
@@ -268,7 +273,7 @@ push $N48132800
   xpos -298
   ypos 1248
  }
-push $N48132c00
+push $N54d5c00
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*256:256" i} {"stretch < 0 ? (1-stretch)*256:256" i}}
@@ -277,7 +282,7 @@ push $N48132c00
   xpos -298
   ypos 1212
  }
-push $N48133000
+push $N54d6000
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*128:128" i} {"stretch < 0 ? (1-stretch)*128:128" i 128}}
@@ -286,7 +291,7 @@ push $N48133000
   xpos -298
   ypos 1176
  }
-push $N48133400
+push $N54d6400
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*64:64" i} {"stretch < 0 ? (1-stretch)*64:64" i}}
@@ -295,7 +300,7 @@ push $N48133400
   xpos -298
   ypos 1140
  }
-push $N48133800
+push $N54d6800
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*32:32"} {"stretch < 0 ? (1-stretch)*32:32"}}
@@ -304,7 +309,7 @@ push $N48133800
   xpos -298
   ypos 1104
  }
-push $N48133c00
+push $N54d6c00
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*16:16" i} {"stretch < 0 ? (1-stretch)*16:16" i}}
@@ -313,7 +318,7 @@ push $N48133c00
   xpos -298
   ypos 1068
  }
-push $N1b10400
+push $N54d7000
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*8:8"} {"stretch < 0 ? (1-stretch)*8:8"}}
@@ -322,7 +327,7 @@ push $N1b10400
   xpos -298
   ypos 1032
  }
-push $N1b10800
+push $N54d7400
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*4 : 4"} {"stretch < 0 ? (1-stretch)*4:4"}}
@@ -331,7 +336,7 @@ push $N1b10800
   xpos -298
   ypos 996
  }
-push $N1b10c00
+push $N54d7800
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*2 : 2"} {"stretch < 0 ? (1-stretch)*2:2"}}
@@ -340,7 +345,7 @@ push $N1b10c00
   xpos -298
   ypos 960
  }
-push $N1b11000
+push $N54d7c00
  Blur {
   channels rgba
   size {{"parent.stretch > 0 ? (1+parent.stretch)*1 : 1"} {"stretch < 0 ? (1-stretch)*1 : 1"}}
@@ -459,13 +464,13 @@ push $N1b11000
   xpos -151
   ypos 1647
  }
-set N507d000 [stack 0]
+set N5391000 [stack 0]
  Dot {
   name Dot9
   xpos -53
   ypos 1647
  }
-set N507cc00 [stack 0]
+set N5390c00 [stack 0]
  Dot {
   name Dot19
   xpos 46
@@ -476,7 +481,7 @@ set N507cc00 [stack 0]
   xpos 46
   ypos 1704
  }
-push $N507cc00
+push $N5390c00
  Reformat {
   resize none
   filter impulse
@@ -485,8 +490,8 @@ push $N507cc00
   xpos -87
   ypos 1687
  }
-push $N982b8c00
-push $N507d000
+push $N37e1f800
+push $N5391000
  CopyBBox {
   inputs 2
   name CopyBBox1
@@ -500,7 +505,7 @@ push $N507d000
   xpos -185
   ypos 1727
  }
-set Nf3a27000 [stack 0]
+set Na598f000 [stack 0]
  Dot {
   name Dot15
   xpos -245
@@ -511,8 +516,8 @@ set Nf3a27000 [stack 0]
   xpos -245
   ypos 2073
  }
-push $Nf3a27000
-push $N982b8800
+push $Na598f000
+push $N37e1f400
  Merge2 {
   inputs 2
   operation plus
