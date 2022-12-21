@@ -1,0 +1,299 @@
+Group {
+ name HH_SpaceKeyer
+ tile_color 0x8535d5ff
+ label "<font size = 4 color =\"orange\">\[if \{\[value contact_sheet]==true\} \{return \"Contact Sheet\"\} \{return \"\[value view_space]\"\}]"
+ addUserKnob {20 SpaceKeyer l "Space Keyer"}
+ addUserKnob {4 view_space l colorspace M {LAB HSL YCbCr CIE-Yxy "" ""}}
+ addUserKnob {22 shuffleout l "split RGB" -STARTLINE T "n = nuke.thisNode()\nn.end()\nn\[\"contact_sheet\"].setValue(0)\nchs = \[\"red\", \"green\", \"blue\", \"alpha\"]\nshuffles = \[nuke.createNode(\"Shuffle\", inpanel=False) for s in range(3)]\ncc = \[3422552319, 13369599, 52479]\nxpos = 0\nfor i, sh in enumerate(shuffles):\n    for ch in chs:\n        sh\[ch].setValue(chs\[i])\n    sh\[\"label\"].setValue(chs\[i]\[0].upper()*6)\n    sh\[\"tile_color\"].setValue(cc\[i])\n    sh.setInput(0, n)\n    sh.setXYpos(n.xpos()+xpos, n.ypos()+75)\n    xpos += 120"}
+ addUserKnob {6 contact_sheet l "contact sheet" +STARTLINE}
+ contact_sheet true
+ addUserKnob {4 px l "" -STARTLINE M {512 1024 2048 "" ""}}
+ px 1024
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 blackpoint l "<font color=\"red\"><b>blackpoint</b></font>" T Grade_R.blackpoint}
+ addUserKnob {41 whitepoint l "<font color=\"red\"><b>whitepoint</b></font>" T Grade_R.whitepoint}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 blackpoint_1 l "<font color=\"green\"><b>blackpoint</b></font>" T Grade_G.blackpoint}
+ addUserKnob {41 whitepoint_1 l "<font color=\"green\"><b>whitepoint</b></font>" T Grade_G.whitepoint}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 blackpoint_2 l "<font color=\"blue\"><b>blackpoint</b></font>" T Grade_B.blackpoint}
+ addUserKnob {41 whitepoint_2 l "<font color=\"blue\"><b>whitepoint</b></font>" T Grade_B.whitepoint}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -590
+  ypos -393
+ }
+ Shuffle {
+  alpha white
+  name Shuffle1
+  xpos -590
+  ypos -345
+ }
+ Dot {
+  name Dot1
+  xpos -556
+  ypos -318
+ }
+set Nc313fc00 [stack 0]
+ Colorspace {
+  colorspace_out CIE-Yxy
+  name Colorspace4
+  xpos -480
+  ypos -201
+ }
+set Nc313f800 [stack 0]
+ Reformat {
+  type "to box"
+  box_width {{"\[value parent.px]"}}
+  box_height {{box_width}}
+  box_fixed true
+  black_outside true
+  name Reformat4
+  xpos -480
+  ypos -177
+ }
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value input.input.colorspace_out]"
+  old_message {{67 73 69 45 89 120 121}
+    }
+  old_expression_markers {{0 6}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 0 1 1 1 2 1 3 1 4 1 5 1 6 1}
+    }
+  cursor_position 34
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color 0.3
+  name Text3
+  xpos -480
+  ypos -153
+ }
+push $Nc313fc00
+ Colorspace {
+  colorspace_out YCbCr
+  name Colorspace1
+  xpos -590
+  ypos -201
+ }
+set Nc313e800 [stack 0]
+ Reformat {
+  type "to box"
+  box_width {{"\[value parent.px]"}}
+  box_height {{box_width}}
+  box_fixed true
+  black_outside true
+  name Reformat1
+  xpos -590
+  ypos -177
+ }
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value input.input.colorspace_out]"
+  old_message {{89 67 98 67 114}
+    }
+  old_expression_markers {{0 4}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 0 1 1 1 2 1 3 1 4 1}
+    }
+  cursor_position 34
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color 0.3
+  name Text2
+  xpos -590
+  ypos -153
+ }
+push $Nc313fc00
+ Colorspace {
+  colorspace_out HSL
+  name Colorspace3
+  xpos -700
+  ypos -201
+ }
+set Nc313d800 [stack 0]
+ Reformat {
+  type "to box"
+  box_width {{"\[value parent.px]"}}
+  box_height {{box_width}}
+  box_fixed true
+  black_outside true
+  name Reformat3
+  xpos -700
+  ypos -177
+ }
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value input.input.colorspace_out]"
+  old_message {{72 83 76}
+    }
+  old_expression_markers {{0 2}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 0 1 1 1 2 1}
+    }
+  cursor_position 34
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color 0.3
+  name Text1
+  xpos -700
+  ypos -153
+ }
+push $Nc313fc00
+ Colorspace {
+  colorspace_out CIE-Lab
+  name Colorspace2
+  xpos -810
+  ypos -201
+ }
+set Nc313c800 [stack 0]
+ Reformat {
+  type "to box"
+  box_width {{"\[value parent.px]"}}
+  box_height {{box_width}}
+  box_fixed true
+  black_outside true
+  name Reformat2
+  xpos -810
+  ypos -177
+ }
+ Text2 {
+  font_size_toolbar 1
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value input.input.colorspace_out]"
+  old_message {{67 73 69 45 76 97 98}
+    }
+  old_expression_markers {{0 6}
+    }
+  box {0 {input.height/6} {input.width} 0}
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 1 1 1 2 1 3 1 4 1 5 1 6 1 0 1 1 1 2 1 3 1 4 1 5 1 6 1}
+    }
+  cursor_position 34
+  global_font_scale {{input.width/10}}
+  font_size 1
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1024}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 778 0 0 1 1 0 0 0 0}
+    }
+  color 0.3
+  name Text18
+  xpos -810
+  ypos -153
+ }
+ ContactSheet {
+  inputs 4
+  width {{"\[value parent.px]*2"}}
+  height {{"\[value parent.px]*2"}}
+  rows 2
+  columns 2
+  gap {{"\[value parent.px]/100"}}
+  name ContactSheet1
+  xpos -590
+  ypos -9
+ }
+push $Nc313f800
+push $Nc313e800
+push $Nc313d800
+push $Nc313c800
+ Switch {
+  inputs 4
+  which {{view_space}}
+  name Switch1
+  xpos -472
+  ypos -9
+ }
+ Switch {
+  inputs 2
+  which {{contact_sheet}}
+  name Switch2
+  xpos -590
+  ypos 39
+ }
+ Grade {
+  channels {rgba.red -rgba.green -rgba.blue}
+  white_clamp true
+  unpremult rgba.alpha
+  name Grade_R
+  tile_color 0xff0000ff
+  xpos -590
+  ypos 95
+ }
+ Grade {
+  channels {-rgba.red rgba.green -rgba.blue}
+  white_clamp true
+  unpremult rgba.alpha
+  name Grade_G
+  tile_color 0xff00ff
+  xpos -590
+  ypos 131
+ }
+ Grade {
+  channels {-rgba.red -rgba.green rgba.blue}
+  white_clamp true
+  unpremult rgba.alpha
+  name Grade_B
+  tile_color 0xffff
+  selected true
+  xpos -590
+  ypos 167
+ }
+ Output {
+  name Output1
+  xpos -590
+  ypos 240
+ }
+end_group
