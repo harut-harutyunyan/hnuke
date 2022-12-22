@@ -6,12 +6,12 @@ Group {
  addUserKnob {20 DespillFast l "Despill Fast"}
  addUserKnob {18 screen_color l "screen color"}
  screen_color {0 1 0}
+ addUserKnob {6 screen_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {18 desp_bias l "despill bias"}
  desp_bias {0.5 0.5 0.5}
+ addUserKnob {6 desp_bias_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {7 desp_gain l "despill gain"}
  desp_gain 1
- addUserKnob {6 desp_bias_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
- addUserKnob {6 screen_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {26 sc l "" +STARTLINE}
  addUserKnob {6 custom_despill l "use custom despill" t "use custom despill. be sure to disable luminance matching" +STARTLINE}
  addUserKnob {26 ""}
@@ -31,6 +31,8 @@ Group {
  edge_extend 15
  addUserKnob {26 ""}
  addUserKnob {41 mix T masking.mix}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
 }
  Input {
   inputs 0
@@ -43,7 +45,7 @@ Group {
   xpos 241
   ypos 2
  }
-set N3c154400 [stack 0]
+set Nd3040c00 [stack 0]
  Dot {
   name Dot10
   xpos 35
@@ -54,15 +56,27 @@ set N3c154400 [stack 0]
   xpos 35
   ypos 514
  }
-set N5c33b800 [stack 0]
-push $N3c154400
+set Nd3040400 [stack 0]
+ Dot {
+  name Dot9
+  xpos 35
+  ypos 565
+ }
+set N87f91000 [stack 0]
+ Dot {
+  name Dot12
+  xpos 35
+  ypos 626
+ }
+push $Nd3040400
+push $Nd3040c00
  OFXuk.co.thefoundry.keylight.keylight_v201 {
   show "Final Result"
   unPreMultiply false
   screenColour {{parent.screen_color x1 0} {parent.screen_color x1 1} {parent.screen_color x1 0}}
   screenGain {{parent.desp_gain}}
   screenBalance 0.5
-  alphaBias {{parent.desp_bias} {parent.desp_bias} {parent.desp_bias}}
+  alphaBias {{parent.desp_bias x1 0.5} {parent.desp_bias x1 0.5} {parent.desp_bias x1 0.5}}
   despillBias {0.5 0.5 0.5}
   gangBiases true
   preBlur 0
@@ -101,7 +115,7 @@ push $N3c154400
   xpos 207
   ypos 58
  }
-set N5c33b400 [stack 0]
+set N87fdfc00 [stack 0]
  Dot {
   name Dot7
   xpos 1101
@@ -138,13 +152,13 @@ set N5c33b400 [stack 0]
   xpos 1101
   ypos 297
  }
-push $N3c154400
+push $Nd3040c00
  Dot {
   name Dot2
   xpos 427
   ypos 2
  }
-set N5c339800 [stack 0]
+set N87fde000 [stack 0]
  Dot {
   name Dot5
   xpos 735
@@ -159,7 +173,7 @@ set N5c339800 [stack 0]
   xpos 701
   ypos 88
  }
-set N5c339000 [stack 0]
+set N87fdd800 [stack 0]
  Dot {
   name Dot6
   xpos 883
@@ -179,7 +193,7 @@ set N5c339000 [stack 0]
   xpos 849
   ypos 294
  }
-push $N5c339000
+push $N87fdd800
  Add {
   channels rgb
   value {{parent.screen_color} {parent.screen_color} {parent.screen_color} 0}
@@ -200,15 +214,15 @@ push $N5c339000
   xpos 701
   ypos 294
  }
-push $N5c339800
-push $N5c33b400
+push $N87fde000
+push $N87fdfc00
  Switch {
   which {{custom_despill}}
   name despill
   xpos 207
   ypos 140
  }
-set N3801b000 [stack 0]
+set N87f93800 [stack 0]
  Merge2 {
   inputs 2
   operation minus
@@ -227,7 +241,7 @@ set N3801b000 [stack 0]
   xpos 427
   ypos 235
  }
-set N3801a400 [stack 0]
+set N87f92c00 [stack 0]
  Dot {
   name Dot3
   xpos 572
@@ -240,7 +254,7 @@ set N3801a400 [stack 0]
   xpos 538
   ypos 294
  }
-push $N3801a400
+push $N87f92c00
  Grade {
   white {{parent.grade_gain} {parent.grade_gain} {parent.grade_gain} {parent.grade_gain}}
   multiply {{parent.grade_mult} {parent.grade_mult} {parent.grade_mult} {parent.grade_mult}}
@@ -255,7 +269,7 @@ push $N3801a400
   xpos 538
   ypos 447
  }
-push $N3801b000
+push $N87f93800
  Merge2 {
   inputs 2
   operation plus
@@ -271,12 +285,7 @@ push $N3801b000
   xpos 207
   ypos 505
  }
-push $N5c33b800
- Dot {
-  name Dot9
-  xpos 35
-  ypos 565
- }
+push $N87f91000
  Merge2 {
   inputs 2
   operation copy
@@ -285,9 +294,17 @@ push $N5c33b800
   xpos 207
   ypos 562
  }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch3
+  selected true
+  xpos 207
+  ypos 623
+ }
  Output {
   name Output1
   xpos 207
-  ypos 623
+  ypos 661
  }
 end_group
