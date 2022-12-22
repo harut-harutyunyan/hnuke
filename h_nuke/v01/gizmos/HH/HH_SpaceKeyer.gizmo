@@ -1,5 +1,6 @@
 Group {
  name HH_SpaceKeyer
+ lock_connections true
  tile_color 0x8535d5ff
  label "<font size = 4 color =\"orange\">\[if \{\[value contact_sheet]==true\} \{return \"Contact Sheet\"\} \{return \"\[value view_space]\"\}]"
  addUserKnob {20 SpaceKeyer l "Space Keyer"}

@@ -1,20 +1,24 @@
 Group {
  name HH_ScreenDilate
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"use_alpha\":\n    val = k.getValue()==0\n    n\[\"premult_in\"].setEnabled(val)\n    n\[\"color_id\"].setVisible(val)\n    n\[\"t\"].setVisible(val)\n    if not val:\n        n\[\"default_col\"].setValue(n\[\"color_id\"].getValue())\n        n\[\"color_id\"].setValue(0)\n    else:\n        n\[\"color_id\"].setValue(n\[\"default_col\"].getValue()) \n"
  tile_color 0x8535d5ff
+ lock_connections true
  addUserKnob {20 Dilate l "Screen Dilate"}
+ addUserKnob {3 default_col l "" +STARTLINE +INVISIBLE}
+ default_col 1000
  addUserKnob {3 color_id l color}
  addUserKnob {26 t l "" -STARTLINE T "  - try different colors to get better matte"}
- addUserKnob {6 premult_in l "premultiply input" +STARTLINE}
- premult_in true
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {6 use_alpha l "key alpha" t "use alpha as RGB. Makes matte extraction easier" +STARTLINE}
+ addUserKnob {6 premult_in l "premultiply input" -STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {41 screenClipMin l "clip black" T Keylight1.screenClipMin}
  addUserKnob {41 screenClipMax l "clip white" T Keylight1.screenClipMax}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {41 screenGrowShrink l dilate T Keylight1.screenGrowShrink}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {41 screenDespotBlack l "despot black" T Keylight1.screenDespotBlack}
  addUserKnob {41 screenDespotWhite l "despot white" T Keylight1.screenDespotWhite}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {41 maskChannel l mask T Keymix1.maskChannel}
  addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
  addUserKnob {26 ""}
@@ -44,7 +48,7 @@ Group {
   xpos -761
   ypos -165
  }
-set N1e4608f0 [stack 0]
+set N820d6000 [stack 0]
  Dot {
   name Dot3
   xpos -651
@@ -55,9 +59,9 @@ set N1e4608f0 [stack 0]
   xpos -658
   ypos 153
  }
-set N12a53520 [stack 0]
-push $N12a53520
-push $N1e4608f0
+set N820d5800 [stack 0]
+push $N820d5800
+push $N820d6000
  Shuffle {
   red black
   green black
@@ -67,7 +71,7 @@ push $N1e4608f0
   xpos -1180
   ypos -175
  }
-set N1d211fa0 [stack 0]
+set N820d5400 [stack 0]
  Add {
   channels rgb
   value {{random(color_id+566)} {random(color_id+666)} {random(color_id)} 0}
@@ -75,7 +79,7 @@ set N1d211fa0 [stack 0]
   xpos -1180
   ypos -76
  }
-push $N1d211fa0
+push $N820d5400
  Add {
   channels rgb
   value {1 0 0 0}
@@ -83,7 +87,7 @@ push $N1d211fa0
   xpos -1290
   ypos -76
  }
-push $N1d211fa0
+push $N820d5400
  Add {
   channels rgb
   value {1 1 0 0}
@@ -91,7 +95,7 @@ push $N1d211fa0
   xpos -1400
   ypos -76
  }
-push $N1d211fa0
+push $N820d5400
  Add {
   channels rgb
   value {0 1 1 0}
@@ -99,7 +103,7 @@ push $N1d211fa0
   xpos -1510
   ypos -76
  }
-push $N1d211fa0
+push $N820d5400
  Add {
   channels rgb
   value {0 1 0 0}
@@ -107,7 +111,7 @@ push $N1d211fa0
   xpos -1730
   ypos -76
  }
-push $N1d211fa0
+push $N820d5400
  Add {
   channels rgb
   value {0 0 1 0}
@@ -122,12 +126,22 @@ push $N1d211fa0
   xpos -1180
   ypos 21
  }
-push $N1e4608f0
+set N46e07400 [stack 0]
+push $N820d6000
  Premult {
   name Premult1
   xpos -795
   ypos -60
   disable {{1-premult_in}}
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle2
+  xpos -795
+  ypos -36
+  disable {{!use_alpha}}
  }
  Merge2 {
   inputs 2
@@ -139,7 +153,7 @@ push $N1e4608f0
  OFXuk.co.thefoundry.keylight.keylight_v201 {
   show "Final Result"
   unPreMultiply false
-  screenColour {{"\[sample \[node Switch1] red input.width/2 input.height/2]"} {"\[sample \[node Switch1] green input.width/2 input.height/2]"} {"\[sample \[node Switch1] blue input.width/2 input.height/2]"}}
+  screenColour {{"\[sample \[node Switch1] red input.width/2 input.height/2]" x25 0} {"\[sample \[node Switch1] green input.width/2 input.height/2]" x25 0} {"\[sample \[node Switch1] blue input.width/2 input.height/2]" x25 0}}
   screenGain 1
   screenBalance 0.5
   alphaBias {0.5 0.5 0.5}

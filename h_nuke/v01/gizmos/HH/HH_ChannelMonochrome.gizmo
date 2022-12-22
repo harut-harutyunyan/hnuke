@@ -1,6 +1,7 @@
 Group {
  name HH_ChannelMonochrome
  tile_color 0x8535d5ff
+ lock_connections true
  addUserKnob {20 ChannelMonochrome l "Channel Monochrome"}
  addUserKnob {41 weight T Expression1.weight}
  addUserKnob {41 source T Expression1.source}

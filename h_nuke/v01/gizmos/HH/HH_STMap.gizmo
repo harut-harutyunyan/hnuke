@@ -1,5 +1,6 @@
 Group {
  name HH_STmap
+ lock_connections true
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name()== \"to_idistort\":\n    val = int(k.getValue())\n    n\[\"overscan_x\"].setVisible(val==0)\n    n\[\"overscan_y\"].setVisible(val==0)\n    colors = \[2234897919, 3426014719]\n    n\[\"tile_color\"].setValue(colors\[val])\n    n.begin()\n    inpt = nuke.allNodes(\"Input\")\[0]\n    names = \[\"format\", \"stmap\"]\n    inpt.setName(names\[val])\n    n.end()\n"
  tile_color 0x8535d5ff
  label "\[if \{\[value to_idistort]==true\} \{return \"DISTORTION\"\} \{return \"\"\}]"
@@ -54,6 +55,7 @@ push $N55959800
   ypos -119
  }
  Multiply {
+  channels rgb
   value {{input.width} {input.height} 1 1}
   name Multiply1
   xpos -540

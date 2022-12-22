@@ -1,5 +1,6 @@
 Group {
  name HH_EdgeMatte
+ lock_connections true
  tile_color 0x8535d5ff
  addUserKnob {20 edge_matte l "Edge Matte"}
  addUserKnob {4 mode l filter M {dilate blur "" "" ""}}

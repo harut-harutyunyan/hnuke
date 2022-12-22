@@ -1,6 +1,7 @@
 Group {
  name HH_ExponentialGlow
  tile_color 0x8535d5ff
+ lock_connections true
  addUserKnob {20 exponentialGlow l "Exponential Glow"}
  addUserKnob {20 PreGrade l "pre grade" n 1}
  PreGrade 0
