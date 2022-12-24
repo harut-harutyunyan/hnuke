@@ -1,24 +1,33 @@
 Group {
+ inputs 3
  name HH_pProject
- lock_connections true
- knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"mask_normal\":\n    val = k.getValue() == 1\n    n\[\"in_1\"].setEnabled(val)\n    n\[\"invert_n\"].setVisible(val)\n    n\[\"normal_contrast\"].setVisible(val)\n    n\[\"normal_mult\"].setVisible(val)"
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"moving_target\":\n    val = k.getValue() == 1\n    n.begin()\n    ax_in = nuke.toNode(\"axis\")\n    if val:\n        inpt = nuke.nodes.Input(name=\"axis\")\n        inpt.setXYpos(248, -515)\n        nuke.toNode(\"DummyAxis\").setInput(0, inpt)\n    elif not val and ax_in:\n        nuke.delete(ax_in)\n    n.end()\nif k.name() == \"mask_normal\":\n    val = k.getValue() == 1\n    n\[\"in_1\"].setEnabled(val)\n    n\[\"invert_n\"].setVisible(val)\n    n\[\"normal_contrast\"].setVisible(val)\n    n\[\"normal_mult\"].setVisible(val)\n    n\[\"normal_mix\"].setVisible(val)\n"
+ onCreate "\nn = nuke.thisNode()\nn\[\"in_1\"].setEnabled(n\[\"mask_normal\"].getValue()==1)\n"
  tile_color 0x8535d5ff
- addUserKnob {20 User}
+ lock_connections true
+ addUserKnob {20 pProject}
  addUserKnob {41 in l "position data" T P.in}
  addUserKnob {41 in_1 l "normal data" T N.in}
  addUserKnob {26 ""}
  addUserKnob {3 prj_frame l "projection frame"}
  prj_frame 1001
  addUserKnob {22 set_prj_frame l "set to current" -STARTLINE T "nuke.thisNode()\[\"prj_frame\"].setValue(int(nuke.frame()))"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {6 moving_target l "moving target" +STARTLINE}
+ addUserKnob {6 projection_only l "projection only" -STARTLINE}
  addUserKnob {26 ""}
  addUserKnob {6 mask_normal l "mask by normal" +STARTLINE}
- mask_normal true
- addUserKnob {6 invert_n l "invert normal" -STARTLINE}
- addUserKnob {7 normal_contrast l "mask contrast"}
- addUserKnob {7 normal_mult l "mask multiply" R 1 4}
+ addUserKnob {6 invert_n l "invert normal" -STARTLINE +HIDDEN}
+ addUserKnob {7 normal_contrast l contrast +HIDDEN}
+ addUserKnob {7 normal_mult l multiply +HIDDEN R 1 4}
  normal_mult 1
+ addUserKnob {7 normal_mix l mix +HIDDEN}
+ normal_mix 1
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {20 Advanced}
+ addUserKnob {6 calc_v l "calculate vaperture" t "calculate fov based on image aspect ratio" -STARTLINE}
+ calc_v true
 }
  BackdropNode {
   inputs 0
@@ -42,30 +51,48 @@ Group {
   bdwidth 181
   bdheight 356
  }
+ BackdropNode {
+  inputs 0
+  name BackdropNode3
+  tile_color 0x7171c600
+  label pref
+  note_font_size 42
+  xpos -181
+  ypos -463
+  bdwidth 181
+  bdheight 376
+ }
  Input {
   inputs 0
   name img
   xpos -138
-  ypos -55
+  ypos -589
  }
-set Nd4ad6c00 [stack 0]
+set Ncda36000 [stack 0]
  Dot {
   name Dot2
   xpos -576
-  ypos -52
+  ypos -586
  }
  Dot {
   name Dot4
   xpos -576
   ypos 1065
  }
-set Nd4ad6400 [stack 0]
+set Ncda35800 [stack 0]
+ Dot {
+  name Dot5
+  xpos -576
+  ypos 1545
+ }
+set Ne352f400 [stack 0]
+push $Ncda35800
  Dot {
   name Dot3
   xpos -382
   ypos 1065
  }
-set Nd4ad6000 [stack 0]
+set Ncda35400 [stack 0]
  Shuffle {
   in rgb
   red black
@@ -83,9 +110,9 @@ set Nd4ad6000 [stack 0]
   xpos -416
   ypos 1213
  }
-push $Nd4ad6000
+push $Ncda35400
  Shuffle {
-  in none
+  in N
   alpha blue
   name N
   xpos -295
@@ -127,12 +154,45 @@ push $Nd4ad6000
   xpos -295
   ypos 1399
  }
-push $Nd4ad6c00
+push $Ncda36000
  Shuffle {
-  in none
+  in P
   name P
   xpos -138
-  ypos -9
+  ypos -543
+ }
+ Add {
+  value {{parent.DummyAxis.world_matrix.3*-1} {parent.DummyAxis.world_matrix.7*-1} {parent.DummyAxis.world_matrix.11*-1} 0}
+  name Add3
+  xpos -138
+  ypos -348
+ }
+ ColorMatrix {
+  matrix {
+      {{parent.DummyAxis.world_matrix.0} {parent.DummyAxis.world_matrix.1} {parent.DummyAxis.world_matrix.2}}
+      {{parent.DummyAxis.world_matrix.4} {parent.DummyAxis.world_matrix.5} {parent.DummyAxis.world_matrix.6}}
+      {{parent.DummyAxis.world_matrix.8} {parent.DummyAxis.world_matrix.9} {parent.DummyAxis.world_matrix.10}}
+    }
+  invert true
+  name ColorMatrix3
+  xpos -138
+  ypos -269
+ }
+ ColorMatrix {
+  matrix {
+      {{parent.DummyAxis.world_matrix.0(parent.prj_frame)} {parent.DummyAxis.world_matrix.1(parent.prj_frame)} {parent.DummyAxis.world_matrix.2(parent.prj_frame)}}
+      {{parent.DummyAxis.world_matrix.4(parent.prj_frame)} {parent.DummyAxis.world_matrix.5(parent.prj_frame)} {parent.DummyAxis.world_matrix.6(parent.prj_frame)}}
+      {{parent.DummyAxis.world_matrix.8(parent.prj_frame)} {parent.DummyAxis.world_matrix.9(parent.prj_frame)} {parent.DummyAxis.world_matrix.10(parent.prj_frame)}}
+    }
+  name ColorMatrix4
+  xpos -138
+  ypos -212
+ }
+ Add {
+  value {{parent.DummyAxis.world_matrix.3(parent.prj_frame)} {parent.DummyAxis.world_matrix.7(parent.prj_frame)} {parent.DummyAxis.world_matrix.11(parent.prj_frame)} 0}
+  name Add4
+  xpos -138
+  ypos -143
  }
  Add {
   value {{parent.DummyCam.world_matrix.3(prj_frame)*-1} {parent.DummyCam.world_matrix.7(prj_frame)*-1} {parent.DummyCam.world_matrix.11(prj_frame)*-1} 0}
@@ -156,8 +216,10 @@ push $Nd4ad6c00
   xpos -138
   ypos 483
   addUserKnob {20 User}
+  addUserKnob {7 calc_vaperture}
+  calc_vaperture {{parent.calc_v==1?DummyCam.haperture(prj_frame)/(input.width/input.height):DummyCam.vaperture(prj_frame)}}
   addUserKnob {7 v_fov}
-  v_fov {{atan(parent.DummyCam.vaperture(prj_frame)/(2*parent.DummyCam.focal(prj_frame)))}}
+  v_fov {{atan(calc_vaperture/(2*parent.DummyCam.focal(prj_frame)))}}
   addUserKnob {7 h_fov}
   h_fov {{atan(parent.DummyCam.haperture(prj_frame)/(2*parent.DummyCam.focal(prj_frame)))}}
  }
@@ -194,7 +256,7 @@ push $Nd4ad6c00
  }
  Input {
   inputs 0
-  name patch
+  name prj
   xpos 294
   ypos 793
   number 2
@@ -223,12 +285,21 @@ push $Nd4ad6c00
   Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
   Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
   output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  mix {{normal_mix}}
   name Merge2
   xpos -138
   ypos 1399
   disable {{!parent.mask_normal}}
  }
-push $Nd4ad6400
+ Merge2 {
+  inputs 2
+  operation under
+  name Merge3
+  xpos -138
+  ypos 1542
+  disable {{projection_only}}
+ }
+push $Ne352f400
  Dot {
   name Dot1
   xpos -576
@@ -245,6 +316,17 @@ push $Nd4ad6400
   name Output1
   xpos -138
   ypos 1722
+ }
+ Camera {
+  inputs 0
+  name DummyAxis
+  xpos 258
+  ypos -358
+  addUserKnob {20 DummyCam l Defaults}
+  addUserKnob {43 the_cam +INVISIBLE}
+  the_cam "\[\n#DummyCam v1.3 - Updated 5 May 2021.\nset starting_point \"this.input0\"\nset default \"this.d_\"\n\n# If cam has no inputs, return the default.\nif \{\[exists \$starting_point]\} \{\n    set x \[node \$starting_point]\n\} \{ \n    return \$default\n\}\n\nset finished 0\nwhile \{\$finished != 1\} \{\n\n    # First look for a Cam or Input or topnode.\n    while \{\[class \$x] != \"Camera3\" && \[class \$x] != \"Camera2\" && \[class \$x] != \"Camera\" && \[class \$x] != \"Input\" && \$x != \[topnode \$x]\} \{\n        set x \[node \$x.input0]\n    \}\n\n    # Then, check if node is a cam (and return), and otherwise, if it's an input, see if the parent exists and move to it.\n    if \{\[class \$x]==\"Camera3\"||\[class \$x]==\"Camera2\"||\[class \$x]==\"Camera\"\} \{\n        set x \[append x \".\"]\n        return \$x\n    \} \{ \n        if \{ \[class \$x]==\"Input\" \} \{ \n            set inp \"\$x.parent.input\"\n            set inputNum \[value \$x.number]\n            set inp \[append inp \$inputNum]\n            if \{ \[exists \$inp] \} \{\n                set x \[node \$inp]\n            \} \{ \n                set finished 1\n            \}\n        \} \{ \n            set finished 1\n        \}\n    \}\n\}\nreturn \$default\n]"
+  addUserKnob {43 the_frame +INVISIBLE}
+  the_frame "\[\nset the_camera \[string trimright \[value the_cam] .]\nif \{\[exists \$the_camera]\} \{\n    return \[value \$the_camera.frame]\n\} \{ \n    return \[frame]\n\}\n]"
  }
  Input {
   inputs 0
@@ -294,6 +376,5 @@ push $Nd4ad6400
   d_focal_point 2
   addUserKnob {7 d_fstop l fstop R 0 30}
   d_fstop 16
-  addUserKnob {26 version l " " t "Updated 5 May 2021" T "<span style=\"color:#666\"><br/><b>DummyCam v1.3</b> - <a href=\"http://www.adrianpueyo.com\" style=\"color:#666;text-decoration: none;\">adrianpueyo.com</a>, 2019-2021</span>"}
  }
 end_group
