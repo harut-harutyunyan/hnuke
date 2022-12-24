@@ -14,7 +14,7 @@ Group {
  addUserKnob {26 ""}
  addUserKnob {41 which l "patch black" T Switch1.which}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
  addUserKnob {20 advanced l Advanced}
  addUserKnob {7 even_edge l "even screen edge" R 0 0.5}
  addUserKnob {7 even_screen_blur l "even screen blur" R 1 5}

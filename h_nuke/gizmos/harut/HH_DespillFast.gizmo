@@ -2,7 +2,6 @@ Group {
  name HH_DespillFast
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"custom_despill\":\n    val = k.getValue()==0\n    n\[\"screen_color\"].setVisible(val)\n    n\[\"desp_bias\"].setVisible(val)\n    n\[\"desp_gain\"].setVisible(val)\n    n\[\"sc\"].setVisible(val)\n    n.begin()\n    dep_in = nuke.toNode(\"despilled\")\n    if not val and not dep_in:\n        inpt = nuke.nodes.Input(name=\"despilled\")\n        inpt.setXYpos(87, 140)\n        nuke.toNode(\"despill\").setInput(1, inpt)\n    elif val and dep_in:\n        nuke.delete(dep_in)\n    n.end()\nif k.name() == \"mode\":\n    val = k.getValue()\n    n\[\"grade_gain\"].setVisible(val==0)\n    n\[\"grade_mult\"].setVisible(val==0)\n    n\[\"color_pick\"].setVisible(val==1)\n    n\[\"edge_extend\"].setVisible(val==2)\n"
  tile_color 0x8535d5ff
- lock_connections true
  addUserKnob {20 DespillFast l "Despill Fast"}
  addUserKnob {18 screen_color l "screen color"}
  screen_color {0 1 0}
@@ -32,7 +31,7 @@ Group {
  addUserKnob {26 ""}
  addUserKnob {41 mix T masking.mix}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
 }
  Input {
   inputs 0
@@ -45,7 +44,7 @@ Group {
   xpos 241
   ypos 2
  }
-set Nd3040c00 [stack 0]
+set N41027000 [stack 0]
  Dot {
   name Dot10
   xpos 35
@@ -56,20 +55,26 @@ set Nd3040c00 [stack 0]
   xpos 35
   ypos 514
  }
-set Nd3040400 [stack 0]
+set N41026800 [stack 0]
  Dot {
   name Dot9
   xpos 35
   ypos 565
  }
-set N87f91000 [stack 0]
+set N41026400 [stack 0]
  Dot {
   name Dot12
   xpos 35
   ypos 626
  }
-push $Nd3040400
-push $Nd3040c00
+push $N41026800
+ Expression {
+  expr3 a
+  name Expression1
+  xpos 86
+  ypos 511
+ }
+push $N41027000
  OFXuk.co.thefoundry.keylight.keylight_v201 {
   show "Final Result"
   unPreMultiply false
@@ -115,7 +120,7 @@ push $Nd3040c00
   xpos 207
   ypos 58
  }
-set N87fdfc00 [stack 0]
+set N41025c00 [stack 0]
  Dot {
   name Dot7
   xpos 1101
@@ -152,13 +157,13 @@ set N87fdfc00 [stack 0]
   xpos 1101
   ypos 297
  }
-push $Nd3040c00
+push $N41027000
  Dot {
   name Dot2
   xpos 427
   ypos 2
  }
-set N87fde000 [stack 0]
+set N40fc7c00 [stack 0]
  Dot {
   name Dot5
   xpos 735
@@ -173,7 +178,7 @@ set N87fde000 [stack 0]
   xpos 701
   ypos 88
  }
-set N87fdd800 [stack 0]
+set N40fc7400 [stack 0]
  Dot {
   name Dot6
   xpos 883
@@ -193,7 +198,7 @@ set N87fdd800 [stack 0]
   xpos 849
   ypos 294
  }
-push $N87fdd800
+push $N40fc7400
  Add {
   channels rgb
   value {{parent.screen_color} {parent.screen_color} {parent.screen_color} 0}
@@ -214,15 +219,15 @@ push $N87fdd800
   xpos 701
   ypos 294
  }
-push $N87fde000
-push $N87fdfc00
+push $N40fc7c00
+push $N41025c00
  Switch {
   which {{custom_despill}}
   name despill
   xpos 207
   ypos 140
  }
-set N87f93800 [stack 0]
+set N40fc5800 [stack 0]
  Merge2 {
   inputs 2
   operation minus
@@ -241,7 +246,7 @@ set N87f93800 [stack 0]
   xpos 427
   ypos 235
  }
-set N87f92c00 [stack 0]
+set N40fc4c00 [stack 0]
  Dot {
   name Dot3
   xpos 572
@@ -254,7 +259,7 @@ set N87f92c00 [stack 0]
   xpos 538
   ypos 294
  }
-push $N87f92c00
+push $N40fc4c00
  Grade {
   white {{parent.grade_gain} {parent.grade_gain} {parent.grade_gain} {parent.grade_gain}}
   multiply {{parent.grade_mult} {parent.grade_mult} {parent.grade_mult} {parent.grade_mult}}
@@ -269,7 +274,7 @@ push $N87f92c00
   xpos 538
   ypos 447
  }
-push $N87f93800
+push $N40fc5800
  Merge2 {
   inputs 2
   operation plus
@@ -285,7 +290,7 @@ push $N87f93800
   xpos 207
   ypos 505
  }
-push $N87f91000
+push $N41026400
  Merge2 {
   inputs 2
   operation copy
@@ -296,7 +301,7 @@ push $N87f91000
  }
  Switch {
   inputs 2
-  which {{"\[exists parent.input1]"}}
+  which {{"\[exists parent.input1] == !parent.custom_despill"}}
   name Switch3
   selected true
   xpos 207

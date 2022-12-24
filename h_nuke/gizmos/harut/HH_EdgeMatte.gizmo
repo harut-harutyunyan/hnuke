@@ -14,7 +14,7 @@ Group {
  addUserKnob {26 ""}
  addUserKnob {7 core_hardness l "core hardness"}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
 }
  BackdropNode {
   inputs 0

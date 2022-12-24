@@ -56,7 +56,7 @@ Group {
  addUserKnob {7 p_noise_lac l "noise lacunarity" +HIDDEN R 0 5}
  p_noise_lac 2.38
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
 }
  BackdropNode {
   inputs 0

@@ -35,7 +35,7 @@ Group {
  addUserKnob {6 effect_only l "effect only" -STARTLINE}
  effect_only false
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "Harut Harutyunyan\n\nhar8unyan@gmail.com"}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
 }
  Input {
   inputs 0
