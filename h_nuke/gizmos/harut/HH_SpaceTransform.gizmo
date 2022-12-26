@@ -1,13 +1,10 @@
 Group {
- name HH_pSpaceTransform
+ name HH_SpaceTransform
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"convert_to\":\n    val = k.getValue()\n    for k in \[i for i in n.knobs() if i.startswith(\"at_\")]:\n        n\[k].setVisible(val==0)\n    n\[\"pref_ref_frame\"].setVisible(val==2)\n    n\[\"pref_set_frame\"].setVisible(val==2)\n    n\[\"prj_frame\"].setVisible(val==4)\n    n\[\"prj_set_frame\"].setVisible(val==4)\n    n.begin()\n    inpt = \[i for i in nuke.allNodes(\"Input\") if i\[\"number\"].getValue()==1]\[0]\n    xform = nuke.toNode(\"transform\")\n    dummy = nuke.toNode(\"dummy\")\n    if val == 0:\n        inpt.setName(\"axis\")\n        xform.setInput(0, inpt)\n        dummy.setInput(0, None)\n    else:\n        xform.setInput(0, None)\n        dummy.setInput(0, inpt)\n        if val == 1 or val == 2:\n            inpt.setName(\"obj_xform\")\n        if val > 2:\n            inpt.setName(\"camera\")\n    n.end()\n"
  label "<font size = 4 color =\"orange\">\[value convert_to]</font>"
  tile_color 0x8535d5ff
  lock_connections true
- addUserKnob {20 pSpaceTransform}
- addUserKnob {20 pSpaceTransform}
- addUserKnob {26 warning l "" +STARTLINE T "<font color=orange><b>expects position data in world space</b></font>"}
- addUserKnob {26 t1 l "" +STARTLINE T "                "}
+ addUserKnob {20 "Space Transform"}
  addUserKnob {41 in l "position data" T in_p.in}
  addUserKnob {6 output_p l "output P" -STARTLINE}
  output_p true

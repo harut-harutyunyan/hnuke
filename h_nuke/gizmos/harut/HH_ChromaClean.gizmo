@@ -1,15 +1,20 @@
 Group {
  name HH_ChromaClean
  lock_connections true
- knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"inputChange\":\n    n.begin()\n    in2 = nuke.toNode(\"additional_matte\")\n    n.end()\n    if n.input(1):\n        n.setInput(2, None)\n        if in2:\n            nuke.delete(in2)\n    else:\n        if in2 == None:\n            n.begin()\n            inpt = nuke.createNode(\"Input\", inpanel=False)\n            inpt.setName(\"additional_matte\")\n            inpt.setXYpos(-920, -7)\n            nuke.toNode(\"Expression11\").setInput(0, inpt)\n            n.end()\n"
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"inputChange\":\n    n.begin()\n    in2 = nuke.toNode(\"additional_matte\")\n    n.end()\n    if n.input(1):\n        n.setInput(2, None)\n        if in2:\n            nuke.delete(in2)\n        \[n\[i].setVisible(False) for i in n.knobs() if i.startswith(\"ibk_\")]\n    else:\n        if in2 == None:\n            n.begin()\n            inpt = nuke.createNode(\"Input\", inpanel=False)\n            inpt.setName(\"additional_matte\")\n            inpt.setXYpos(-920, -7)\n            nuke.toNode(\"Expression11\").setInput(0, inpt)\n            n.end()\n        \[n\[i].setVisible(True) for i in n.knobs() if i.startswith(\"ibk_\")]\n"
  tile_color 0x8535d5ff
  addUserKnob {20 ChromaClean l "Chroma Clean"}
  addUserKnob {22 double_out l "Split output" -STARTLINE T "node = nuke.thisNode()\nnode.end()\nCHNAME = \"h_screenprep\"\n\nnuke.Layer(CHNAME, \[CHNAME+\".red\", CHNAME+\".green\", CHNAME+\".blue\", CHNAME+\".alpha\"])\nnode.begin()\nshc = nuke.toNode(\"ShuffleCopy1\")\nshc\[\"disable\"].setValue(0)\nshc\[\"out\"].setValue(CHNAME)\nnode.end()\nsh = nuke.nodes.Shuffle(name = CHNAME)\nsh\[\"in\"].setValue(CHNAME)\nsh.setXYpos(node.xpos()+80, node.ypos()+100)\nsh.setInput(0, node)\nsh\[\"tile_color\"].setValue(295571967)\n\neven = nuke.nodes.Remove(name=\"Even Screen\")\n\neven\[\"channels\"].value()\n\neven\[\"channels\"].setValue(CHNAME)\neven.setInput(0, sh)\neven.setXYpos(node.xpos()+80, node.ypos()+130)\n\neven\[\"tile_color\"].setValue(295571967)\n\nclear = nuke.nodes.Remove(name=\"Clear Screen\")\nclear\[\"channels\"].value()\n\nclear\[\"channels\"].setValue(CHNAME)\nclear.setInput(0, node)\nclear.setXYpos(node.xpos()-80, node.ypos()+130)\nclear\[\"tile_color\"].setValue(295571967)"}
+ addUserKnob {22 create_ibk l "IBK Gizmo" -STARTLINE T "node = nuke.thisNode()\nnode.end()\nibk = nuke.createNode(\"IBKGizmoV3\", inpanel=False)\nibk\[\"st\"].setValue(1-int(node\[\"ibk_screen_type\"].getValue()))\nibk.setInput(1, node)\nibk.setInput(0, node.input(0))"}
  addUserKnob {26 ""}
- addUserKnob {41 screen_type l "screen type" T colour.screen_type}
- addUserKnob {41 off l darks T colour.off}
- addUserKnob {41 mult l lights T colour.mult}
- addUserKnob {26 ""}
+ addUserKnob {4 ibk_screen_type l "screen type" M {green blue ""}}
+ addUserKnob {18 ibk_darks l darks}
+ ibk_darks {0 0 0}
+ addUserKnob {6 ibk_darks_panelDropped l "panel dropped state" -STARTLINE +INVISIBLE}
+ addUserKnob {18 ibk_lights l lights}
+ ibk_lights {1 1 1}
+ addUserKnob {6 ibk_lights_panelDropped l "panel dropped state" -STARTLINE +INVISIBLE}
+ addUserKnob {26 ibk_div l "" +STARTLINE}
  addUserKnob {41 erode T colour.erode}
  addUserKnob {26 ""}
  addUserKnob {41 which l "patch black" T Switch1.which}
@@ -25,20 +30,21 @@ Group {
  Input {
   inputs 0
   name additional_matte
+  selected true
   xpos -920
-  ypos 12
+  ypos -7
   number 2
  }
  Expression {
   expr3 a>0?1:0
   name Expression11
   xpos -920
-  ypos 63
+  ypos 51
  }
  Dot {
   name Dot1
   xpos -886
-  ypos 105
+  ypos 93
  }
  Input {
   inputs 0
@@ -63,23 +69,23 @@ Group {
   xpos -687
   ypos -130
  }
-set N54b85000 [stack 0]
+set N6ac04c00 [stack 0]
  Group {
   inputs 2
   name colour
   help "This node provides IBKGizmo a colour reference in which to base its keying algorithm on a per pixel basis.\nThe idea is to remove the foreground image and only leave the shades and hues of the original blue/greenscreen.\nAttach the output of this node to the 'c' input of a default IBKGizmo. Attach the input of this node along with the 'fg' input of the IBKGizmo to the original screen.\nPick which colour your screen type is in both nodes and then while viewing the alpha output from the IBKGizmo lower the darks.b (if a bluescreen - adjust darks.g if a greenscreen) in this node \nuntil you see a change in the garbage area of the matte. Once you see a change then you have gone too far -back off a step. If you are still left with discoloured edges you can use the other colours in the lights and darks to eliminate them. Remember the idea is \nto be left with the original shades of the screen and the foreground blacked out. While swapping between viewing the matte from the IBKGizmo and the rgb output of this IBKColour adjust the other colours \nuntil you see a change in the garbage area of the matte. Simple rule of thumb - if you have a light red discoloured area increase the lights.r - if you have a dark green discoloured area increase darks.g. If your screen does not have a very saturated hue you may still be left\n with areas of discolouration after the above process. The 'erode' slider can help with this - while viewing the rgb output adjust the erode until those areas disappear.\nThe 'patch black' slider allows you to fill in the black areas with screen colour. This is not always necessary but if you see blue squares in your composite increase this value and it'll fix it.\nThe above is the only real workflow for this node - working from the top parameter to the bottom parameter- going back to tweak darks/lights with 'erode' and 'patch black' activated isn't really gonna work. "
   tile_color 0x990000
-  disable {{"1-\[exists parent.input0]"}}
   xpos -721
   ypos -53
+  disable {{"1-\[exists parent.input0]"}}
   addUserKnob {20 "" l Parameters}
   addUserKnob {41 screen_type l "screen type" T IBK2.screen_type}
   addUserKnob {16 Size l size t "size of colour expansion" R 0 100}
   addUserKnob {18 off l darks t "adjust the colour values to get the best separation between black and the screen type colour.\nYou want to be left with only shades of the screen colour and black. \nIf a green screen is selected start by bringing down darks->green\nIf a blue screen is selected start by bringing down darks->blue" R -1 1}
-  off {0 0 0}
+  off {{parent.ibk_darks} {parent.ibk_darks} {parent.ibk_darks}}
   addUserKnob {6 off_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {18 mult l lights t "adjust the colour values to get the best separation between black and the screen type colour.\nYou want to be left with only shades of the screen colour and black. \nIf a green screen is selected start by bringing down darks->green\nIf a blue screen is selected start by bringing down darks->blue" R 0 2}
-  mult {1 1 1}
+  mult {{parent.ibk_lights} {parent.ibk_lights} {parent.ibk_lights}}
   addUserKnob {6 mult_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
   addUserKnob {26 ""}
   addUserKnob {7 erode t "increase this value if you still see traces of the foreground edge colour in the output" R 0 5}
@@ -114,7 +120,7 @@ set N54b85000 [stack 0]
    xpos 3
    ypos -58
   }
-set N54b1bc00 [stack 0]
+set N6abb3800 [stack 0]
   Dot {
    name Dot1
    tile_color 0x9597bf00
@@ -135,12 +141,12 @@ set N54b1bc00 [stack 0]
    xpos -338
    ypos 54
   }
-set N54b1b000 [stack 0]
-push $N54b1b000
-push $N54b1b000
+set N6abb2c00 [stack 0]
+push $N6abb2c00
+push $N6abb2c00
   IBK {
    inputs 3
-   screen_type green
+   screen_type {{ibk_screen_type}}
    blue_green_weight 1
    luma 1
    name IBK2
@@ -168,15 +174,15 @@ push $N54b1b000
    xpos -18
    ypos 206
   }
-set N54b1a000 [stack 0]
+set N6abb1c00 [stack 0]
   Dot {
    name Dot3
    tile_color 0x9597bf00
    xpos 16
    ypos 686
   }
-push $N54b1a000
-push $N54b1bc00
+push $N6abb1c00
+push $N6abb3800
   Dot {
    name Dot17
    xpos 126
@@ -209,7 +215,7 @@ push $N54b1bc00
    xpos 92
    ypos 321
   }
-set N54b18800 [stack 0]
+set N6abb0400 [stack 0]
   Clamp {
    channels {rgba.red rgba.green rgba.blue -rgba.alpha}
    maximum 0
@@ -219,20 +225,20 @@ set N54b18800 [stack 0]
    xpos 212
    ypos 321
   }
-set N54b18400 [stack 0]
+set N6ab5fc00 [stack 0]
   Dot {
    name Dot5
    xpos 366
    ypos 325
   }
-push $N54b18400
-push $N54b18800
+push $N6ab5fc00
+push $N6abb0400
   Dot {
    name Dot4
    xpos 126
    ypos 370
   }
-set N8477800 [stack 0]
+set N6ab5f400 [stack 0]
   Copy {
    inputs 2
    from0 rgba.red
@@ -267,7 +273,7 @@ set N8477800 [stack 0]
    xpos 334
    ypos 494
   }
-set N8476400 [stack 0]
+set N6ab5e000 [stack 0]
   FilterErode {
    channels alpha
    size {{(-Size/5)}}
@@ -276,7 +282,7 @@ set N8476400 [stack 0]
    xpos 334
    ypos 592
   }
-push $N8476400
+push $N6ab5e000
   FilterErode {
    channels alpha
    size {{(-Size/5)*multi*2}}
@@ -297,7 +303,7 @@ push $N8476400
    xpos 217
    ypos 637
   }
-push $N8477800
+push $N6ab5f400
   Merge {
    inputs 2
    name Merge1
@@ -330,19 +336,19 @@ push $N8477800
   operation stencil
   name ChannelMerge1
   xpos -721
-  ypos 90
+  ypos 78
  }
  Premult {
   name Premult1
   xpos -721
-  ypos 186
+  ypos 126
  }
  EdgeBlur {
   channels rgba
   size 1
   name EdgeBlur1
   xpos -721
-  ypos 210
+  ypos 150
  }
  Expression {
   expr0 r>0?r/a:0
@@ -351,16 +357,36 @@ push $N8477800
   expr3 a>0?1:0
   name Expression1
   xpos -721
+  ypos 186
+  addUserKnob {20 User}
+  addUserKnob {7 size l "" +STARTLINE}
+  size {{input.size}}
+ }
+ EdgeBlur {
+  channels rgba
+  size {{input.size*2}}
+  name EdgeBlur2
+  xpos -721
+  ypos 210
+ }
+set N2345a800 [stack 0]
+ Expression {
+  expr0 r>0?r/a:0
+  expr1 g>0?g/a:0
+  expr2 b>0?b/a:0
+  expr3 a>0?1:0
+  name Expression2
+  xpos -721
   ypos 246
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N8413000 [stack 0]
+set N2345a400 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur2
+  name EdgeBlur3
   xpos -721
   ypos 270
  }
@@ -369,18 +395,18 @@ set N8413000 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression2
+  name Expression3
   xpos -721
   ypos 306
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N8412800 [stack 0]
+set N23459c00 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur3
+  name EdgeBlur4
   xpos -721
   ypos 330
  }
@@ -389,18 +415,18 @@ set N8412800 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression3
+  name Expression4
   xpos -721
   ypos 366
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N8412000 [stack 0]
+set N23459400 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur4
+  name EdgeBlur5
   xpos -721
   ypos 390
  }
@@ -409,18 +435,18 @@ set N8412000 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression4
+  name Expression5
   xpos -721
   ypos 426
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N8411800 [stack 0]
+set N23458c00 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur5
+  name EdgeBlur6
   xpos -721
   ypos 450
  }
@@ -429,18 +455,18 @@ set N8411800 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression5
+  name Expression6
   xpos -721
   ypos 486
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N8411000 [stack 0]
+set N23458400 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur6
+  name EdgeBlur7
   xpos -721
   ypos 510
  }
@@ -449,18 +475,18 @@ set N8411000 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression6
+  name Expression7
   xpos -721
   ypos 546
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N8410800 [stack 0]
+set N233cf800 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur7
+  name EdgeBlur8
   xpos -721
   ypos 570
  }
@@ -469,18 +495,18 @@ set N8410800 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression7
+  name Expression8
   xpos -721
   ypos 606
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N877fc00 [stack 0]
+set N233cf000 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur8
+  name EdgeBlur9
   xpos -721
   ypos 630
  }
@@ -489,18 +515,18 @@ set N877fc00 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression8
+  name Expression9
   xpos -721
   ypos 666
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N877f400 [stack 0]
+set N233ce800 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur9
+  name EdgeBlur10
   xpos -721
   ypos 690
  }
@@ -509,18 +535,18 @@ set N877f400 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression9
+  name Expression10
   xpos -721
   ypos 726
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-set N877ec00 [stack 0]
+set N233ce000 [stack 0]
  EdgeBlur {
   channels rgba
   size {{input.size*2}}
-  name EdgeBlur10
+  name EdgeBlur11
   xpos -721
   ypos 750
  }
@@ -529,47 +555,48 @@ set N877ec00 [stack 0]
   expr1 g>0?g/a:0
   expr2 b>0?b/a:0
   expr3 a>0?1:0
-  name Expression10
+  name Expression13
   xpos -721
   ypos 786
   addUserKnob {20 User}
   addUserKnob {7 size l "" +STARTLINE}
   size {{input.size}}
  }
-push $N877ec00
-push $N877f400
-push $N877fc00
-push $N8410800
-push $N8411000
-push $N8411800
-push $N8412000
-push $N8412800
-push $N8413000
+push $N233ce000
+push $N233ce800
+push $N233cf000
+push $N233cf800
+push $N23458400
+push $N23458c00
+push $N23459400
+push $N23459c00
+push $N2345a400
+push $N2345a800
  Switch {
-  inputs 10
+  inputs 11
   name Switch1
   xpos -475
   ypos 786
  }
-set N877e000 [stack 0]
+set N233cdc00 [stack 0]
  Dot {
   name Dot5
   xpos -339
   ypos 789
  }
-set N877dc00 [stack 0]
+set N233cd800 [stack 0]
  Dot {
   name Dot4
   xpos -215
   ypos 789
  }
-set N877d800 [stack 0]
+set N233cd400 [stack 0]
  Dot {
   name Dot6
   xpos 26
   ypos 789
  }
-push $N54b85000
+push $N6ac04c00
  Dot {
   name Dot3
   xpos -134
@@ -580,14 +607,10 @@ push $N54b85000
   xpos -134
   ypos 875
  }
-set N877cc00 [stack 0]
+set N233cc800 [stack 0]
  IBKGizmoV3 {
   inputs 2
   name IBKGizmoV3_1
-  selected false
-  xpos -8
-  ypos 872
-  st C-green
  }
  Grade {
   channels alpha
@@ -598,7 +621,7 @@ set N877cc00 [stack 0]
   xpos -8
   ypos 979
  }
-push $N877dc00
+push $N233cd800
  Blur {
   channels rgb
   size {{1000*even_screen_blur}}
@@ -612,12 +635,11 @@ push $N877dc00
   expr1 "(g(width/1.5, height/1.5) + g(width/2, height/2) + g(width/2.5, height/2.5) + g(width/3, height/3))/4"
   expr2 "(b(width/1.5, height/1.5) + b(width/2, height/2) + b(width/2.5, height/2.5) + b(width/3, height/3))/4"
   name Expression12
-  selected true
   xpos -373
   ypos 893
   disable {{1-use_average}}
  }
-push $N877d800
+push $N233cd400
  Merge2 {
   inputs 2
   operation minus
@@ -637,7 +659,7 @@ push $N877d800
   xpos -215
   ypos 1070
  }
-push $N877cc00
+push $N233cc800
  Merge2 {
   inputs 2
   operation plus
@@ -650,13 +672,13 @@ push $N877cc00
   xpos -134
   ypos 1155
  }
-push $N877e000
+push $N233cdc00
  ShuffleCopy {
   inputs 2
   red red
   green green
   blue blue
-  out h_screenprep
+  out none
   name ShuffleCopy1
   xpos -475
   ypos 1152
