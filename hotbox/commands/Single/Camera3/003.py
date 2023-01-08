@@ -28,13 +28,13 @@ for cameraNode in selection:
     frameHoldNode = nuke.createNode('FrameHold', inpanel=False)
     dotNode4 = nuke.createNode('Dot', inpanel=False)
     project3DNode = nuke.createNode('Project3D', inpanel=False)
-    sphereNode = nuke.createNode('Sphere', inpanel=False)
+    sphereNode = nuke.createNode('Card2', inpanel=False)
 
     #connections
     dotNode2.setInput(0,dotNode1)
     scanlineRenderNode.setInput(1,sphereNode)
 
-	#values
+    #values
     project3DNode.knob('crop').setValue(False)
     camTrans = cameraNode.knob('translate').value()
     sphereNode.knob('translate').setValue(camTrans)

@@ -2,13 +2,10 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Toggle Invert Mask
+# NAME: cyan
+# COLOR: #388e8e
+# TEXTCOLOR: #111111
 #
 #----------------------------------------------------------------------------------------------------------
 
-for i in nuke.selectedNodes():
-    maskKnob = i.knob('invert_mask')
-    if maskKnob == None:
-        maskKnob = i.knob('invertMask')
-    if maskKnob != None:
-        maskKnob.setValue(1-maskKnob.value())
+nuke.selectedNode()["tile_color"].setValue(948866560)

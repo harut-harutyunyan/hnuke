@@ -2,8 +2,9 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Count Selection
+# NAME: red
+# COLOR: #8e3937
 #
 #----------------------------------------------------------------------------------------------------------
 
-nuke.message('%s / %s nodes selected'%(len(nuke.selectedNodes()),len(nuke.allNodes())))
+nuke.selectedNode()["tile_color"].setValue(2386114559)

@@ -2,14 +2,9 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Copy Class
+# NAME: begie
+# COLOR: #5b4456
 #
 #----------------------------------------------------------------------------------------------------------
 
-from PySide import QtGui
-
-nodeClasses = ' '.join(sorted([i.Class() for i in nuke.selectedNodes()]))
-
-QtGui.QApplication.clipboard().setText(nodeClasses)
-
-	
+nuke.selectedNode()["tile_color"].setValue(1531205375)
