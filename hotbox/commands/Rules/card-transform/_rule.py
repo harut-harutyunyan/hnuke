@@ -2,10 +2,8 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: begie
-# COLOR: #5b4456
+# IGNORE CLASSES: 0
 #
 #----------------------------------------------------------------------------------------------------------
 
-for node in nuke.selectedNodes():
-    node["tile_color"].setValue(1531205375)
+ret = nuke.selectedNode().Class() in ["Card", "Card2", "TransformGeo"]

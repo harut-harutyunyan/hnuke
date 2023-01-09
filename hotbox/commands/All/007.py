@@ -16,7 +16,7 @@ else:
     from PySide2 import QtWidgets
 
 
-GIZMO_FOLDER_NAME = "Gizmos"
+TOOL_FOLDER_NAME = "Tools"
 HOTBOX_LOCATION = nuke.toNode('preferences')["hotboxLocation"]
 
 def read_file(file):
@@ -45,7 +45,7 @@ def get_gizmo_folder(location):
 
     gizmo_number = None
     for n in names:
-        if GIZMO_FOLDER_NAME in n[0]:
+        TOOLZMO_FOLDER_NAME in n[0]:
             gizmo_number = n[1]
             return "{}/{}".format(location, gizmo_number)
     if not gizmo_number:
@@ -53,7 +53,7 @@ def get_gizmo_folder(location):
         gizmo_folder = "{}/{}".format(location, gizmo_number)
         if not os.path.isdir(gizmo_folder):
             os.mkdir(gizmo_folder)
-        write_file(os.path.join(gizmo_folder, "_name.json"), GIZMO_FOLDER_NAME)
+        TOOL_file(os.path.join(gizmo_folder, "_name.json"), GIZMO_FOLDER_NAME)
         return gizmo_folder
 
 if HOTBOX_LOCATION:

@@ -7,4 +7,5 @@
 #
 #----------------------------------------------------------------------------------------------------------
 
-nuke.selectedNode()["tile_color"].setValue(1146832895)
+for node in nuke.selectedNodes():
+    node["tile_color"].setValue(1146832895)
