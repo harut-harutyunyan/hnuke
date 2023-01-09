@@ -2,9 +2,11 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: add to hotbox
+# NAME: Add to Hotbox
 #
 #----------------------------------------------------------------------------------------------------------
+
+
 
 import os
 
