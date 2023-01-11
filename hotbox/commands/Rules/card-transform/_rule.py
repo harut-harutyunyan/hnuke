@@ -6,4 +6,7 @@
 #
 #----------------------------------------------------------------------------------------------------------
 
-ret = nuke.selectedNode().Class() in ["Card", "Card2", "TransformGeo"]
+if nuke.selectedNodes():
+    ret = nuke.selectedNode().Class() in ["Card", "Card2", "TransformGeo"]
+else:
+    ret = False

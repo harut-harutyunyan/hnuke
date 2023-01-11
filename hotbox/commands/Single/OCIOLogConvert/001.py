@@ -2,10 +2,9 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 07
+# NAME: Toggle
 #
 #----------------------------------------------------------------------------------------------------------
 
 for i in nuke.selectedNodes():
-    i.knob('in').setValue('MultiMatte07')
-    i.knob('tile_color').setValue(421934079)
+    i.knob("operation").setValue(int(1-i.knob("operation").getValue()))

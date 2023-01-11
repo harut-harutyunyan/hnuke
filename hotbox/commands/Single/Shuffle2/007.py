@@ -17,7 +17,7 @@ def emptySelection(selection):
 for i in selection:
 	emptySelection(selection)
 	i.knob('selected').setValue(True)
-	newNode = nuke.createNode('Shuffle', inpanel = False)
+	newNode = nuke.createNode('Shuffle2', inpanel = False)
 	newList.append(newNode)
 
 emptySelection(selection)

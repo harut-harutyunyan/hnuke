@@ -2,10 +2,10 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 02
+# NAME: Depth
 #
 #----------------------------------------------------------------------------------------------------------
 
 for i in nuke.selectedNodes():
-    i.knob('in').setValue('MultiMatte02')
-    i.knob('tile_color').setValue(421934079)
+    i.knob('in1').setValue('depth')
+    i.knob('tile_color').setValue(2130739199)

@@ -2,10 +2,15 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 03
+# NAME: Set to Alpha
+# COLOR: #593d52
 #
 #----------------------------------------------------------------------------------------------------------
 
-for i in nuke.selectedNodes():
-    i.knob('in').setValue('CustomMatte03')
-    i.knob('tile_color').setValue(421934079)
+for node in nuke.selectedNodes():
+    knob = node.knob("channels")
+    if knob:
+        knob.setValue("alpha")
+    if node.Class() == "Grade":
+        node["white_clamp"].setValue(1)
+        node["black_clamp"].setValue(1)

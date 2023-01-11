@@ -2,11 +2,14 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Set Animated
+# NAME: Turn to Exposure
 #
 #----------------------------------------------------------------------------------------------------------
 
-for i in nuke.selectedNodes():
-	curValue = i.knob('value').value()
-	i.knob('value').setAnimated()
-	curValue = i.knob('value').setValue(curValue)
+for node in nuke.selectedNodes():
+    knob = nuke.Tab_Knob("exposure", "Exposure")
+    node.addKnob(knob)
+    knob = nuke.Double_Knob("stops", "stops")
+    knob.setRange(-4, 4)
+    node.addKnob(knob)
+    node["value"].setExpression("pow(2, stops)")

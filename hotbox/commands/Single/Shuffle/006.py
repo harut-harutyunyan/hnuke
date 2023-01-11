@@ -2,14 +2,12 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: pWorld
+# NAME: Alpha
 #
 #----------------------------------------------------------------------------------------------------------
 
 for i in nuke.selectedNodes():
-    if 'pWorld' in nuke.channels():
-        i.knob('in').setValue('pWorld')
-    else:
-        i.knob('in').setValue('P')
+    for channel in ['red','green','blue','alpha']:
+        i.knob(channel).setValue('alpha')
 
-    i.knob('tile_color').setValue(2130739199)
+    i.knob('tile_color').setValue(4278124287)

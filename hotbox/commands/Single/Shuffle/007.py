@@ -2,12 +2,24 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Alpha
+# NAME: New Shuffle
 #
 #----------------------------------------------------------------------------------------------------------
 
-for i in nuke.selectedNodes():
-    for channel in ['red','green','blue','alpha']:
-        i.knob(channel).setValue('alpha')
+selection = nuke.selectedNodes()
 
-    i.knob('tile_color').setValue(4278124287)
+newList = []
+
+def emptySelection(selection):
+    for i in selection:
+        i.knob('selected').setValue(False)
+
+for i in selection:
+	emptySelection(selection)
+	i.knob('selected').setValue(True)
+	newNode = nuke.createNode('Shuffle', inpanel = False)
+	newList.append(newNode)
+
+emptySelection(selection)
+for i in newList:
+	i.knob('selected').setValue(True)

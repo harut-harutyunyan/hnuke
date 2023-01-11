@@ -16,7 +16,6 @@ if sel:
     for i, sh in enumerate(shuffles):
         for ch in chs:
             sh[ch].setValue(chs[i])
-        sh["label"].setValue(chs[i][0].upper()*6)
         sh["tile_color"].setValue(cc[i])
         sh.setInput(0, sel)
         sh.setXYpos(sel.xpos()+xpos, sel.ypos()+75)
