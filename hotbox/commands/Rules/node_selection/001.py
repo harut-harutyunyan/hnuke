@@ -8,4 +8,11 @@
 #----------------------------------------------------------------------------------------------------------
 
 import nukescripts
-nukescripts.autobackdrop.autoBackdrop()
+
+col = nuke.getColor(858993663)
+bd = nukescripts.autobackdrop.autoBackdrop()
+bd["tile_color"].setValue(col)
+txt = nuke.getInput("Change label", "")
+if txt:
+    bd["label"].setValue("<center>"+txt)
+    bd["note_font"].setValue("Arial")
