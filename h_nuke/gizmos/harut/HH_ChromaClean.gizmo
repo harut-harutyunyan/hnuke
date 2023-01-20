@@ -611,6 +611,7 @@ set N233cc800 [stack 0]
  IBKGizmoV3 {
   inputs 2
   name IBKGizmoV3_1
+  st {{1-parent.ibk_screen_type}}
  }
  Grade {
   channels alpha

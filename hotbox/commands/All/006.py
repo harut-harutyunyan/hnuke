@@ -17,6 +17,11 @@ else:
 
 
 TOOL_FOLDER_LIST = [
+<<<<<<< HEAD
+=======
+"Test",
+"Gizmo",
+>>>>>>> 21bd001aefc5c58528dae9c7e0cc33337704c076
 "ToolSets",
 ]
 

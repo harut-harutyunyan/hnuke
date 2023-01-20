@@ -90,7 +90,7 @@ push $Nc4380800
  }
  Blur {
   channels alpha
-  size {{blur_inside}}
+  size {{blur_inside/5}}
   name Blur2
   xpos -520
   ypos -145
@@ -112,7 +112,7 @@ push $Nc4380800
  }
  Blur {
   channels alpha
-  size {{blur_outside}}
+  size {{blur_outside/5}}
   name Blur3
   xpos -395
   ypos -146
