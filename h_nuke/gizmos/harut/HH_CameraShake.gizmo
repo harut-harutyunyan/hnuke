@@ -1,0 +1,97 @@
+Group {
+name HH_CameraShake
+tile_color 0x8535d5ff
+selected true
+addUserKnob {20 camera_shake l "Camera Shake"}
+addUserKnob {7 amount l "global amount" R 0 10}
+amount 1
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {6 jitter_on l jitter +STARTLINE}
+jitter_on true
+addUserKnob {7 jitter_amount l "" -STARTLINE R 0 4}
+jitter_amount 1
+addUserKnob {7 jitter_frq l speed -STARTLINE R 0.001 2}
+jitter_frq 2
+addUserKnob {6 jitter_rot l rotation -STARTLINE}
+jitter_rot true
+addUserKnob {6 shake_on l shake +STARTLINE}
+shake_on true
+addUserKnob {7 shake_amount l "" -STARTLINE R 0 4}
+shake_amount 1
+addUserKnob {7 shake_frq l speed -STARTLINE R 0.001 2}
+shake_frq 1.2
+addUserKnob {6 shake_rot l rotation -STARTLINE}
+shake_rot true
+addUserKnob {6 float_on l float +STARTLINE}
+float_on true
+addUserKnob {7 float_amount l "" -STARTLINE R 0 4}
+float_amount 1
+addUserKnob {7 float_frq l speed -STARTLINE R 0 2}
+float_frq 0.025
+addUserKnob {6 float_rot l rotation -STARTLINE}
+float_rot true
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {6 motionblur l "motion blur" +STARTLINE}
+motionblur true
+addUserKnob {41 shutter -STARTLINE T motion_blur.shutter}
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {3 seed}
+seed 23695
+addUserKnob {22 random_seed l randomize -STARTLINE T "import random\nnuke.thisNode().knob(\"seed\").setValue(random.randint(1,99999))"}
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {12 output_val l output}
+output_val {{(jitter_on==1?jitter.translate.x:0)+(shake_on==1?shake.translate.x:0)+(float_on==1?float.translate.x:0)} {(jitter_on==1?jitter.translate.y:0)+(shake_on==1?shake.translate.y:0)+(float_on==1?float.translate.y:0)}}
+addUserKnob {26 ""}
+addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+}
+Input {
+inputs 0
+name Input
+xpos -393
+ypos -341
+}
+Transform {
+translate {{fBm((seed+55+frame)*jitter_frq,2.1,3.3,3,2,.5)*amount*jitter_amount} {fBm(1.3,(seed+88+frame)*jitter_frq,10.5,3,2,.5)*amount*jitter_amount}}
+rotate {{(fBm((seed+frame)*jitter_frq,20.5,21.5,3,2,.5)*amount*(jitter_amount/2))*jitter_rot}}
+center {{jitter_on==1?((fBm((seed+frame)*jitter_frq,2.5,3.5,3,2,.5)*input.width)+input.width/2):(input.width/2)*global_amount*jitter_amount} {jitter_on==1?((fBm((seed+frame)*jitter_frq+100,10.5,11.5,3,2,.5)*input.height)+input.height/2):(input.height/2)*global_amount*jitter_amount}}
+shutteroffset centred
+name jitter
+xpos -393
+ypos -194
+disable {{1-jitter_on}}
+}
+Transform {
+translate {{fBm((seed+55+frame)*shake_frq,10.5,5.5,3,2,.5)*4*amount*shake_amount} {fBm(3.1,(seed+88+frame)*shake_frq,5.1,3,2,.5)*4*amount*shake_amount}}
+rotate {{(fBm((seed+frame)*shake_frq,20.5,21.5,3,2,.5)*6*amount*(shake_amount/2))*shake_rot}}
+center {{input.width/2} {input.height/2}}
+shutteroffset centred
+name shake
+xpos -393
+ypos -156
+disable {{1-shake_on}}
+}
+Transform {
+translate {{fBm((seed+55+frame)*float_frq,8.6,5.5,3,2,.5)*20*amount*float_amount} {fBm(6.1,(seed+88+frame)*float_frq,9.1,3,2,.5)*20*amount*float_amount}}
+rotate {{(fBm((seed+frame)*float_frq,20.5,21.5,3,2,.5)*20*amount*(float_amount/2))*float_rot}}
+center {{input.width/2} {input.height/2}}
+shutteroffset centred
+name float
+xpos -393
+ypos -115
+disable {{1-float_on}}
+}
+Transform {
+center {{input.width/2} {input.height/2}}
+motionblur {{"\$gui?1:16"}}
+shutteroffset centred
+name motion_blur
+xpos -393
+ypos -70
+disable {{1-parent.motionblur}}
+}
+Output {
+name Output1
+xpos -393
+ypos 43
+}
+end_group

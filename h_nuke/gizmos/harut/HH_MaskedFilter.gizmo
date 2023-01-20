@@ -1,0 +1,111 @@
+Group {
+inputs 2
+name HH_MaskedFilter
+tile_color 0x8535d5ff
+addUserKnob {20 masked_filter l MaskedFilter}
+addUserKnob {4 filter M {Custom Blur DirBlur "" "" ""}}
+filter Blur
+addUserKnob {41 size T TimeBlur4.size}
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {41 samples t "number of substeps" T TimeBlur4.divisions}
+addUserKnob {41 blur_mask l "blur samples" T Blur2.size}
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {41 control l "control expression" t "parent this to the value you want to control" T TimeBlur4.exp}
+addUserKnob {26 ""}
+addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+}
+Input {
+inputs 0
+name mask
+xpos 269
+ypos -273
+number 1
+}
+Expression {
+expr3 "ceil(a*divisions)/divisions == ceil((frame%1)*divisions)/divisions"
+name Expression4
+xpos 269
+ypos -215
+addUserKnob {20 User}
+addUserKnob {7 divisions}
+divisions {{parent.TimeBlur4.divisions-1}}
+}
+Blur {
+channels alpha
+size 4
+name Blur2
+label "\[value size]"
+xpos 269
+ypos -189
+}
+Dot {
+name Dot6
+xpos 303
+ypos -101
+}
+Input {
+inputs 0
+name Input
+xpos 519
+ypos -510
+}
+set N220f2f60 [stack 0]
+push $N220f2f60
+DirBlurWrapper {
+BlurCenter {{input.width/2} {input.height/2}}
+BlurLength {{parent.TimeBlur4.exp}}
+target {0 0}
+name DirBlurWrapper1
+xpos 293
+ypos -427
+}
+push $N220f2f60
+Blur {
+size {{parent.TimeBlur4.exp}}
+name Blur1
+xpos 408
+ypos -427
+}
+push $N220f2f60
+Switch {
+inputs 4
+which {{filter}}
+name Switch1
+xpos 519
+ypos -332
+}
+Merge2 {
+inputs 2
+operation mask
+name Merge4
+xpos 519
+ypos -104
+}
+TimeBlur {
+shutter 0.999
+shutteroffset start
+shuttercustomoffset 0
+name TimeBlur4
+xpos 519
+ypos -78
+addUserKnob {20 User}
+addUserKnob {7 size R 0 100}
+size 20
+addUserKnob {7 exp l "control expression"}
+exp {{size*decimalFrameStepped}}
+addUserKnob {7 decimalFrameStepped l "decimal frame stepped" +INVISIBLE}
+decimalFrameStepped {{ceil((frame%1)*divisions)/divisions}}
+}
+Multiply {
+channels rgba
+value {{parent.TimeBlur4.divisions}}
+name Multiply4
+xpos 519
+ypos -29
+}
+Output {
+name Output1
+xpos 519
+ypos 71
+}
+end_group
