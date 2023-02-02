@@ -2,23 +2,17 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Version to...
+# NAME: Set Project Range
 #
 #----------------------------------------------------------------------------------------------------------
 
-import nukescripts
+node = nuke.selectedNode()
 
-myKnobPanel = nuke.Panel('Set Version')
-myKnobPanel.addSingleLineInput('Version','')
+first = node.knob('first').value()
+last = node.knob('last').value()
 
-#show the panel
-panel = myKnobPanel.show()
+nuke.Root().knob('first_frame').setValue(first)
+nuke.Root().knob('last_frame').setValue(last)
 
-if panel:
-    newVersion = myKnobPanel.value('Version')
-
-    for i in nuke.selectedNodes():
-        fileString = i.knob('file').value()
-        curVersion = nukescripts.version_get(fileString, 'v')[-1]
-        newVersion = newVersion.zfill(len(curVersion))
-        i.knob('file').setValue(fileString.replace(curVersion,newVersion))
+if nuke.frame() not in range(first,last+1):
+    nuke.frame(first)

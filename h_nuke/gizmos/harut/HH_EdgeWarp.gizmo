@@ -1,0 +1,195 @@
+Group {
+ name HH_EdgeWarp
+ lock_connections true
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name()==\"premult\":\n    val = k.value()\n    n\[\"preserve_alpha\"].setValue(val)\n    n\[\"preserve_alpha\"].setEnabled(val==0)\n"
+ tile_color 0x8535d5ff
+ addUserKnob {20 edgeWarp l EdgeWarp}
+ addUserKnob {7 area l "warp area" R 0 250}
+ addUserKnob {7 intensity l "warp intensity" R 0 2}
+ intensity 0.5
+ addUserKnob {6 preserve_alpha l "preserve input alpha" +STARTLINE}
+ addUserKnob {6 premult -STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {26 "" l mask T ""}
+ addUserKnob {41 maskChannelMask l "" -STARTLINE T Merge1.maskChannelMask}
+ addUserKnob {41 inject -STARTLINE T Merge1.inject}
+ addUserKnob {41 invert_mask l invert -STARTLINE T Merge1.invert_mask}
+ addUserKnob {41 fringe -STARTLINE T Merge1.fringe}
+ addUserKnob {41 mix T Dissolve1.which}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -305
+  ypos -170
+ }
+set N10e13c70 [stack 0]
+ Dot {
+  name Dot4
+  xpos -723
+  ypos -166
+ }
+ Input {
+  inputs 0
+  name mask
+  xpos -434
+  ypos 302
+  number 1
+ }
+push $N10e13c70
+ Dot {
+  name Dot3
+  xpos -271
+  ypos -114
+ }
+set N10d2de20 [stack 0]
+ Dot {
+  name Dot2
+  xpos -402
+  ypos -114
+ }
+set N10bf1ab0 [stack 0]
+ Matrix {
+  channels alpha
+  matrix {
+      {3 0 -3}
+      {10 0 -10}
+      {3 0 -3}
+    }
+  name Scharr_operator_x
+  xpos -436
+  ypos 1
+ }
+push $N10d2de20
+ Matrix {
+  channels alpha
+  matrix {
+      {3 10 3}
+      {0 0 0}
+      {-3 -10 -3}
+    }
+  name Scharr_operator_y
+  xpos -305
+  ypos -66
+ }
+ ShuffleCopy {
+  inputs 2
+  red alpha
+  green alpha2
+  blue black
+  alpha black
+  name ShuffleCopy2
+  xpos -305
+  ypos 1
+ }
+ Blur {
+  size {{"\[value parent.area]"}}
+  filter quadratic
+  name Blur
+  xpos -305
+  ypos 74
+ }
+ Crop {
+  box {0 0 {format.w} {format.h}}
+  name Crop1
+  xpos -305
+  ypos 121
+ }
+ Multiply {
+  value {{"\[python -execlocal blur\\ =\\ nuke.toNode(\\\"Blur\\\")\\\[\\\"size\\\"\\].value()\\nmult\\ =\\ nuke.thisParent()\\\[\\\"intensity\\\"\\].value()\\nif\\ blur\\ <=\\ 50:\\n\\ ret\\ =\\ mult\\ *\\ blur\\ /\\ 2\\nelse:\\ #blur\\ <=\\ 100:\\n\\ ret\\ =\\ mult\\ *\\ blur\\ *\\ ((blur\\ -\\ 25)\\ /\\ 50)\\n]"}}
+  name Multiply
+  xpos -305
+  ypos 160
+ }
+ Expression {
+  expr0 (x-r+.5)*(1.0/width)
+  expr1 (y+g+.5)*(1.0/height)
+  expr2 0
+  name Displacement
+  xpos -305
+  ypos 215
+ }
+push $N10d2de20
+ Dot {
+  name Dot7
+  xpos -141
+  ypos -114
+ }
+ Expression {
+  expr0 "(x+.5) / width"
+  expr1 "(y+.5) / height"
+  name STmap
+  xpos -175
+  ypos 302
+ }
+set N10fc7f40 [stack 0]
+ Merge2 {
+  inputs 2+1
+  operation copy
+  name Merge1
+  xpos -305
+  ypos 302
+ }
+push $N10fc7f40
+ Dissolve {
+  inputs 2
+  which 1
+  name Dissolve1
+  xpos -305
+  ypos 339
+ }
+push $N10bf1ab0
+ Dot {
+  name Dot1
+  xpos -512
+  ypos -114
+ }
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap2
+  xpos -546
+  ypos 339
+ }
+set N112ed9a0 [stack 0]
+ Unpremult {
+  name Unpremult1
+  xpos -647
+  ypos 345
+  disable {{1-premult}}
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -757
+  ypos 339
+ }
+ Premult {
+  name Premult1
+  xpos -757
+  ypos 391
+  disable {{1-premult}}
+ }
+ Dot {
+  name Dot5
+  xpos -723
+  ypos 426
+ }
+push $N112ed9a0
+ Switch {
+  inputs 2
+  which {{parent.preserve_alpha}}
+  name Switch1
+  xpos -546
+  ypos 422
+ }
+ Output {
+  name Output1
+  xpos -546
+  ypos 552
+ }
+end_group

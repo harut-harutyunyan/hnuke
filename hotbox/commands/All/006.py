@@ -16,16 +16,12 @@ else:
     from PySide2 import QtWidgets
 
 
-TOOL_FOLDER_LIST = [
-<<<<<<< HEAD
-=======
-"Test",
-"Gizmo",
->>>>>>> 21bd001aefc5c58528dae9c7e0cc33337704c076
-"ToolSets",
-]
-
 HOTBOX_LOCATION = nuke.toNode('preferences')["hotboxLocation"]
+
+if not isinstance(HOTBOX_LOCATION, str):
+    HOTBOX_LOCATION = os.path.join(HOTBOX_LOCATION.value(), "All")
+else:
+    HOTBOX_LOCATION = os.path.join(HOTBOX_LOCATION, "All")
 
 def interface2rgb(hexValue, normalize = True):
     '''
@@ -67,11 +63,14 @@ def get_next_num(location):
     else:
         return max(nums)+1
 
+def get_folder_names():
+    return [(read_file("{}/{}/_name.json".format(HOTBOX_LOCATION, f)), f) for f in os.listdir(HOTBOX_LOCATION) if f.isdigit()]
+
 def get_gizmo_folder(location, folder_name):
     if folder_name == "root":
         return location
 
-    names = [(read_file("{}/{}/_name.json".format(location, f)), f) for f in os.listdir(location) if f.isdigit()]
+    names = get_folder_names()
 
     gizmo_number = None
     for n in names:
@@ -89,14 +88,25 @@ def get_gizmo_folder(location, folder_name):
 class ToHotbox(nukescripts.PythonPanel):
     def __init__(self):
         super(ToHotbox, self).__init__('Add to Hotbox')
-
-        self.folder = nuke.Enumeration_Knob("folder", "folder: ", ["root"] + TOOL_FOLDER_LIST)
+        self.setMinimumSize(300, 50)
+        self.folder = nuke.Enumeration_Knob("folder", "folder: ", ["root"] + [i[0] for i in get_folder_names()]+["custom"])
+        self.custom_folder = nuke.String_Knob("custom", 'custom: ')
+        self.custom_folder.clearFlag(nuke.STARTLINE)
+        self.custom_folder.setVisible(False)
         self.name = nuke.String_Knob("name", 'name: ')
         self.color = nuke.ColorChip_Knob('color', '', 0)
         self.color.clearFlag(nuke.STARTLINE)
         self.addKnob(self.folder)
+        self.addKnob(self.custom_folder)
         self.addKnob(self.name)
         self.addKnob(self.color)
+
+    def knobChanged(self, knob):
+            if knob == self.folder:
+                if knob.value() == "custom":
+                    self.custom_folder.setVisible(True)
+                else:
+                    self.custom_folder.setVisible(False)
 
 def main():
     panel = ToHotbox()
@@ -104,6 +114,13 @@ def main():
         col = panel.color.value()
         name = panel.name.value()
         folder = panel.folder.value()
+        if folder == "custom":
+            custom_folder = panel.custom_folder.value()
+            if custom_folder:
+                folder=custom_folder
+            else:
+                folder = "root"
+
         if not name:
             name = nuke.selectedNode().name()
         if col != 0:
@@ -111,16 +128,10 @@ def main():
         else:
             col_hex = ""
 
-        if HOTBOX_LOCATION:
-            if not isinstance(HOTBOX_LOCATION, str):
-                loc = os.path.join(HOTBOX_LOCATION.value(), "All")
-            else:
-                loc = os.path.join(HOTBOX_LOCATION, "All")
+        gizmo_folder = get_gizmo_folder(HOTBOX_LOCATION, folder)
+        gizmo_file = "{}/{}.py".format(gizmo_folder, format(get_next_num(gizmo_folder), "03"))
 
-            gizmo_folder = get_gizmo_folder(loc, folder)
-            gizmo_file = "{}/{}.py".format(gizmo_folder, format(get_next_num(gizmo_folder), "03"))
-
-            contents = """#----------------------------------------------------------------------------------------------------------
+        contents = """#----------------------------------------------------------------------------------------------------------
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
@@ -142,9 +153,9 @@ script = r'''{}'''
 clipboard = QtWidgets.QApplication.clipboard()
 clipboard.setText(script)
 nuke.nodePaste('%clipboard%')
-            """.format(name, col_hex, copy_script())
+        """.format(name, col_hex, copy_script())
 
-            write_file(gizmo_file, contents)
+        write_file(gizmo_file, contents)
 
 
 if nuke.selectedNodes():

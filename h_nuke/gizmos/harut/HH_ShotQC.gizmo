@@ -1,9 +1,9 @@
 Group {
  name HH_Shot_QC
- lock_connections true
  knobChanged "\ndef hide_knobs():\n    kk = \[k for k in n.knobs() if k.startswith(\"__\")]\n    for i in kk:\n        nuke.thisNode()\[i].setVisible(False)\n\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"qc_view\":\n    v = k.value()\n    hide_knobs()\n    if v == \"Difference\":\n        n\[\"__show_changed\"].setVisible(True)\n    if v == \"Black Levels(Gamma Up)\":\n        n\[\"__gamma_up\"].setVisible(True)\n    if v == \"Highlights(Exposure Down)\":\n        n\[\"__exp_down\"].setVisible(True)\n    if v == \"Shadows(Exposure Up)\":\n        n\[\"__exp_up\"].setVisible(True)\n    if v == \"Color(Saturation Up)\":\n        n\[\"__sat_up\"].setVisible(True)\n    if v == \"Noise\":\n        n\[\"__noise_mode\"].setVisible(True)\n        n\[\"__noise_size\"].setVisible(True)\n    if v == \"HSV\":\n        n\[\"__hsv_mode\"].setVisible(True)\n        if n\[\"__hsv_mode\"].value() == \"mono\":\n            n\[\"__hsv_ch\"].setVisible(True)\n            n\[\"__hsv_3d\"].setVisible(True)\n    if v == \"Negative Pixels\":\n        n\[\"__neg_per_ch\"].setVisible(True)\n    if v == \"Alpha Channel\":\n        n\[\"__alpha_over\"].setVisible(True)\nif k.name() == \"__hsv_mode\":\n    if k.value() == \"mono\":\n        n\[\"__hsv_ch\"].setVisible(True)\n        n\[\"__hsv_3d\"].setVisible(True)\n    else:\n        n\[\"__hsv_ch\"].setVisible(False)\n        n\[\"__hsv_3d\"].setVisible(False)\nif k.name() == \"contact_sheet\":\n    if k.value() == 1:\n        n\[\"tile_size\"].setVisible(True)\n    else:\n        n\[\"tile_size\"].setVisible(False)\n"
  tile_color 0x8535d5ff
  label "in <font size = 4 color =\"orange\">\[value cmp] </font>\nview <font size = 4 color =\"orange\">\[if \{\[value contact_sheet]==true\} \{return \"Contact Sheet\"\} \{return \"\[value qc_view]\"\}]"
+ lock_connections true
  addUserKnob {20 User l "Shot QC"}
  addUserKnob {4 cmp l compare M {COMP SCAN "EDIT REF"}}
  addUserKnob {4 to -STARTLINE M {COMP SCAN "EDIT REF"}}
@@ -23,8 +23,8 @@ Group {
  __gamma_up 4
  addUserKnob {7 __sat_up l amount +HIDDEN R 1 5}
  __sat_up 5
- addUserKnob {4 __noise_mode l mode +HIDDEN M {blur-diff laplacian}}
- __noise_mode laplacian
+ addUserKnob {4 __noise_mode l mode +HIDDEN M {blur-diff laplacian blur-plus}}
+ __noise_mode blur-plus
  addUserKnob {7 __noise_size l size +HIDDEN R 1 5}
  __noise_size 2
  addUserKnob {7 __exp_up l amount +HIDDEN R 0 10}
@@ -99,8 +99,8 @@ Group {
   note_font_size 42
   xpos 3325
   ypos -11
-  bdwidth 486
-  bdheight 728
+  bdwidth 742
+  bdheight 729
  }
  BackdropNode {
   inputs 0
@@ -125,7 +125,7 @@ Group {
   xpos 41
   ypos -203
  }
-set Nbbbad400 [stack 0]
+set N11b1cbc0 [stack 0]
  Input {
   inputs 0
   name scan
@@ -133,7 +133,7 @@ set Nbbbad400 [stack 0]
   ypos -227
   number 1
  }
-set Nbbbacc00 [stack 0]
+set N1168aaa0 [stack 0]
  Input {
   inputs 0
   name comp
@@ -146,7 +146,7 @@ set Nbbbacc00 [stack 0]
   xpos -424
   ypos -203
  }
-set Nbbbac400 [stack 0]
+set N136f3f90 [stack 0]
  Switch {
   inputs 3
   which {{cmp}}
@@ -160,26 +160,26 @@ set Nbbbac400 [stack 0]
   xpos -130
   ypos 69
  }
-set N29227800 [stack 0]
+set N10cd11c0 [stack 0]
  Dot {
   name Dot1
   xpos 293
   ypos 69
  }
-set N29227400 [stack 0]
+set N13c72a00 [stack 0]
  Dot {
   name Dot101
   xpos 519
   ypos 69
  }
-set N29227000 [stack 0]
+set N1365f410 [stack 0]
  Dot {
   name Dot10
   xpos 861
   ypos 69
  }
-set N29226c00 [stack 0]
-push $N29226c00
+set N13b20ac0 [stack 0]
+push $N13b20ac0
  Shuffle {
   in alpha
   green red
@@ -203,7 +203,7 @@ push $N29226c00
   ypos 267
   disable {{1-__alpha_over}}
  }
-set N29226000 [stack 0]
+set N129050b0 [stack 0]
  Shuffle {
   alpha white
   name Shuffle12
@@ -249,7 +249,7 @@ set N29226000 [stack 0]
   xpos 1626
   ypos 1372
  }
-push $N29227000
+push $N1365f410
  Expression {
   expr0 isinf(r)?1:0
   expr1 isinf(g)?1:0
@@ -277,7 +277,7 @@ push $N29227000
   xpos 485
   ypos 302
  }
-set N6019bc00 [stack 0]
+set N12068030 [stack 0]
  Shuffle {
   alpha white
   name Shuffle13
@@ -323,7 +323,7 @@ set N6019bc00 [stack 0]
   xpos 1436
   ypos 1216
  }
-push $N29227400
+push $N13c72a00
  Expression {
   expr0 isnan(r)?1:0
   expr1 isnan(g)?1:0
@@ -351,7 +351,7 @@ push $N29227400
   xpos 259
   ypos 306
  }
-set N60199c00 [stack 0]
+set N13950680 [stack 0]
  Shuffle {
   alpha white
   name Shuffle14
@@ -397,49 +397,49 @@ set N60199c00 [stack 0]
   xpos 1270
   ypos 1168
  }
-push $N29226c00
+push $N13b20ac0
  Dot {
   name Dot100
   xpos 1031
   ypos 69
  }
-set N60198800 [stack 0]
+set N13eb7f50 [stack 0]
  Dot {
   name Dot102
   xpos 1243
   ypos 69
  }
-set N60198400 [stack 0]
+set N13f66d60 [stack 0]
  Dot {
   name Dot17
   xpos 1434
   ypos 69
  }
-set N5103bc00 [stack 0]
+set N127b6750 [stack 0]
  Dot {
   name Dot4
   xpos 1647
   ypos 69
  }
-set N5103b800 [stack 0]
+set N13b22700 [stack 0]
  Dot {
   name Dot18
   xpos 1854
   ypos 69
  }
-set N5103b400 [stack 0]
+set N12aebb90 [stack 0]
  Dot {
   name Dot3
   xpos 2433
   ypos 69
  }
-set N5103b000 [stack 0]
+set N132a42a0 [stack 0]
  Dot {
   name Dot103
   xpos 2433
   ypos 135
  }
-set N5103ac00 [stack 0]
+set N1405ac40 [stack 0]
  Dot {
   name Dot104
   xpos 2243
@@ -453,8 +453,8 @@ set N5103ac00 [stack 0]
   xpos 2209
   ypos 178
  }
-set N5103a400 [stack 0]
-push $N5103a400
+set N134ba170 [stack 0]
+push $N134ba170
  Expression {
   expr0 clamp(r+g+b)
   name Expression6
@@ -482,14 +482,14 @@ push $N5103a400
   xpos 2209
   ypos 232
  }
-set N51039400 [stack 0]
+set N1311a970 [stack 0]
  Dot {
   name Dot2
   xpos 2243
   ypos 390
  }
-push $N51039400
-push $N5103ac00
+push $N1311a970
+push $N1405ac40
  Merge2 {
   inputs 2
   operation plus
@@ -504,7 +504,7 @@ push $N5103ac00
   xpos 2399
   ypos 387
  }
-set N51038800 [stack 0]
+set N139c6750 [stack 0]
  Shuffle {
   alpha white
   name Shuffle15
@@ -550,20 +550,20 @@ set N51038800 [stack 0]
   xpos 1148
   ypos 1169
  }
-push $N5103b000
+push $N132a42a0
  Dot {
   name Dot5
   xpos 2994
   ypos 69
  }
-set N9fc27000 [stack 0]
+set N1342ec00 [stack 0]
  Colorspace {
   colorspace_out HSV
   name Colorspace1
   xpos 2783
   ypos 133
  }
-set N9fc26c00 [stack 0]
+set N1323d150 [stack 0]
  Shuffle {
   red blue
   green blue
@@ -572,7 +572,7 @@ set N9fc26c00 [stack 0]
   xpos 2868
   ypos 189
  }
-push $N9fc26c00
+push $N1323d150
  Shuffle {
   red green
   blue green
@@ -581,7 +581,7 @@ push $N9fc26c00
   xpos 2783
   ypos 189
  }
-push $N9fc26c00
+push $N1323d150
  Shuffle {
   green red
   blue red
@@ -597,7 +597,7 @@ push $N9fc26c00
   xpos 2783
   ypos 285
  }
-set N9fc25c00 [stack 0]
+set N1215d9c0 [stack 0]
  Expression {
   channel0 {rgba.red -rgba.green -rgba.blue none}
   expr0 "x / width * (width/height)"
@@ -615,7 +615,7 @@ set N9fc25c00 [stack 0]
   xpos 2783
   ypos 414
  }
-push $N9fc27000
+push $N1342ec00
 add_layer {P P.x P.y P.z}
  ShuffleCopy {
   inputs 2
@@ -643,7 +643,7 @@ add_layer {P P.x P.y P.z}
   xpos 2960
   ypos 523
  }
-push $N9fc26c00
+push $N1323d150
  Dot {
   name Dot8
   xpos 3079
@@ -654,7 +654,7 @@ push $N9fc26c00
   xpos 3079
   ypos 620
  }
-push $N9fc25c00
+push $N1215d9c0
  Dot {
   name Dot6
   xpos 2701
@@ -679,7 +679,7 @@ push $N9fc25c00
   xpos 2960
   ypos 653
  }
-set N52b86c00 [stack 0]
+set N11584dd0 [stack 0]
  Shuffle {
   alpha white
   name Shuffle16
@@ -725,19 +725,73 @@ set N52b86c00 [stack 0]
   xpos 1007
   ypos 1176
  }
-push $N9fc27000
+push $N1342ec00
  Dot {
   name Dot19
   xpos 3623
   ypos 69
  }
+set N126e7a60 [stack 0]
+ Dot {
+  name Dot15
+  xpos 3918
+  ypos 69
+ }
+set N1337e180 [stack 0]
+ Blur {
+  size 1
+  name Blur2
+  xpos 3774
+  ypos 235
+ }
+push $N1337e180
+ Merge2 {
+  inputs 2
+  operation from
+  name Merge6
+  xpos 3884
+  ypos 241
+ }
+ Multiply {
+  channels rgb
+  value {{parent.__noise_size*100}}
+  name Multiply9
+  xpos 3884
+  ypos 294
+ }
+push $N1337e180
+ Dot {
+  name Dot23
+  xpos 4017
+  ypos 69
+ }
+ Dot {
+  name Dot24
+  xpos 4017
+  ypos 369
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  output rgb
+  name Merge7
+  selected true
+  xpos 3884
+  ypos 365
+ }
+ Dot {
+  name Dot25
+  xpos 3918
+  ypos 706
+ }
+push $N126e7a60
  Colorspace {
   colorspace_out sRGB
   name Colorspace2
   xpos 3589
   ypos 170
  }
-set N52b85400 [stack 0]
+set N121a6fc0 [stack 0]
  Dot {
   name Dot11
   xpos 3755
@@ -747,15 +801,15 @@ set N52b85400 [stack 0]
   value 0.5
   name Multiply7
   xpos 3721
-  ypos 574
+  ypos 546
  }
-push $N52b85400
+push $N121a6fc0
  Dot {
   name Dot12
   xpos 3479
   ypos 173
  }
-set N52b84800 [stack 0]
+set N11d313a0 [stack 0]
  Dot {
   name Dot13
   xpos 3369
@@ -767,14 +821,14 @@ set N52b84800 [stack 0]
   xpos 3335
   ypos 456
  }
-push $N52b85400
+push $N121a6fc0
  Blur {
   size {{__noise_size}}
   name Blur1
   xpos 3589
   ypos 243
  }
-push $N52b84800
+push $N11d313a0
  Dot {
   name Dot14
   xpos 3479
@@ -798,23 +852,35 @@ push $N52b84800
   value 50
   name Multiply8
   xpos 3589
-  ypos 575
+  ypos 547
  }
  Merge2 {
   inputs 2
   operation plus
   name Merge3
   xpos 3589
-  ypos 665
+  ypos 637
  }
  Colorspace {
   colorspace_in sRGB
   colorspace_out AlexaV3LogC
   name Colorspace3
   xpos 3589
-  ypos 689
+  ypos 661
  }
-set N9f09e000 [stack 0]
+ Switch {
+  inputs 2
+  which {{__noise_mode>1}}
+  name Switch12
+  xpos 3589
+  ypos 702
+ }
+ Dot {
+  name Dot22
+  xpos 3623
+  ypos 737
+ }
+set N10989660 [stack 0]
  Shuffle {
   alpha white
   name Shuffle17
@@ -860,14 +926,14 @@ set N9f09e000 [stack 0]
   xpos 867
   ypos 1165
  }
-push $N5103b800
+push $N13b22700
  Saturation {
   saturation {{__sat_up}}
   name Saturation1
   xpos 1613
   ypos 222
  }
-set N9f09cc00 [stack 0]
+set N11975840 [stack 0]
  Shuffle {
   alpha white
   name Shuffle18
@@ -913,14 +979,14 @@ set N9f09cc00 [stack 0]
   xpos 741
   ypos 1110
  }
-push $N5103b400
+push $N12aebb90
  Saturation {
   saturation 0
   name Saturation3
   xpos 1820
   ypos 221
  }
-set N523ab400 [stack 0]
+set N137dbca0 [stack 0]
  Shuffle {
   alpha white
   name Shuffle19
@@ -966,14 +1032,14 @@ set N523ab400 [stack 0]
   xpos 624
   ypos 1103
  }
-push $N5103bc00
+push $N127b6750
  Multiply {
   value {{"pow(2, __exp_down)"}}
   name Multiply3
   xpos 1400
   ypos 216
  }
-set N523aa000 [stack 0]
+set N12cd4620 [stack 0]
  Shuffle {
   alpha white
   name Shuffle11
@@ -1019,14 +1085,14 @@ set N523aa000 [stack 0]
   xpos 526
   ypos 1120
  }
-push $N60198400
+push $N13f66d60
  Multiply {
   value {{"pow(2, __exp_up)"}}
   name Multiply6
   xpos 1209
   ypos 216
  }
-set N523a8c00 [stack 0]
+set N135de0a0 [stack 0]
  Shuffle {
   alpha white
   name Shuffle10
@@ -1072,14 +1138,14 @@ set N523a8c00 [stack 0]
   xpos 432
   ypos 1127
  }
-push $N60198800
+push $N13eb7f50
  Gamma {
   value {{__gamma_up}}
   name Gamma1
   xpos 997
   ypos 216
  }
-set N863fb400 [stack 0]
+set N13d44980 [stack 0]
  Shuffle {
   alpha white
   name Shuffle9
@@ -1125,9 +1191,9 @@ set N863fb400 [stack 0]
   xpos 317
   ypos 1129
  }
-push $Nbbbad400
-push $Nbbbacc00
-push $Nbbbac400
+push $N11b1cbc0
+push $N1168aaa0
+push $N136f3f90
  Switch {
   inputs 3
   which {{to}}
@@ -1141,14 +1207,14 @@ push $Nbbbac400
   xpos -436
   ypos 568
  }
-set N863f9c00 [stack 0]
-push $N29227800
+set N11cb0d40 [stack 0]
+push $N10cd11c0
  Dot {
   name Dot21
   xpos -141
   ypos 517
  }
-set N863f9800 [stack 0]
+set N1225d8b0 [stack 0]
  MergeExpression {
   inputs 2
   expr3 Ar!=Br||Ag!=Bg||Ab!=Bb?1:0
@@ -1156,7 +1222,7 @@ set N863f9800 [stack 0]
   xpos -311
   ypos 648
  }
-push $N863f9800
+push $N1225d8b0
  Grade {
   inputs 1+1
   multiply 0
@@ -1165,8 +1231,8 @@ push $N863f9800
   xpos -175
   ypos 648
  }
-push $N863f9c00
-push $N863f9800
+push $N11cb0d40
+push $N1225d8b0
  Merge2 {
   inputs 2
   operation difference
@@ -1181,7 +1247,7 @@ push $N863f9800
   xpos -343
   ypos 795
  }
-set N863f8800 [stack 0]
+set N13226900 [stack 0]
  Shuffle {
   alpha white
   name Shuffle7
@@ -1227,7 +1293,7 @@ set N863f8800 [stack 0]
   xpos 69
   ypos 1127
  }
-push $N29227800
+push $N10cd11c0
  Shuffle {
   alpha white
   name Shuffle8
@@ -1289,7 +1355,7 @@ push $N29227800
   xpos 777
   ypos 1316
  }
-set N811e2000 [stack 0]
+set N137e92f0 [stack 0]
  Grade {
   multiply 0
   add 0.045
@@ -1297,7 +1363,7 @@ set N811e2000 [stack 0]
   xpos 619
   ypos 1390
  }
-push $N811e2000
+push $N137e92f0
  Merge2 {
   inputs 2
   operation under
@@ -1343,18 +1409,18 @@ push $N811e2000
   xpos 777
   ypos 1462
  }
-push $N29226000
-push $N6019bc00
-push $N60199c00
-push $N51038800
-push $N52b86c00
-push $N9f09e000
-push $N9f09cc00
-push $N523ab400
-push $N523aa000
-push $N523a8c00
-push $N863fb400
-push $N863f8800
+push $N129050b0
+push $N12068030
+push $N13950680
+push $N139c6750
+push $N11584dd0
+push $N10989660
+push $N11975840
+push $N137dbca0
+push $N12cd4620
+push $N135de0a0
+push $N13d44980
+push $N13226900
  Switch {
   inputs 12
   which {{qc_view}}

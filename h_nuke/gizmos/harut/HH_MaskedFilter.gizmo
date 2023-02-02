@@ -1,6 +1,7 @@
 Group {
 inputs 2
 name HH_MaskedFilter
+lock_connections true
 tile_color 0x8535d5ff
 addUserKnob {20 masked_filter l MaskedFilter}
 addUserKnob {4 filter M {Custom Blur DirBlur "" "" ""}}

@@ -2,14 +2,9 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Union
+# NAME: YCbCr
 #
 #----------------------------------------------------------------------------------------------------------
 
-sel = nuke.selectedNodes()
-if len(sel) == 1:
-    if sel[0].Class()=="ChannelMerge":
-        cm = sel[0]
-else:
-    cm = nuke.createNode("ChannelMerge", inpanel=False)
-cm["operation"].setValue("union")
+for n in nuke.selectedNodes():
+    n["colorspace_out"].setValue("YCbCr")

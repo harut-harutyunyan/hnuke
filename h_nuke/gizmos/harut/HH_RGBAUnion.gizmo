@@ -1,0 +1,117 @@
+Group {
+ name HH_RGBAUnion
+ lock_connections true
+ tile_color 0x8535d5ff
+ addUserKnob {20 rgbaunion l RGBAUnion}
+ addUserKnob {6 r +STARTLINE}
+ r true
+ addUserKnob {6 g -STARTLINE}
+ g true
+ addUserKnob {6 b -STARTLINE}
+ b true
+ addUserKnob {6 a -STARTLINE}
+ a true
+ addUserKnob {4 output M {rgba alpha}}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 60
+  ypos -502
+ }
+ Dot {
+  name Dot1
+  xpos 94
+  ypos -462
+ }
+set N1f021910 [stack 0]
+ Dot {
+  name Dot5
+  xpos 94
+  ypos -282
+ }
+set N1e2c46a0 [stack 0]
+ Dot {
+  name Dot4
+  xpos 94
+  ypos -176
+ }
+set N1e245a40 [stack 0]
+ Dot {
+  name Dot3
+  xpos 94
+  ypos -77
+ }
+set N1fb978b0 [stack 0]
+ Dot {
+  name Dot6
+  xpos 94
+  ypos 19
+ }
+push $N1fb978b0
+push $N1e245a40
+push $N1e2c46a0
+push $N1f021910
+ Dot {
+  name Dot2
+  xpos 204
+  ypos -462
+ }
+ Remove {
+  name Remove1
+  xpos 170
+  ypos -402
+ }
+ ChannelMerge {
+  inputs 2
+  A rgba.red
+  name ChannelMerge2
+  tile_color 0xff0000ff
+  xpos 170
+  ypos -298
+  disable {{1-r}}
+ }
+ ChannelMerge {
+  inputs 2
+  A rgba.green
+  name ChannelMerge3
+  tile_color 0x1fff00ff
+  xpos 170
+  ypos -192
+  disable {{1-g}}
+ }
+ ChannelMerge {
+  inputs 2
+  A rgba.blue
+  name ChannelMerge4
+  tile_color 0x3fffff
+  xpos 170
+  ypos -93
+  disable {{1-b}}
+ }
+ ChannelMerge {
+  inputs 2
+  name ChannelMerge1
+  tile_color 0xeeeeeeff
+  xpos 170
+  ypos 3
+  disable {{1-a}}
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  tile_color 0xfefefeff
+  xpos 170
+  ypos 81
+  disable {{output}}
+ }
+ Output {
+  name Output1
+  xpos 170
+  ypos 136
+ }
+end_group
