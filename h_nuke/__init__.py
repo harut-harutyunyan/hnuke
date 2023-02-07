@@ -7,6 +7,7 @@ load = [
     "tools/look_manager",
     "tools/w_hotbox",
     "tools/ddot",
+    "tools/quick_share",
     ]
 
 current_dir = os.path.dirname(__file__)

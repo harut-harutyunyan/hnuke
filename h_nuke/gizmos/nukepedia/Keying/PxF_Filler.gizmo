@@ -1,10 +1,9 @@
-
 Group {
  name PxF_Filler
  help "Gaussian in-fill. Useful to remove markers and create clean plates."
  knobChanged "m = nuke.thisNode()\nkc = nuke.thisKnob()\n\nif kc.name() in \[\"iterations\"]:\n    i = nuke.toNode('Merge1')\n    i2 = nuke.toNode('Invert1')\n    o = nuke.toNode('Transform3')\n    \n    for n in nuke.allNodes():\n      if \"static\" not in n\['label'].getValue():\n          ###print \"i would delete\" + n\['name'].value()\n          nuke.delete(n)\n    \n    \n    slices = int(m\['iterations'].value())\n    step = int(1)\n    for x in range(1,slices+step,step):\n\n      b1 = nuke.nodes.Blur()\n      b1.setInput(0, i)\n      b1\['size'].setSingleValue(False)\n      b1\['size'].setExpression(\"parent.size.w\", 0)\n      b1\['size'].setExpression(\"parent.size.h\", 1)\n\n      b2 = nuke.nodes.Blur()\n      b2.setInput(0, i2)\n      b2\['size'].setSingleValue(False)\n      b2\['size'].setExpression(\"parent.size.w\", 0)\n      b2\['size'].setExpression(\"parent.size.h\", 1)\n\n      g1 = nuke.nodes.Grade()\n      g1.setInput(0, b2)\n      g1\['channels'].setValue('rgba')\n      g1\['blackpoint'].setValue(-0.0001)\n      g1\['disable'].setExpression(\"parent.softEdges ? 0 : 1\")\n\n      m1 = nuke.nodes.Merge()\n      m1.setInput(1, b1)\n      m1.setInput(0, g1)\n      m1\['operation'].setValue(\"divide\")\n      \n      if x < slices:\n         m2 = nuke.nodes.Merge()\n         m2.setInput(1, b2)\n         m2.setInput(0, g1)\n         m2\['operation'].setValue(\"divide\")\n    \n      i = m1\n      i2 = m2\n    \n    o.setInput(0, i)\n\n"
  tile_color 0x733520ff
- addUserKnob {20 User}
+ addUserKnob {20 PxF_Filler}
  addUserKnob {14 size t "Amount of 'in-fill' for one iteration. " R 0 100}
  size {1 10}
  addUserKnob {3 iterations t "How many times the blur/divide operation is repeated."}
@@ -19,7 +18,7 @@ Group {
  addUserKnob {7 mix t "Dissolve between the effect and the original image."}
  mix 1
  addUserKnob {26 ""}
- addUserKnob {26 t l "" -STARTLINE T "PxF_Filler 3.0.4 - (c) 2015 - Xavier Bourque - www.pixelfudger.com"}
+ addUserKnob {26 Credits l "" t "PxF_Filler 3.0.5 - &copy; 2012-2023 - Xavier Bourque - pixelfudger.com \n\nPixelfudger gizmos are free to use for personal and commercial use as long as you leave the credit text intact in the gizmo's knobs and in the source files. " +STARTLINE T "<font size=2>PxF_Filler 3.0.5 - &copy; 2012-2023 - </font><a href=\"http://www.xavierbourque.com\"><font color=\"#bbbbbb\" size=2>Xavier Bourque</a></font> - <a href=\"http://www.pixelfudger.com\"><font color=\"#bbbbbb\" size=2>pixelfudger.com</a></font> - <a href=\"http://www.pixelfudger.com/userguides/PxF_Filler.html\"><font color=\"#bbbbbb\" size=2>Video Tutorial</a></font>"}
 }
  Input {
   inputs 0
@@ -39,8 +38,8 @@ Group {
   addUserKnob {7 blur R 0 500}
   addUserKnob {3 iterations}
  }
-set Neda5c060 [stack 0]
-push $Neda5c060
+set N1449a400 [stack 0]
+push $N1449a400
  Input {
   inputs 0
   name hole_mask
@@ -49,7 +48,7 @@ push $Neda5c060
   ypos -851
   number 1
  }
-set Neda5ec70 [stack 0]
+set N1449a800 [stack 0]
  Shuffle {
   red alpha
   green alpha
@@ -59,7 +58,7 @@ set Neda5ec70 [stack 0]
   xpos 457
   ypos -762
  }
-push $Neda5ec70
+push $N1449a800
  Shuffle {
   red blue
   green blue
@@ -69,7 +68,7 @@ push $Neda5ec70
   xpos 373
   ypos -762
  }
-push $Neda5ec70
+push $N1449a800
  Shuffle {
   red green
   blue green
@@ -79,7 +78,7 @@ push $Neda5ec70
   xpos 290
   ypos -762
  }
-push $Neda5ec70
+push $N1449a800
  Shuffle {
   green red
   blue red
@@ -97,8 +96,8 @@ push $Neda5ec70
   xpos 342
   ypos -668
  }
-set Neda7c200 [stack 0]
-push $Neda7c200
+set N1449bc00 [stack 0]
+push $N1449bc00
  Transform {
   rotate {{parent.angle i}}
   center {2048 1463}
@@ -107,8 +106,8 @@ push $Neda7c200
   xpos 342
   ypos -587
  }
-set Neda7ff80 [stack 0]
-push $Neda5c060
+set N19066000 [stack 0]
+push $N1449a400
  Transform {
   rotate {{parent.angle i}}
   center {2048 1463}
@@ -125,7 +124,7 @@ push $Neda5c060
   xpos 137
   ypos -519
  }
-push $Neda7ff80
+push $N19066000
  Merge2 {
   inputs 2
   operation out
@@ -140,7 +139,7 @@ push $Neda7ff80
   xpos 137
   ypos -239
  }
-push $Neda7ff80
+push $N19066000
  Clamp {
   name Clamp1
   label static
@@ -159,7 +158,7 @@ push $Neda7ff80
   xpos 342
   ypos -400
  }
-set Neda9fbc0 [stack 0]
+set N19067c00 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -168,7 +167,7 @@ set Neda9fbc0 [stack 0]
   ypos -319
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nedaa5130 [stack 0]
+set N14c8e000 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -182,8 +181,8 @@ set Nedaa5130 [stack 0]
   xpos 310
   ypos -79
  }
-push $Neda9fbc0
-push $Nedaa5130
+push $N19067c00
+push $N14c8e000
  Merge {
   inputs 2
   operation divide
@@ -197,7 +196,7 @@ push $Nedaa5130
   xpos 470
   ypos -239
  }
-set Nedabbbc0 [stack 0]
+set N14c8f000 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -206,7 +205,7 @@ set Nedabbbc0 [stack 0]
   ypos -159
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nedac1130 [stack 0]
+set N14c8f400 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -220,8 +219,8 @@ set Nedac1130 [stack 0]
   xpos 470
   ypos 81
  }
-push $Nedabbbc0
-push $Nedac1130
+push $N14c8f000
+push $N14c8f400
  Merge {
   inputs 2
   operation divide
@@ -235,7 +234,7 @@ push $Nedac1130
   xpos 630
   ypos -79
  }
-set Nedad7bf0 [stack 0]
+set N14e66400 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -244,7 +243,7 @@ set Nedad7bf0 [stack 0]
   ypos 1
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nedadd1f0 [stack 0]
+set N14e66800 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -258,8 +257,8 @@ set Nedadd1f0 [stack 0]
   xpos 630
   ypos 241
  }
-push $Nedad7bf0
-push $Nedadd1f0
+push $N14e66400
+push $N14e66800
  Merge {
   inputs 2
   operation divide
@@ -273,7 +272,7 @@ push $Nedadd1f0
   xpos 790
   ypos 81
  }
-set Nedaf3d40 [stack 0]
+set N14e67800 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -282,7 +281,7 @@ set Nedaf3d40 [stack 0]
   ypos 161
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nedaf92b0 [stack 0]
+set N14e67c00 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -296,8 +295,8 @@ set Nedaf92b0 [stack 0]
   xpos 790
   ypos 401
  }
-push $Nedaf3d40
-push $Nedaf92b0
+push $N14e67800
+push $N14e67c00
  Merge {
   inputs 2
   operation divide
@@ -311,7 +310,7 @@ push $Nedaf92b0
   xpos 950
   ypos 241
  }
-set Nbbe14040 [stack 0]
+set N19094c00 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -320,7 +319,7 @@ set Nbbe14040 [stack 0]
   ypos 321
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nbbe19530 [stack 0]
+set N19095000 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -334,8 +333,8 @@ set Nbbe19530 [stack 0]
   xpos 950
   ypos 561
  }
-push $Nbbe14040
-push $Nbbe19530
+push $N19094c00
+push $N19095000
  Merge {
   inputs 2
   operation divide
@@ -349,7 +348,7 @@ push $Nbbe19530
   xpos 1110
   ypos 401
  }
-set Nbbe2ff00 [stack 0]
+set N15d08000 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -358,7 +357,7 @@ set Nbbe2ff00 [stack 0]
   ypos 481
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nbbe35470 [stack 0]
+set N15d08400 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -372,8 +371,8 @@ set Nbbe35470 [stack 0]
   xpos 1110
   ypos 721
  }
-push $Nbbe2ff00
-push $Nbbe35470
+push $N15d08000
+push $N15d08400
  Merge {
   inputs 2
   operation divide
@@ -387,7 +386,7 @@ push $Nbbe35470
   xpos 1270
   ypos 561
  }
-set Nbbe4bec0 [stack 0]
+set N15d09400 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -396,7 +395,7 @@ set Nbbe4bec0 [stack 0]
   ypos 641
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nbbe51430 [stack 0]
+set N15d09800 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -410,8 +409,8 @@ set Nbbe51430 [stack 0]
   xpos 1270
   ypos 881
  }
-push $Nbbe4bec0
-push $Nbbe51430
+push $N15d09400
+push $N15d09800
  Merge {
   inputs 2
   operation divide
@@ -425,7 +424,7 @@ push $Nbbe51430
   xpos 1430
   ypos 721
  }
-set Nbbe67ee0 [stack 0]
+set N1444e800 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -434,7 +433,7 @@ set Nbbe67ee0 [stack 0]
   ypos 801
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nbbe6d4c0 [stack 0]
+set N1444ec00 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -448,8 +447,8 @@ set Nbbe6d4c0 [stack 0]
   xpos 1430
   ypos 1041
  }
-push $Nbbe67ee0
-push $Nbbe6d4c0
+push $N1444e800
+push $N1444ec00
  Merge {
   inputs 2
   operation divide
@@ -463,7 +462,7 @@ push $Nbbe6d4c0
   xpos 1590
   ypos 881
  }
-set Nbbe83f30 [stack 0]
+set N1444fc00 [stack 0]
  Grade {
   channels rgba
   blackpoint -0.0001
@@ -472,7 +471,7 @@ set Nbbe83f30 [stack 0]
   ypos 961
   disable {{"parent.softEdges ? 0 : 1"}}
  }
-set Nbbe89090 [stack 0]
+set N14b0c000 [stack 0]
  Merge {
   inputs 2
   operation divide
@@ -486,8 +485,8 @@ set Nbbe89090 [stack 0]
   xpos 1590
   ypos 1201
  }
-push $Nbbe83f30
-push $Nbbe89090
+push $N1444fc00
+push $N14b0c000
  Merge {
   inputs 2
   operation divide
@@ -524,7 +523,7 @@ push $Nbbe89090
   xpos -163
   ypos 1431
  }
-push $Neda5c060
+push $N1449a400
  Keymix {
   inputs 3
   name Keymix1
@@ -540,7 +539,7 @@ push $Neda5c060
   ypos 1763
   disable {{"parent.ignoreAlpha ? 0 : 1" i}}
  }
-push $Neda5c060
+push $N1449a400
  Dissolve {
   inputs 2
   which {{parent.mix i}}

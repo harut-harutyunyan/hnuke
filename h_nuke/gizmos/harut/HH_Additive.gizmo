@@ -1,0 +1,354 @@
+Group {
+ name HH_Additive
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"nocp\":\n    val = k.value()\n    n\[\"screencolor\"].setVisible(val==1)\n    n.begin()\n    ref = nuke.toNode(\"ref\")\n    if val==1:\n        if ref:\n            nuke.delete(ref)\n    else:\n        if ref == None:\n            inpt = nuke.createNode(\"Input\", inpanel=False)\n            inpt.setName(\"ref\")\n            inpt.setXYpos(454, -92)\n            nuke.toNode(\"Switch3\").setInput(0, inpt)\n    n.end()\nif k.name() == \"mode\":\n    val = k.getValue()\n    if val == 0:\n        n\[\"setup\"].setValue(0)\n    n\[\"e\"].setVisible(val==1)\n    n\[\"setup\"].setVisible(val==1)\n    n\[\"t\"].setVisible(val==1)\n    n\[\"setupcolor\"].setVisible(val==1)\n"
+ tile_color 0x8535d5ff
+ lock_connections true
+ addUserKnob {20 additive l Additive}
+ addUserKnob {4 screentype l "screen type" M {Green Blue}}
+ addUserKnob {6 nocp l "missing clean plate" -STARTLINE}
+ addUserKnob {18 screencolor l "screen color" +HIDDEN}
+ screencolor {0 1 0}
+ addUserKnob {6 screencolor_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {20 finetune n 1}
+ finetune 0
+ addUserKnob {7 adj_highs l highs R 0 3}
+ adj_highs 1
+ addUserKnob {7 adj_mids l mids R 0 3}
+ adj_mids 1
+ addUserKnob {7 adj_darks l darks R 0 3}
+ adj_darks 1
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {26 ""}
+ addUserKnob {4 mode l merge M {Multiply Plus ""}}
+ addUserKnob {26 e l "<font color=\"orange\">enter" +HIDDEN T "<font color=\"orange\">the "}
+ addUserKnob {6 setup l "setup mode" -STARTLINE +HIDDEN}
+ addUserKnob {26 t l "" -STARTLINE +HIDDEN T "<font color=\"orange\">and adjust the setup color to make screen part black"}
+ addUserKnob {18 setupcolor l "setup color" +HIDDEN}
+ setupcolor {1 1 1}
+ addUserKnob {6 setupcolor_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+}
+ Input {
+  inputs 0
+  name bg
+  xpos -307
+  ypos 208
+ }
+ Expression {
+  expr3 a
+  name Expression1
+  xpos -307
+  ypos 321
+ }
+set N1cf09400 [stack 0]
+ Dot {
+  name Dot7
+  xpos -273
+  ypos 506
+ }
+set N1cf09000 [stack 0]
+ Input {
+  inputs 0
+  name fg
+  xpos -34
+  ypos -92
+  number 1
+ }
+set N1cf08c00 [stack 0]
+ Dot {
+  name Dot1
+  xpos 0
+  ypos 20
+ }
+set N1cf08800 [stack 0]
+ Expression {
+  temp_name0 desp
+  temp_expr0 b>(g+r)/2*.95?(g+r)/2*.95:b
+  temp_name1 mono
+  temp_expr1 (b-desp)*.11
+  expr0 mono+r
+  expr1 mono+g
+  expr2 mono+desp
+  expr3 g-(r+b)*.95/2
+  name despill_blue
+  tile_color 0x2160ff
+  xpos 12
+  ypos 67
+ }
+ set C1cf08400 [stack 0]
+push $N1cf08800
+ Expression {
+  temp_name0 desp
+  temp_expr0 g>(b+r)/2*.95?(b+r)/2*.95:g
+  temp_name1 mono
+  temp_expr1 (g-desp)*.7
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr0 mono+r
+  channel1 {-rgba.red rgba.green -rgba.blue none}
+  expr1 mono+desp
+  channel2 {-rgba.red -rgba.green rgba.blue none}
+  expr2 mono+b
+  expr3 g-(r+b)*.95/2
+  name despill_green
+  tile_color 0x6000ff
+  xpos -88
+  ypos 66
+ }
+ set C7c683c00 [stack 0]
+ Switch {
+  inputs 2
+  which {{screentype}}
+  name Switch1
+  xpos -34
+  ypos 110
+ }
+set N7c683800 [stack 0]
+ Dot {
+  name Dot5
+  xpos -545
+  ypos 113
+ }
+set N7c683400 [stack 0]
+push $N7c683400
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  tile_color 0xfefefeff
+  xpos -726
+  ypos 110
+ }
+ Multiply {
+  channels rgb
+  value {{parent.setupcolor.r} {parent.setupcolor.g} {parent.setupcolor.b} 1}
+  name Multiply1
+  xpos -726
+  ypos 161
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name Merge2
+  xpos -579
+  ypos 161
+ }
+ Clamp {
+  channels rgb
+  maximum_enable false
+  name Clamp1
+  xpos -579
+  ypos 209
+ }
+set N7c682400 [stack 0]
+ Rectangle {
+  invert true
+  area {{width/200} {area.x} {width-area.x} {height-area.x}}
+  name Rectangle1
+  xpos -919
+  ypos 209
+ }
+set N7c682000 [stack 0]
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle4
+  tile_color 0xccff
+  xpos -799
+  ypos 255
+ }
+ Grade {
+  white {0.5 0.5 1 1}
+  name Grade8
+  xpos -799
+  ypos 279
+ }
+push $N7c682000
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle3
+  tile_color 0xcc00ff
+  xpos -919
+  ypos 255
+ }
+ Grade {
+  white {0.5 1 0.5 1}
+  name Grade7
+  xpos -919
+  ypos 279
+ }
+push $N7c682000
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle2
+  tile_color 0xcc0000ff
+  xpos -1039
+  ypos 255
+ }
+ Grade {
+  white {1 0.5 0.5 1}
+  name Grade6
+  xpos -1039
+  ypos 279
+ }
+ ContactSheet {
+  inputs 3
+  width {{(input.width/2)*3}}
+  height {{input.height/2}}
+  rows 1
+  columns 3
+  name ContactSheet1
+  xpos -919
+  ypos 321
+ }
+ Dot {
+  name Dot6
+  xpos -885
+  ypos 436
+ }
+push $N1cf09400
+push $N7c682400
+ ColorCorrect {
+  shadows.gain {{parent.adj_darks}}
+  midtones.gain {{parent.adj_mids}}
+  highlights.gain {{parent.adj_highs}}
+  name ColorCorrect1
+  xpos -579
+  ypos 261
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  output rgb
+  name Merge14
+  xpos -579
+  ypos 321
+ }
+ Switch {
+  inputs 2
+  which {{parent.setup}}
+  name Switch5
+  xpos -579
+  ypos 433
+ }
+push $N7c683800
+push $N1cf08c00
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha black
+  name Shuffle5
+  xpos 332
+  ypos -92
+ }
+ Add {
+  channels rgb
+  value {{parent.screencolor.r} {parent.screencolor.g} {parent.screencolor.b} 0}
+  name Add1
+  xpos 332
+  ypos -26
+ }
+ Input {
+  inputs 0
+  name ref
+  selected true
+  xpos 454
+  ypos -92
+  number 2
+ }
+ Switch {
+  inputs 2
+  which {{parent.nocp}}
+  name Switch3
+  xpos 454
+  ypos -26
+ }
+ Dot {
+  name Dot2
+  xpos 488
+  ypos 20
+ }
+set N7c60a000 [stack 0]
+clone $C1cf08400 {
+  xpos 503
+  ypos 66
+  selected false
+ }
+push $N7c60a000
+clone $C7c683c00 {
+  xpos 403
+  ypos 66
+  selected false
+ }
+ Switch {
+  inputs 2
+  which {{screentype}}
+  name Switch2
+  xpos 454
+  ypos 110
+ }
+ Dot {
+  name Dot4
+  xpos 488
+  ypos 215
+ }
+ Merge2 {
+  inputs 2
+  operation divide
+  name Merge12
+  xpos -34
+  ypos 212
+ }
+ ColorCorrect {
+  shadows.gain {{parent.adj_darks}}
+  midtones.gain {{parent.adj_mids}}
+  highlights.gamma {{parent.adj_highs}}
+  name ColorCorrect2
+  xpos -34
+  ypos 261
+ }
+push $N1cf09400
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge1
+  xpos -34
+  ypos 321
+ }
+ Switch {
+  inputs 2
+  which {{mode}}
+  name Switch4
+  xpos -34
+  ypos 433
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -34
+  ypos 497
+  disable {{parent.setup}}
+ }
+push $N1cf09000
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch6
+  xpos -34
+  ypos 593
+ }
+ Output {
+  name Output1
+  xpos -34
+  ypos 637
+ }
+end_group

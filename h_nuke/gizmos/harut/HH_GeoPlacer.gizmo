@@ -11,7 +11,7 @@ Group {
  addUserKnob {6 update_pt l "auto update position" -STARTLINE}
  update_pt true
  addUserKnob {12 pt l position}
- addUserKnob {22 set_pt l set -STARTLINE +HIDDEN T "n = nuke.thisNode()\nn.begin()\nnuke.toNode(\"FrameHold1\")\[\"firstFrame\"].setValue(nuke.frame())\nn.end()"}
+ addUserKnob {22 set_pt l set -STARTLINE +HIDDEN T "n = nuke.thisNode()\nn.begin()\nnuke.toNode(\"FrameHold1\")\[\"first_frame\"].setValue(nuke.frame())\nn.end()"}
  addUserKnob {22 export -STARTLINE T "this_node = nuke.thisNode()\n\np = nuke.Panel('my custom panel')\np.addSingleLineInput('Frame Range', '\{\}'.format(int(nuke.frame())))\np.addEnumerationPulldown('Export', 'TransformGeo Axis')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_obj = p.value('Export')\nif export_obj:\n    frames = nuke.FrameRange(p.value('Frame Range'))\n    \n    this_node.begin()\n    xform = nuke.toNode(\"xform\")\n    this_node.end()\n    \n    node_class = \{\"TransformGeo\": \"TransformGeo\", \"Axis\": \"Axis2\"\}\[export_obj]\n    axis = nuke.createNode(node_class)\n    axis.setXYpos(this_node.xpos()+100, this_node.ypos()+150)\n    if node_class==\"TransformGeo\":\n        axis.setInput(0, this_node.input(1))\n    axis\[\"useMatrix\"].setValue(True)\n    knob = axis\['matrix']\n    if this_node\[\"update_pt\"] == 1 or frames.first() != frames.last():\n        knob.setAnimated()\n    else:\n        frames = nuke.FrameRange(str(int(nuke.frame())))\n    if frames.first() == frames.last():\n        frames = nuke.FrameRange(str(int(nuke.frame())))\n\n    task = nuke.ProgressTask(\"Self Destructing\")\n    for i in range(frames.first(), frames.last()+1):\n        task.setProgress(i)\n        xform_matrix = xform\['matrix'].getValueAt(i)\n        for j in range(16):\n            knob.setValueAt(xform_matrix\[j], i, j)\n    del task"}
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
@@ -123,7 +123,7 @@ push 0
  }
 push $N7ab3ac00
  FrameHold {
-  firstFrame 1001
+  first_frame 1001
   name FrameHold1
   xpos 158
   ypos -315
