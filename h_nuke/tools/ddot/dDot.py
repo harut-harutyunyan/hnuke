@@ -106,7 +106,7 @@ class DDot(object):
     FONT_SIZE = 42
     ERROR_COL = 4278190335
     DISTANCE_FROM_NODE = 150
-    UPDATE_UI_ON = True
+    UPDATE_UI_ON = False
     UPDATE_UI = "node = nuke.toNode(nuke.thisNode().knob('label').getValue())\nif node:\n    nuke.thisNode().setInput(0, node)"
 
     @classmethod
@@ -162,8 +162,9 @@ class DDot(object):
         newDot.addKnob(parentKnob)
 
     @classmethod
-    def connect(cls, parent):
-        dot = nuke.createNode("Dot", inpanel=False)
+    def connect(cls, parent, dot=None):
+        if not dot:
+            dot = nuke.createNode("Dot", inpanel=False)
         dot.connectInput(0, parent)
         dot.knob('label').setValue(parent.name())
         dot.knob('hide_input').setValue(True)
@@ -171,8 +172,9 @@ class DDot(object):
         dot.knob('note_font_size').setValue(cls.FONT_SIZE-10)
         if cls.UPDATE_UI_ON:
             dot.knob('updateUI').setValue(cls.UPDATE_UI)
-        child_knob = nuke.Text_Knob('child', 'child')
-        dot.addKnob(child_knob)
+        if not dot.knob("child"):
+            child_knob = nuke.Text_Knob('child', 'child')
+            dot.addKnob(child_knob)
         parent_color = int(parent.knob('note_font_color').getValue())
         dot.knob('note_font_color').setValue(parent_color)
         dot.knob('tile_color').setValue(parent_color)
@@ -181,12 +183,12 @@ class DDot(object):
     def check_input(cls):
         brokenConnections = []
         for d in nuke.allNodes('Dot'):
-            if d.input(0) == None:
-                d['tile_color'].setValue(cls.ERROR_COL)
-                d['note_font_color'].setValue(cls.ERROR_COL)
-                brokenConnections.append(d.knob('name').getValue())
-            else:
-                if d.knob('child'):
+            if d.knob('child'):
+                if d.input(0) == None:
+                    d['tile_color'].setValue(cls.ERROR_COL)
+                    d['note_font_color'].setValue(cls.ERROR_COL)
+                    brokenConnections.append(d.knob('name').getValue())
+                else:
                     childLabel = d.knob('label').getValue()
                     parentName = d.input(0).knob('name').getValue()
                     if childLabel != parentName:
@@ -350,13 +352,17 @@ class DDotManager(QtWidgets.QDialog):
 
     def create_widgets(self):
         self.close_btn = QtWidgets.QPushButton("Close")
+        self.check_inputs_btn = QtWidgets.QPushButton("Check Inputs")
         self.shortcuts_list = ShortcutList()
+
+        self.link_menu = self.shortcuts_list.link_context_menu
 
     def create_layout(self):
         self.manager_layout = QtWidgets.QVBoxLayout(self)
         self.btn_layout = QtWidgets.QHBoxLayout()
 
         self.manager_layout.addWidget(self.shortcuts_list)
+        self.btn_layout.addWidget(self.check_inputs_btn)
         self.btn_layout.addItem(self.spacer())
         self.btn_layout.addWidget(self.close_btn)
 
@@ -364,7 +370,76 @@ class DDotManager(QtWidgets.QDialog):
 
     def create_connections(self):
         self.close_btn.clicked.connect(self.close)
+        self.check_inputs_btn.clicked.connect(DDot.check_input)
         self.shortcuts_list.itemDoubleClicked.connect(self.frame_on_link)
+        self.shortcuts_list.customContextMenuRequested.connect(
+            self.link_rightclicked)
+
+        self.link_menu.triggered.connect(self._processtrigger)
+
+    def link_rightclicked(self, QPos):
+        """
+        When item is right clicked clear the menu. And add all the actions.
+        """
+        self.link_menu.clear()
+
+        # create a menu header with link name to be displayed over actions
+        header_name = self.current_item()
+        if not header_name:
+            return
+
+        header = self.link_menu.addAction(header_name)
+        header.setDisabled(True)
+        self.link_menu.addSeparator()
+
+        self.link_menu.addAction("Show Children")
+        self.link_menu.addAction("Rename Children")
+        self.link_menu.addAction("Connection Visibility")
+
+        # parent_pos = self.shortcuts_list.mapToGlobal(QtCore.QPoint(0, 0))
+        cursor_position = QtGui.QCursor.pos()
+        self.link_menu.move(cursor_position)
+        self.link_menu.show()
+
+    def _processtrigger(self, action):
+        if isinstance(action, QtWidgets.QAction):
+            action_name = action.text()
+            if action_name == "Show Children":
+                self._ddot_show_children()
+            elif action_name == "Rename Children":
+                self._ddot_rename_children()
+            elif action_name == "Connection Visibility":
+                self._ddot_connection_vis()
+            else:
+                print("{} triggered".format(action_name))
+
+    def _ddot_show_children(self):
+        self._select_current_item()
+        DDot.show_children()
+
+    def _ddot_rename_children(self):
+        self._select_current_item()
+        DDot.name_change()
+
+    def _ddot_connection_vis(self):
+        self._select_current_item()
+        DDot.toggle_connection_visibility()()
+
+    def current_item(self):
+        """
+        Gets current link item from shortcuts list.
+        Returns dict of links user data.
+        """
+        item = self.shortcuts_list.currentItem()
+        if not item:
+            return None
+        item_data = item.data(QtCore.Qt.UserRole)
+        return item_data
+
+    def _select_current_item(self):
+        DDot.unselect_all()
+        node = nuke.toNode(self.current_item())
+        node.setSelected(True)
 
     def populate(self):
         self.shortcuts_list.clear()
@@ -394,7 +469,12 @@ class ShortcutList(QtWidgets.QListWidget):
 
     def __init__(self):
         super(ShortcutList, self).__init__()
+        self.configure_menu()
         self.configure_widget()
+
+    def configure_menu(self):
+        self.link_context_menu = QtWidgets.QMenu()
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
     def configure_widget(self):
         self.setFixedSize(650, 155)
@@ -506,12 +586,28 @@ class NodeShape(QtWidgets.QWidget):
 
 def ddot_start():
     sel_list = nuke.selectedNodes()
+
+
     if len(sel_list) == 0:
         DDotManager.display()
-    elif sel_list[0].knob('child'):
+
+    elif sel_list[0].knob('parent') or sel_list[-1].knob('parent') and len([s for s in sel_list if s.Class() == "Dot"])>1:
+        if sel_list[0].knob('parent'):
+            parent = sel_list.pop(0)
+        else:
+            parent = sel_list.pop()
+        for node in sel_list:
+            if node.Class() == "Dot" and not node.knob("parent"):
+                DDot.connect(parent, node)
+
+    elif max([s.knob('child') for s in sel_list]):
         DDot.auto_connect()
     else:
         for node in sel_list:
+            if node.knob("child"):
+                continue
+            if node.Class() in ["Viewer"]:
+                continue
             DDot.unselect_all()
             node.setSelected(True)
             DDot.parent()

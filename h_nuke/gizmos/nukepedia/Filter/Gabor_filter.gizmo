@@ -1,4 +1,5 @@
 Group {
+ name GaborFilter
  tile_color 0xe0e0eff
  addUserKnob {20 User}
  addUserKnob {26 text_1 l " " T "Gabor Kernel Controls\n"}

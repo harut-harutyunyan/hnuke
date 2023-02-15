@@ -10,7 +10,7 @@
 node = nuke.selectedNode()
 if not node.knob("contrast"):
     node.resetKnobsToDefault()
-    knob = nuke.Tab_Knob("contrast", "Contrast")
+    knob = nuke.Tab_Knob("cont_tab", "Contrast")
     node.addKnob(knob)
     knob = nuke.Double_Knob("contrast", "contrast")
     knob.setRange(.001, 3)

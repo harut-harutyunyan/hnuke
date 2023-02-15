@@ -6,7 +6,6 @@ import W_smartAlign
 import W_hotbox, W_hotboxManager
 import dDot
 import gizmo_loader
-import W_smartAlign
 
 
 ## commands

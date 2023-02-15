@@ -26,5 +26,5 @@ if not node.knob("lm"):
     node["expr1"].setValue("lm==1?mono+g:g")
     node["expr2"].setValue("lm==1?mono+desp:desp")
     node["expr3"].setValue("g-(r+b)*limit/2")
-    node["tile_color"].setValue(6291711)
+    node["tile_color"].setValue(745727)
     node.setName("despill_blue")
