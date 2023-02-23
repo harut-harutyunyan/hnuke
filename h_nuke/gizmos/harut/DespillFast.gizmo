@@ -1,5 +1,5 @@
 Group {
- name HH_DespillFast
+ name DespillFast
  lock_connections true
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"custom_despill\":\n    val = k.getValue()==0\n    n\[\"screen_color\"].setVisible(val)\n    n\[\"desp_bias\"].setVisible(val)\n    n\[\"desp_gain\"].setVisible(val)\n    n\[\"sc\"].setVisible(val)\n    n.begin()\n    dep_in = nuke.toNode(\"despilled\")\n    if not val and not dep_in:\n        inpt = nuke.nodes.Input(name=\"despilled\")\n        inpt.setXYpos(87, 140)\n        nuke.toNode(\"despill\").setInput(1, inpt)\n    elif val and dep_in:\n        nuke.delete(dep_in)\n    n.end()\nif k.name() == \"mode\":\n    val = k.getValue()\n    n\[\"grade_gain\"].setVisible(val==0)\n    n\[\"grade_mult\"].setVisible(val==0)\n    n\[\"color_pick\"].setVisible(val==1)\n    n\[\"edge_extend\"].setVisible(val==2)\n    n\[\"clip_black\"].setVisible(val==2)\n    n\[\"clip_white\"].setVisible(val==2)\n    n\[\"divv\"].setVisible(val==2)\n"
  tile_color 0x8535d5ff

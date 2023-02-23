@@ -23,6 +23,7 @@ if "QS_ROOT_PATH" in os.environ:
     quick_share.QuickShare.set_host(os.getenv("QS_HOST_NAME"))
     menubar = nuke.menu ('Nuke')
     menubar.addCommand ('Edit/hscripts/Quick Share',  'quick_share.QuickShare.quick_share()', 'Ctrl+Alt+C')
+    menubar.addCommand ('Edit/hscripts/Quick Share Manager',  'quick_share.QuickShareManager().display()')
 
 #___________________________________________________________________________________________________________________
 

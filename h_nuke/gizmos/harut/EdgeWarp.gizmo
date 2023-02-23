@@ -1,5 +1,5 @@
 Group {
- name HH_EdgeWarp
+ name EdgeWarp
  lock_connections true
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name()==\"premult\":\n    val = k.value()\n    n\[\"preserve_alpha\"].setValue(val)\n    n\[\"preserve_alpha\"].setEnabled(val==0)\n"
  tile_color 0x8535d5ff

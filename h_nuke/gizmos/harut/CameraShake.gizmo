@@ -1,5 +1,5 @@
 Group {
- name HH_CameraShake
+ name CameraShake
  tile_color 0x8535d5ff
  lock_connections true
  addUserKnob {20 camera_shake l "Camera Shake"}

@@ -1,5 +1,5 @@
 Group {
- name HH_IBKHelper
+ name IBKHelper
  lock_connections true
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"inputChange\":\n    n.begin()\n    in2 = nuke.toNode(\"additional_matte\")\n    n.end()\n    if n.input(1):\n        n.setInput(2, None)\n        if in2:\n            nuke.delete(in2)\n        \[n\[i].setVisible(False) for i in n.knobs() if i.startswith(\"ibk_\")]\n    else:\n        if in2 == None:\n            n.begin()\n            inpt = nuke.createNode(\"Input\", inpanel=False)\n            inpt.setName(\"additional_matte\")\n            inpt.setXYpos(-920, -7)\n            nuke.toNode(\"Expression11\").setInput(0, inpt)\n            n.end()\n        \[n\[i].setVisible(True) for i in n.knobs() if i.startswith(\"ibk_\")]\n"
  tile_color 0x8535d5ff

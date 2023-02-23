@@ -1,5 +1,5 @@
 Group {
- name HH_ScreenDilate
+ name ScreenDilate
  tile_color 0x8535d5ff
  lock_connections true
  addUserKnob {20 Dilate l "Screen Dilate"}

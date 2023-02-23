@@ -1,5 +1,5 @@
 Group {
- name HH_Additive
+ name Additive
  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"nocp\":\n    val = k.value()\n    n\[\"screencolor\"].setVisible(val==1)\n    n.begin()\n    ref = nuke.toNode(\"ref\")\n    if val==1:\n        if ref:\n            nuke.delete(ref)\n    else:\n        if ref == None:\n            inpt = nuke.createNode(\"Input\", inpanel=False)\n            inpt.setName(\"ref\")\n            inpt.setXYpos(454, -92)\n            nuke.toNode(\"Switch3\").setInput(0, inpt)\n    n.end()\nif k.name() == \"mode\":\n    val = k.getValue()\n    if val == 0:\n        n\[\"setup\"].setValue(0)\n    n\[\"e\"].setVisible(val==1)\n    n\[\"setup\"].setVisible(val==1)\n    n\[\"t\"].setVisible(val==1)\n    n\[\"setupcolor\"].setVisible(val==1)\n"
  tile_color 0x8535d5ff
  lock_connections true

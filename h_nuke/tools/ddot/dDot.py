@@ -147,6 +147,9 @@ class DDot(object):
             nuke.message('No parent name given.')
             return False
 
+        parentName = parentName.replace(" ", "_")
+        parentName = "".join(l for l in parentName if l.isalnum() or l == "_")
+
         if selected.Class() == 'Dot' and selected.knob('child'):
             nuke.message("Error:It's a child.")
             return False
@@ -448,7 +451,11 @@ class DDotManager(QtWidgets.QDialog):
             parent_item = QtWidgets.QListWidgetItem()
             parent_item.setSizeHint(QtCore.QSize(ICON_SIZE, ICON_SIZE))
             parent_item.setData(QtCore.Qt.UserRole, parent.name())
-            klass = parent.input(0).Class()
+            klass = parent.input(0)
+            if klass:
+                klass = klass.Class()
+            else:
+                klass = "Dot"
             custom_item = NodeShape(parent.name(), color=get_tile_color(parent, mode="rgb"), circle=klass in self.nodes_3d)
             self.shortcuts_list.addItem(parent_item)
             self.shortcuts_list.setItemWidget(parent_item, custom_item)
@@ -584,6 +591,28 @@ class NodeShape(QtWidgets.QWidget):
         return super(NodeShape, self).enterEvent(event)
 
 
+class DotToParent(nukescripts.PythonPanel):
+    def __init__(self):
+        super(DotToParent, self).__init__('Dot >> Parent')
+        self.setMinimumSize(300, 50)
+        self.parent_name = nuke.Enumeration_Knob("parent", "parent: ", [n.name() for n in DDot.get_parent_nodes()] + ["_MAKE_PARENT_"])
+        self.addKnob(self.parent_name)
+
+def dot_to_parent(sel_list):
+    panel = DotToParent()
+    if panel.showModalDialog():
+        parent_name = panel.parent_name.value()
+        if parent_name == "_MAKE_PARENT_":
+            for node in sel_list:
+                DDot.unselect_all()
+                node.setSelected(True)
+                DDot.parent()
+        else:
+            parent = nuke.toNode(parent_name)
+            for node in sel_list:
+                DDot.connect(parent, node)
+
+
 def ddot_start():
     sel_list = nuke.selectedNodes()
 
@@ -599,6 +628,9 @@ def ddot_start():
         for node in sel_list:
             if node.Class() == "Dot" and not node.knob("parent"):
                 DDot.connect(parent, node)
+
+    elif min([s.Class()=="Dot" for s in sel_list]) and max([s.knob('child') for s in sel_list])==None and max([s.knob('parent') for s in sel_list])==None:
+        dot_to_parent(sel_list)
 
     elif max([s.knob('child') for s in sel_list]):
         DDot.auto_connect()
