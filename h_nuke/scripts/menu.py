@@ -6,6 +6,7 @@ import W_smartAlign
 import W_hotbox, W_hotboxManager
 import dDot
 import gizmo_loader
+import tracker_to_node
 
 
 ## commands
@@ -13,6 +14,10 @@ import gizmo_loader
 # close open property panels
 menu = nuke.menu("Nuke")
 menu.addCommand('Edit/hscripts/ClosePanels', lambda: [node.hideControlPanel() for node in nuke.allNodes(recurseGroups=True)], 'shift+C')
+
+# tab menu scripts
+toolbar = nuke.toolbar("Nodes")
+toolbar.addCommand("nukepedia/scripts/TrackerToRoto", "tracker_to_node.main()")
 
 # setup QUICK SHARE
 if "QS_ROOT_PATH" in os.environ:

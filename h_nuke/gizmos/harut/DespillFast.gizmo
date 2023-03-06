@@ -1,38 +1,41 @@
 Group {
  name DespillFast
- lock_connections true
- knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"custom_despill\":\n    val = k.getValue()==0\n    n\[\"screen_color\"].setVisible(val)\n    n\[\"desp_bias\"].setVisible(val)\n    n\[\"desp_gain\"].setVisible(val)\n    n\[\"sc\"].setVisible(val)\n    n.begin()\n    dep_in = nuke.toNode(\"despilled\")\n    if not val and not dep_in:\n        inpt = nuke.nodes.Input(name=\"despilled\")\n        inpt.setXYpos(87, 140)\n        nuke.toNode(\"despill\").setInput(1, inpt)\n    elif val and dep_in:\n        nuke.delete(dep_in)\n    n.end()\nif k.name() == \"mode\":\n    val = k.getValue()\n    n\[\"grade_gain\"].setVisible(val==0)\n    n\[\"grade_mult\"].setVisible(val==0)\n    n\[\"color_pick\"].setVisible(val==1)\n    n\[\"edge_extend\"].setVisible(val==2)\n    n\[\"clip_black\"].setVisible(val==2)\n    n\[\"clip_white\"].setVisible(val==2)\n    n\[\"divv\"].setVisible(val==2)\n"
+ knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"mode\":\n    val = k.getValue()\n    n\[\"grade_gain\"].setVisible(val==0)\n    n\[\"grade_mult\"].setVisible(val==0)\n    n\[\"color_pick\"].setVisible(val==1)\n    n\[\"edge_extend\"].setVisible(val==2)\n    n\[\"edge\"].setVisible(val==2)\n    n.begin()\n    cstm = nuke.toNode(\"spill_area\")\n    if val==3 and not cstm:\n        inpt = nuke.nodes.Input(name=\"spill_area\")\n        inpt.setXYpos(1218, 282)\n        nuke.toNode(\"Switch2\").setInput(2, inpt)\n    elif val!=3 and cstm:\n        n.setInput(1, None)\n        nuke.delete(cstm)\n    nuke.setInput()\n    n.end()\n"
  tile_color 0x8535d5ff
+ lock_connections true
  addUserKnob {20 DespillFast l "Despill Fast"}
  addUserKnob {18 screen_color l "screen color"}
  screen_color {0 1 0}
  addUserKnob {6 screen_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
  addUserKnob {18 desp_bias l "despill bias"}
  desp_bias {0.5 0.5 0.5}
  addUserKnob {6 desp_bias_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
- addUserKnob {7 desp_gain l "despill gain"}
- desp_gain 1
+ addUserKnob {20 Tuning n 2}
+ addUserKnob {41 midPoint l "Mid Tones At" T Keylight1.midPoint}
+ addUserKnob {41 lowGain l "Shadow Gain" T Keylight1.lowGain}
+ addUserKnob {41 midGain l "Midtones Gain" T Keylight1.midGain}
+ addUserKnob {41 highGain l "Highlights Gain" T Keylight1.highGain}
+ addUserKnob {20 "" n -1}
  addUserKnob {26 sc l "" +STARTLINE}
- addUserKnob {6 custom_despill l "use custom despill" t "use custom despill. be sure to disable luminance matching" +STARTLINE}
+ addUserKnob {41 mode_1 l "spill matte math" T Saturation1.mode}
  addUserKnob {6 spill_matte l "spill matte in alpha" -STARTLINE}
  addUserKnob {26 ""}
- addUserKnob {4 mode l "spill area" M {grade "color pick" "edge extend" "" ""}}
- addUserKnob {18 grade_gain l gain}
+ addUserKnob {4 mode l "spill area" M {grade "color pick" "edge extend" custom none}}
+ mode "color pick"
+ addUserKnob {18 grade_gain l gain +HIDDEN}
  grade_gain 1
  addUserKnob {6 grade_gain_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
- addUserKnob {18 grade_mult l multiply}
+ addUserKnob {18 grade_mult l multiply +HIDDEN}
  grade_mult 1
  addUserKnob {6 grade_mult_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {6 _1_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
- addUserKnob {18 color_pick l pick +HIDDEN}
+ addUserKnob {18 color_pick l pick}
  color_pick {0.2 0.2 0.2}
  addUserKnob {6 color_pick_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {7 edge_extend l "edge extend" +HIDDEN R 5 50}
  edge_extend 10
- addUserKnob {26 divv l "" +STARTLINE +HIDDEN}
- addUserKnob {7 clip_black l "clip black" +HIDDEN}
- addUserKnob {7 clip_white l "clip white" +HIDDEN}
- clip_white 1
+ addUserKnob {7 edge +HIDDEN R -5 5}
  addUserKnob {26 ""}
  addUserKnob {41 mix T masking.mix}
  addUserKnob {26 ""}
@@ -49,50 +52,27 @@ Group {
   xpos 241
   ypos 2
  }
-set Ncc27dc00 [stack 0]
- Dot {
-  name Dot10
-  xpos 35
-  ypos 2
- }
- Dot {
-  name Dot11
-  xpos 35
-  ypos 514
- }
-set Ncc27d400 [stack 0]
- Dot {
-  name Dot14
-  xpos 35
-  ypos 618
- }
-set N3be71400 [stack 0]
- Dot {
-  name Dot12
-  xpos 35
-  ypos 674
- }
-push $Ncc27dc00
+set N1dc1e040 [stack 0]
  Dot {
   name Dot2
   xpos 427
   ypos 2
  }
-set Ncef9a400 [stack 0]
-push $Ncc27dc00
+set N2d7c89a0 [stack 0]
+push $N1dc1e040
  OFXuk.co.thefoundry.keylight.keylight_v201 {
   show "Final Result"
   unPreMultiply false
   screenColour {{parent.screen_color x1 0} {parent.screen_color x1 1} {parent.screen_color x1 0}}
-  screenGain {{parent.desp_gain}}
+  screenGain 1
   screenBalance 0.5
   alphaBias {{parent.desp_bias x1 0.5} {parent.desp_bias x1 0.5} {parent.desp_bias x1 0.5}}
   despillBias {0.5 0.5 0.5}
   gangBiases true
   preBlur 0
   "Screen Matte" 1
-  screenClipMin {{parent.clip_black}}
-  screenClipMax {{parent.clip_white}}
+  screenClipMin 0
+  screenClipMax 1
   screenClipRollback 0
   screenGrowShrink 0
   screenSoftness 0
@@ -100,7 +80,7 @@ push $Ncc27dc00
   screenDespotWhite 0
   screenReplaceMethod "Soft Colour"
   screenReplaceColour {0.5 0.5 0.5}
-  Tuning 0
+  Tuning 1
   midPoint 0.5
   lowGain 1
   midGain 1
@@ -125,14 +105,14 @@ push $Ncc27dc00
   xpos 207
   ypos 58
  }
-set Ncc27c400 [stack 0]
+set N20c02b40 [stack 0]
  Switch {
   which {{custom_despill}}
   name despill
   xpos 207
   ypos 140
  }
-set Ncef37c00 [stack 0]
+set N13b00c00 [stack 0]
  Merge2 {
   inputs 2
   operation minus
@@ -146,7 +126,7 @@ set Ncef37c00 [stack 0]
   xpos 393
   ypos 187
  }
-set Ndd4e6400 [stack 0]
+set N1e822dc0 [stack 0]
  Dot {
   name Dot9
   xpos 335
@@ -157,14 +137,25 @@ set Ndd4e6400 [stack 0]
   xpos 335
   ypos 569
  }
-push $Ncc27d400
+push $N1dc1e040
+ Dot {
+  name Dot10
+  xpos 35
+  ypos 2
+ }
+ Dot {
+  name Dot11
+  xpos 35
+  ypos 514
+ }
+set N11d05a30 [stack 0]
  Expression {
   expr3 a
   name Expression1
   xpos 86
   ypos 511
  }
-push $Ncc27c400
+push $N20c02b40
  Dot {
   name Dot7
   xpos 1101
@@ -177,31 +168,45 @@ push $Ncc27c400
   white_clamp true
   name Grade2
   xpos 1067
-  ypos 123
+  ypos 89
+ }
+ Dilate {
+  channels alpha
+  size {{edge}}
+  name Dilate1
+  xpos 1067
+  ypos 135
  }
  Premult {
   name Premult1
   xpos 1067
-  ypos 159
+  ypos 177
  }
  Blur {
   channels rgba
   size {{parent.edge_extend}}
   name Blur1
   xpos 1067
-  ypos 183
+  ypos 201
  }
  Unpremult {
   name Unpremult1
   xpos 1067
-  ypos 207
+  ypos 230
+ }
+ Blur {
+  channels rgba
+  size {{parent.edge_extend/2}}
+  name Blur4
+  xpos 1067
+  ypos 256
  }
  Dot {
   name Dot8
   xpos 1101
-  ypos 297
+  ypos 298
  }
-push $Ncef9a400
+push $N2d7c89a0
  Dot {
   name Dot5
   xpos 735
@@ -216,11 +221,11 @@ push $Ncef9a400
   xpos 701
   ypos 88
  }
-set Ncef99c00 [stack 0]
+set N1dd20890 [stack 0]
  Dot {
   name Dot6
   xpos 883
-  ypos 91
+  ypos 98
  }
  Add {
   channels rgb
@@ -236,7 +241,7 @@ set Ncef99c00 [stack 0]
   xpos 849
   ypos 294
  }
-push $Ncef99c00
+push $N1dd20890
  Add {
   channels rgb
   value {{parent.screen_color} {parent.screen_color} {parent.screen_color} 0}
@@ -257,13 +262,13 @@ push $Ncef99c00
   xpos 701
   ypos 294
  }
-push $Ndd4e6400
+push $N1e822dc0
  Dot {
   name Dot4
   xpos 427
   ypos 235
  }
-set Ncef37000 [stack 0]
+set N3653b4c0 [stack 0]
  Dot {
   name Dot3
   xpos 572
@@ -276,7 +281,7 @@ set Ncef37000 [stack 0]
   xpos 538
   ypos 294
  }
-push $Ncef37000
+push $N3653b4c0
  Grade {
   white {{parent.grade_gain} {parent.grade_gain} {parent.grade_gain} {parent.grade_gain}}
   multiply {{parent.grade_mult} {parent.grade_mult} {parent.grade_mult} {parent.grade_mult}}
@@ -291,13 +296,14 @@ push $Ncef37000
   xpos 538
   ypos 447
  }
-push $Ncef37c00
+push $N13b00c00
  Merge2 {
   inputs 2
   operation plus
   name Merge2
   xpos 207
   ypos 447
+  disable {{mode==4}}
  }
  Copy {
   inputs 2
@@ -312,12 +318,16 @@ push $Ncef37c00
   from0 rgba.red
   to0 rgba.alpha
   name Copy2
-  selected true
   xpos 207
   ypos 560
   disable {{1-parent.spill_matte}}
  }
-push $N3be71400
+push $N11d05a30
+ Dot {
+  name Dot14
+  xpos 35
+  ypos 618
+ }
  Merge2 {
   inputs 2
   operation copy
@@ -325,13 +335,6 @@ push $N3be71400
   name masking
   xpos 207
   ypos 615
- }
- Switch {
-  inputs 2
-  which {{"\[exists parent.input1] == !parent.custom_despill"}}
-  name Switch3
-  xpos 207
-  ypos 671
  }
  Output {
   name Output1
