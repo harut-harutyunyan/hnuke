@@ -1,0 +1,25 @@
+set cut_paste_input [stack 0]
+version 13.2 v5
+push $cut_paste_input
+Group {
+ name LightMixer
+ selected true
+ xpos 3130
+ ypos -310
+ addUserKnob {20 LightMixer l "Light Mixer"}
+ addUserKnob {22 add_aov l + -STARTLINE T "node = nuke.thisNode()\n\nclass ChooseAov(nukescripts.PythonPanel):\n    def __init__(self):\n        super(ChooseAov, self).__init__('Select AOV')\n        self.setMinimumSize(300, 50)\n        self.aov_name = nuke.Enumeration_Knob(\"aov_name\", \"AOV Name: \", sorted(list(set(\[c.split(\".\")\[0] for c in node.channels()]))))\n        self.addKnob(self.aov_name)\n\npanel = ChooseAov()\nif panel.showModalDialog():\n    aov_name = panel.aov_name.value()\n    if not node.knob(aov_name+\"_tex\"):\n        node.removeKnob(node.knob(\"credit\"))\n        node.addKnob(nuke.Text_Knob(aov_name+\"_tex\", \"\",  '<font size=4 color=\"orange\">\{\}</font>\\n'.format(aov_name)))\n        \n        knob = nuke.Boolean_Knob(aov_name + \"_solo\", \"<font color=\\\"green\\\"><b>\[S]</b></font>\")\n        node.addKnob(knob)\n        knob.setFlag(nuke.STARTLINE)\n        \n        knob = nuke.Boolean_Knob (aov_name + \"_mute\", \"<font color=\\\"red\\\"><b>\[M]</b></font>\")\n        node.addKnob(knob)\n        knob.clearFlag(nuke.STARTLINE)\n        \n        knob_script = \"\"\"\nnode = nuke.thisNode()\nknob = nuke.thisKnob()\n\nnn = knob.name().rsplit(\"_\", 1)\[0]\n\nnode.removeKnob(node\[\"\{\}_tex\".format(nn)])\nnode.removeKnob(node\[\"\{\}_solo\".format(nn)])\nnode.removeKnob(node\[\"\{\}_mute\".format(nn)])\nnode.removeKnob(node\[\"\{\}_del\".format(nn)])\nnode.removeKnob(node\[\"\{\}_col\".format(nn)])\nnode.removeKnob(node\[\"\{\}_intens\".format(nn)])\nnode.removeKnob(node\[\"\{\}_expo\".format(nn)])\nnode.removeKnob(node\[\"\{\}_div\".format(nn)])\n        \"\"\"\n        \n        knob = nuke.PyScript_Knob(aov_name + \"_del\", \"X\", knob_script)\n        node.addKnob(knob)\n        knob.clearFlag(nuke.STARTLINE)\n        \n        knob = nuke.Color_Knob(aov_name + \"_col\", \"Color\")\n        knob.setValue(1)\n        knob.setSingleValue(False)\n        node.addKnob(knob)\n        \n        knob = nuke.Double_Knob(aov_name + \"_intens\", \"Intensity\")\n        knob.setValue(1)\n        knob.setRange(0, 5)\n        node.addKnob(knob)\n        \n        knob = nuke.Double_Knob(aov_name + \"_expo\", \"Exposure\")\n        knob.setValue(0)\n        knob.setRange(-5, 5)\n        node.addKnob(knob)\n        \n        knob = nuke.Text_Knob(aov_name + \"_div\", \"\")\n        node.addKnob(knob)\n\n        knob = nuke.Text_Knob(\"credit\",\"\", \"<font style=\\\"color:#666\\\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>\")\n        node.addKnob(knob)"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -2506
+ }
+ Output {
+  name Output1
+  xpos -40
+  ypos -2197
+ }
+end_group

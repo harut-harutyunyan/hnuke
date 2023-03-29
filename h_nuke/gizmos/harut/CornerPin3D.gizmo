@@ -1,16 +1,16 @@
 Group {
  name CornerPin3D
- lock_connections true
  knobChanged "\n\nn = nuke.thisNode()\nk = nuke.thisKnob()\nif k.name() == \"only_p\":\n    n\[\"in_1\"].setEnabled(k.value()==0)\nif k.name() == \"pt\":\n    n.begin()\n    nuke.toNode(\"Wireframe1\")\[\"line_color\"].setValue(\[1,0,0, 1])\n    n.end()\nif k.name() == \"mode\":\n    val = k.getValue() == 1\n    n\[\"pt\"].setVisible(not val)\n    n\[\"set_pt\"].setVisible(not val)\n    n\[\"offset\"].setVisible(not val)\n    n\[\"rotate\"].setVisible(not val)\n    n\[\"scale\"].setVisible(not val)\n    n\[\"uniform\"].setVisible(not val)\n    n\[\"skew\"].setVisible(not val)\n\n    n\[\"pt1\"].setVisible(val)\n    n\[\"pt2\"].setVisible(val)\n    n\[\"pt3\"].setVisible(val)\n    n\[\"pt4\"].setVisible(val)\n"
  tile_color 0x8535d5ff
+ lock_connections true
  addUserKnob {20 CornerPin3D}
- addUserKnob {41 in l "position data" T P.in}
- addUserKnob {41 in_1 l "normal data" T N.in}
+ addUserKnob {41 in l "position data" T src_P.in}
+ addUserKnob {41 in_1 l "normal data" T src_N.in}
  addUserKnob {6 only_p l "position only" +STARTLINE}
  addUserKnob {26 ""}
  addUserKnob {4 mode M {Planar Points}}
- addUserKnob {22 export -STARTLINE T "import math\nimport _nukemath\n\ndef cameraProjectionMatrixAt(cameraNode, frame):\n\n    wm = cameraNode\[\"world_matrix\"].getValueAt(frame)\n    camTransform = _nukemath.Matrix4()\n    tt = \[wm\[0], wm\[4], wm\[8], wm\[12],\n          wm\[1], wm\[5], wm\[9], wm\[13],\n          wm\[2], wm\[6], wm\[10], wm\[14],\n          wm\[3], wm\[7], wm\[11], wm\[15],\n    ]\n    for i in range(len(tt)):\n        camTransform\[i] = tt\[i]\n    camTransform = camTransform.inverse()\n\n    roll = float(cameraNode\['winroll'].getValueAt(frame))\n    scale_x, scale_y = \[float(v) for v in cameraNode\['win_scale'].getValueAt(frame)]\n    translate_x, translate_y = \[float(v) for v in cameraNode\['win_translate'].getValueAt(frame)]\n    m = _nukemath.Matrix4()\n    m.makeIdentity()\n    m.rotateZ(math.radians(roll))\n    m.scale(1.0 / scale_x, 1.0 / scale_y, 1.0)\n    m.translate(-translate_x, -translate_y, 0.0)\n\n    focal_length = float(cameraNode\['focal'].getValueAt(frame))\n    h_aperture = float(cameraNode\['haperture'].getValueAt(frame))\n    near = float(cameraNode\['near'].getValueAt(frame))\n    far = float(cameraNode\['far'].getValueAt(frame))\n    projection_mode = int(cameraNode\['projection_mode'].getValueAt(frame))\n    p = _nukemath.Matrix4()\n    p.projection(focal_length / h_aperture, near, far, projection_mode == 0)\n\n    format = nuke.root()\['format'].value()\n    imageAspect = float(format.height()) / float(format.width())\n    t = _nukemath.Matrix4()\n    t.makeIdentity()\n    t.translate( 1.0, 1.0 - (1.0 - imageAspect / float(format.pixelAspect())), 0.0 )\n\n    x_scale = float(format.width()) / 2.0\n    y_scale = x_scale * format.pixelAspect()\n    s = _nukemath.Matrix4()\n    s.makeIdentity()\n    s.scale(x_scale, y_scale, 1.0)\n\n    return s * t * p * m * camTransform\n\ndef projectPointAt(camera=None, point=None, frame=None):\n\n    camNode = None\n    if isinstance(camera, nuke.Node):\n        camNode = camera\n    elif isinstance(camera, str):\n        camNode = nuke.toNode(camera)\n    else:\n        raise ValueError(\"Argument camera must be a node or the name of a node.\")\n\n    camMatrix = cameraProjectionMatrixAt(camNode, frame)\n    if camMatrix == None:\n        raise RuntimeError(\"snap3d.cameraProjectionMatrix() returned None for camera.\")\n\n    if isinstance(point, nuke.math.Vector3):\n        pt = point\n    elif isinstance(point, list) or isinstance(point, tuple):\n        pt = nuke.math.Vector3(point\[0], point\[1], point\[2])\n    else:\n        raise ValueError(\"All items in point must be nuke.math.Vector3 or list/tuple of 3 floats.\")\n\n    tPos = camMatrix * nuke.math.Vector4(pt.x, pt.y, pt.z, 1.0)\n    return nuke.math.Vector2(tPos.x / tPos.w, tPos.y / tPos.w)\n\ndef sample(node, pos):\n    return \[nuke.sample(node, \"r\", pos\[0], pos\[1]), nuke.sample(node, \"g\", pos\[0], pos\[1]), nuke.sample(node, \"b\", pos\[0], pos\[1])]\n\ndef calc_conrner_pos(card):\n    geo_knob = card\['geo_select']\n    obj = geo_knob.getGeometry()\[0]\n    obj_transform = obj.transform()\n    corners = \[]\n    pts = obj.points()\n    i = 0\n    for p in pts:\n        if i in \[0, 4, 20, 24]:\n            world_p = obj_transform*nuke.math.Vector4(p.x, p.y, p.z, 1)\n            corners.append(\[world_p.x, world_p.y, world_p.z])\n        i += 1\n    return corners\n\nknob_names = \{\"match-move\": \"to\", \"stabilize\": \"from\", \"track\": \"to\",\}\np = nuke.Panel('export corner pin')\nstart = nuke.root()\[\"first_frame\"].getValue()\nend = nuke.root()\[\"last_frame\"].getValue()\np.addSingleLineInput('FrameRange', '\{\}-\{\}'.format(int(start), int(end)))\np.addEnumerationPulldown('Export', 'match-move stabilize track')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_mode = p.value('Export')\nif export_mode:\n    frames = p.value(\"FrameRange\").split(\"-\")\n    if len(frames)==1:\n        start_f = frames\[0]\n        end_f = start_f\n    elif len(frames)==2:\n        start_f, end_f = frames\n    else:\n        start_f = start\n        end_f = end\n\n    node = nuke.thisNode()\n    mode = node\[\"mode\"].getValue()\n\n    node.begin()\n    cam = nuke.toNode(\"DummyCam\")\n    card = nuke.toNode(\"xform_geo\")\n    xform_axis = nuke.toNode(\"xform\")\n    ppos = nuke.toNode(\"P\")\n    node.end()\n\n    if mode == 0:\n        corners = calc_conrner_pos(card)\n    elif mode == 1:\n        corners = \[]\n        for i in range(1, 5):\n            point = node\[\"pt\{\}\".format(i)]\n            corners.append(sample(ppos, point.getValue()))\n\n    cp = nuke.createNode(\"CornerPin2D\")\n\n    track_script = \"\"\"\nn = nuke.thisNode()\ncard = nuke.nodes.Card2()\ncard.setXYpos(n.xpos()+500, n.ypos())\nxform = nuke.nodes.TransformGeo(name = \"xform\")\nxform.setXYpos(card.xpos(), card.ypos()+100)\nxform\[\"translate\"].setValue(\{0\})\nxform\[\"rotate\"].setValue(\{1\})\nxform\[\"scaling\"].setValue(\{2\})\nxform\[\"uniform_scale\"].setValue(\{3\})\nxform\[\"skew\"].setValue(\{4\})\n\naxis = nuke.nodes.Axis()\naxis.setXYpos(xform.xpos()-100, xform.ypos()-20)\naxis\[\"useMatrix\"].setValue(True)\naxis\[\"matrix\"].setValue(\{5\})\nxform.setInput(0, card)\nxform.setInput(1, axis)\nsr = nuke.nodes.ScanlineRender()\nsr.setXYpos(xform.xpos(), xform.ypos()+100)\ndot = nuke.nodes.Dot(label=\"cam\", note_font_size=25)\ndot.setXYpos(sr.xpos()-100, sr.ypos()+5)\nsr.setInput(0, dot)\nsr.setInput(1, xform)\n\"\"\".format(str(node\[\"offset\"].getValue()), str(node\[\"rotate\"].getValue()), str(node\[\"scale\"].getValue()), node\[\"uniform\"].getValue(), str(node\[\"skew\"].getValue()), str(xform_axis\[\"world_matrix\"].getValue()))\n\n    mm_script = track_script + \"\"\"\nprj = nuke.nodes.Project3D2()\nfr = nuke.nodes.FrameHold()\ndot = nuke.nodes.Dot(label=\"cam\", note_font_size=25)\nfr.setInput(0, dot)\ncard.setInput(0, prj)\nprj.setInput(1, fr)\nprj.setXYpos(card.xpos(), card.ypos()-100)\nfr.setXYpos(prj.xpos()-100, prj.ypos())\ndot.setXYpos(fr.xpos(), fr.ypos()-35)\nfr\[\"first_frame\"].setValue(int(n\[\"refframe\"].getValue()))\n\"\"\"\n\n    cp\[\"tile_color\"].setValue(3036654335)\n    if export_mode == \"match-move\":\n        cp\[\"label\"].setValue(\"<center><b>CornerPin3D Export\\nmethod: \{\}\\nref frame: \[value refframe]</b>\".format(export_mode))\n        knob = nuke.Tab_Knob(\"control\", \"Control\")\n        cp.addKnob(knob)\n        knob = nuke.Int_Knob(\"refframe\", \"ref frame: \")\n        knob.setValue(int(nuke.frame()))\n        cp.addKnob(knob)\n        script = \"nuke.thisNode()\[\\\"refframe\\\"].setValue(int(nuke.frame()))\"\n        knob = nuke.PyScript_Knob(\"set_ref\", \"set current\", script)\n        cp.addKnob(knob)\n        knob = nuke.PyScript_Knob(\"make3d\", \"build 3d system\", mm_script)\n        knob.setFlag(nuke.STARTLINE)\n        cp.addKnob(knob)\n    elif export_mode == \"stabilize\":\n        cp\[\"label\"].setValue(\"<center><b>CornerPin3D Export\\nmethod: \{\}</b>\".format(export_mode))\n    elif export_mode == \"track\":\n        cp\[\"from2\"].setExpression(\"\[exists input] ? input.width : width\", 0)\n        cp\[\"from3\"].setExpression(\"\[exists input] ? input.width : width\", 0)\n        cp\[\"from3\"].setExpression(\"\[exists input] ? input.height : height\", 1)\n        cp\[\"from4\"].setExpression(\"\[exists input] ? input.height : height\", 1)\n        knob = nuke.PyScript_Knob(\"make3d\", \"build 3d system\", track_script)\n        cp.addKnob(knob)\n        cp\[\"label\"].setValue(\"<center><b>CornerPin3D Export\\nmethod: \{\}</b>\".format(export_mode))\n\n    cp.setInput(0, None)\n    cp.setXYpos(node.xpos()+100, node.ypos()+100)\n    crop = nuke.createNode(\"Crop\", inpanel=False)\n    crop.setInput(0, cp)\n    crop.setXYpos(cp.xpos(), cp.ypos()+100)\n    crop\[\"tile_color\"].setValue(3036654335)\n    knob_name = knob_names\[export_mode]\n    for i, pt in enumerate(corners):\n        if mode == 0:\n            if i == 2:\n                index = 3\n            elif i == 3:\n                index = 2\n            else:\n                index = i\n        else:\n            index = i\n        knob = cp\[\"\{\}\{\}\".format(knob_name, index+1)]\n        knob.setAnimated()\n        if export_mode == \"match-move\":\n            cp\[\"from\{\}\".format(index+1)].setExpression(\"\{\}(refframe)\".format(knob.name()))\n        for f in range(int(start_f), int(end_f)+1):\n            pos = projectPointAt(cam, pt, f)\n            knob.setValueAt(pos\[0], f, 0)\n            knob.setValueAt(pos\[1], f, 1)\n"}
-addUserKnob {26 ""}
+ addUserKnob {22 export -STARTLINE T "import math\nimport _nukemath\n\ndef cameraProjectionMatrixAt(cameraNode, frame):\n\n    wm = cameraNode\[\"world_matrix\"].getValueAt(frame)\n    camTransform = _nukemath.Matrix4()\n    tt = \[wm\[0], wm\[4], wm\[8], wm\[12],\n          wm\[1], wm\[5], wm\[9], wm\[13],\n          wm\[2], wm\[6], wm\[10], wm\[14],\n          wm\[3], wm\[7], wm\[11], wm\[15],\n    ]\n    for i in range(len(tt)):\n        camTransform\[i] = tt\[i]\n    camTransform = camTransform.inverse()\n\n    roll = float(cameraNode\['winroll'].getValueAt(frame))\n    scale_x, scale_y = \[float(v) for v in cameraNode\['win_scale'].getValueAt(frame)]\n    translate_x, translate_y = \[float(v) for v in cameraNode\['win_translate'].getValueAt(frame)]\n    m = _nukemath.Matrix4()\n    m.makeIdentity()\n    m.rotateZ(math.radians(roll))\n    m.scale(1.0 / scale_x, 1.0 / scale_y, 1.0)\n    m.translate(-translate_x, -translate_y, 0.0)\n\n    focal_length = float(cameraNode\['focal'].getValueAt(frame))\n    h_aperture = float(cameraNode\['haperture'].getValueAt(frame))\n    near = float(cameraNode\['near'].getValueAt(frame))\n    far = float(cameraNode\['far'].getValueAt(frame))\n    projection_mode = int(cameraNode\['projection_mode'].getValueAt(frame))\n    p = _nukemath.Matrix4()\n    p.projection(focal_length / h_aperture, near, far, projection_mode == 0)\n\n    format = nuke.root()\['format'].value()\n    imageAspect = float(format.height()) / float(format.width())\n    t = _nukemath.Matrix4()\n    t.makeIdentity()\n    t.translate( 1.0, 1.0 - (1.0 - imageAspect / float(format.pixelAspect())), 0.0 )\n\n    x_scale = float(format.width()) / 2.0\n    y_scale = x_scale * format.pixelAspect()\n    s = _nukemath.Matrix4()\n    s.makeIdentity()\n    s.scale(x_scale, y_scale, 1.0)\n\n    return s * t * p * m * camTransform\n\ndef projectPointAt(camera=None, point=None, frame=None):\n\n    camNode = None\n    if isinstance(camera, nuke.Node):\n        camNode = camera\n    elif isinstance(camera, str):\n        camNode = nuke.toNode(camera)\n    else:\n        raise ValueError(\"Argument camera must be a node or the name of a node.\")\n\n    camMatrix = cameraProjectionMatrixAt(camNode, frame)\n    if camMatrix == None:\n        raise RuntimeError(\"snap3d.cameraProjectionMatrix() returned None for camera.\")\n\n    if isinstance(point, nuke.math.Vector3):\n        pt = point\n    elif isinstance(point, list) or isinstance(point, tuple):\n        pt = nuke.math.Vector3(point\[0], point\[1], point\[2])\n    else:\n        raise ValueError(\"All items in point must be nuke.math.Vector3 or list/tuple of 3 floats.\")\n\n    tPos = camMatrix * nuke.math.Vector4(pt.x, pt.y, pt.z, 1.0)\n    return nuke.math.Vector2(tPos.x / tPos.w, tPos.y / tPos.w)\n\ndef sample(node, pos):\n    return \[nuke.sample(node, \"r\", pos\[0], pos\[1]), nuke.sample(node, \"g\", pos\[0], pos\[1]), nuke.sample(node, \"b\", pos\[0], pos\[1])]\n\ndef calc_conrner_pos(card):\n    geo_knob = card\['geo_select']\n    obj = geo_knob.getGeometry()\[0]\n    obj_transform = obj.transform()\n    corners = \[]\n    pts = obj.points()\n    i = 0\n    for p in pts:\n        if i in \[0, 4, 20, 24]:\n            world_p = obj_transform*nuke.math.Vector4(p.x, p.y, p.z, 1)\n            corners.append(\[world_p.x, world_p.y, world_p.z])\n        i += 1\n    return corners\n\nknob_names = \{\"match-move\": \"to\", \"stabilize\": \"from\", \"track\": \"to\",\}\np = nuke.Panel('export corner pin')\nstart = nuke.root()\[\"first_frame\"].getValue()\nend = nuke.root()\[\"last_frame\"].getValue()\np.addSingleLineInput('FrameRange', '\{\}-\{\}'.format(int(start), int(end)))\np.addEnumerationPulldown('Export', 'match-move stabilize track')\n\np.addButton('Cancel')\np.addButton('Ok')\n\np.show()\n\nexport_mode = p.value('Export')\nif export_mode:\n    frames = p.value(\"FrameRange\").split(\"-\")\n    if len(frames)==1:\n        start_f = frames\[0]\n        end_f = start_f\n    elif len(frames)==2:\n        start_f, end_f = frames\n    else:\n        start_f = start\n        end_f = end\n\n    node = nuke.thisNode()\n    mode = node\[\"mode\"].getValue()\n\n    node.begin()\n    cam = nuke.toNode(\"DummyCam\")\n    card = nuke.toNode(\"xform_geo\")\n    xform_axis = nuke.toNode(\"xform\")\n    ppos = nuke.toNode(\"P\")\n    node.end()\n\n    if mode == 0:\n        corners = calc_conrner_pos(card)\n    elif mode == 1:\n        corners = \[]\n        for i in range(1, 5):\n            point = node\[\"pt\{\}\".format(i)]\n            corners.append(sample(ppos, point.getValue()))\n\n    cp = nuke.createNode(\"CornerPin2D\")\n\n    track_script = \"\"\"\nn = nuke.thisNode()\ncard = nuke.nodes.Card2(image_aspect=False)\ncard.setXYpos(n.xpos()+500, n.ypos())\nxform = nuke.nodes.TransformGeo(name = \"xform\")\nxform.setXYpos(card.xpos(), card.ypos()+100)\nxform\[\"translate\"].setValue(\{0\})\nxform\[\"rotate\"].setValue(\{1\})\nxform\[\"scaling\"].setValue(\{2\})\nxform\[\"uniform_scale\"].setValue(\{3\})\nxform\[\"skew\"].setValue(\{4\})\n\naxis = nuke.nodes.Axis()\naxis.setXYpos(xform.xpos()-100, xform.ypos()-20)\naxis\[\"useMatrix\"].setValue(True)\naxis\[\"matrix\"].setValue(\{5\})\nxform.setInput(0, card)\nxform.setInput(1, axis)\nsr = nuke.nodes.ScanlineRender()\nsr.setXYpos(xform.xpos(), xform.ypos()+100)\ndot = nuke.nodes.Dot(label=\"cam\", note_font_size=25)\ndot.setXYpos(sr.xpos()-100, sr.ypos()+5)\nsr.setInput(2, dot)\nsr.setInput(1, xform)\n\"\"\".format(str(node\[\"offset\"].getValue()), str(node\[\"rotate\"].getValue()), str(node\[\"scale\"].getValue()), node\[\"uniform\"].getValue(), str(node\[\"skew\"].getValue()), str(xform_axis\[\"world_matrix\"].getValue()))\n\n    mm_script = track_script + \"\"\"\nprj = nuke.nodes.Project3D2()\nfr = nuke.nodes.FrameHold()\ndot = nuke.nodes.Dot(label=\"cam\", note_font_size=25)\nfr.setInput(0, dot)\ncard.setInput(0, prj)\nprj.setInput(1, fr)\nprj.setXYpos(card.xpos(), card.ypos()-100)\nfr.setXYpos(prj.xpos()-100, prj.ypos())\ndot.setXYpos(fr.xpos(), fr.ypos()-35)\nfr\[\"first_frame\"].setValue(int(n\[\"refframe\"].getValue()))\n\"\"\"\n\n    cp\[\"tile_color\"].setValue(3036654335)\n    if export_mode == \"match-move\":\n        cp\[\"label\"].setValue(\"<center><b>CornerPin3D Export\\nmethod: \{\}\\nref frame: \[value refframe]</b>\".format(export_mode))\n        knob = nuke.Tab_Knob(\"control\", \"Control\")\n        cp.addKnob(knob)\n        knob = nuke.Int_Knob(\"refframe\", \"ref frame: \")\n        knob.setValue(int(nuke.frame()))\n        cp.addKnob(knob)\n        script = \"nuke.thisNode()\[\\\"refframe\\\"].setValue(int(nuke.frame()))\"\n        knob = nuke.PyScript_Knob(\"set_ref\", \"set current\", script)\n        cp.addKnob(knob)\n        knob = nuke.PyScript_Knob(\"make3d\", \"build 3d system\", mm_script)\n        knob.setFlag(nuke.STARTLINE)\n        cp.addKnob(knob)\n    elif export_mode == \"stabilize\":\n        cp\[\"label\"].setValue(\"<center><b>CornerPin3D Export\\nmethod: \{\}</b>\".format(export_mode))\n    elif export_mode == \"track\":\n        cp\[\"from2\"].setExpression(\"\[exists input] ? input.width : width\", 0)\n        cp\[\"from3\"].setExpression(\"\[exists input] ? input.width : width\", 0)\n        cp\[\"from3\"].setExpression(\"\[exists input] ? input.height : height\", 1)\n        cp\[\"from4\"].setExpression(\"\[exists input] ? input.height : height\", 1)\n        knob = nuke.PyScript_Knob(\"make3d\", \"build 3d system\", track_script)\n        cp.addKnob(knob)\n        cp\[\"label\"].setValue(\"<center><b>CornerPin3D Export\\nmethod: \{\}</b>\".format(export_mode))\n\n    cp.setInput(0, None)\n    cp.setXYpos(node.xpos()+100, node.ypos()+100)\n    crop = nuke.createNode(\"Crop\", inpanel=False)\n    crop.setInput(0, cp)\n    crop.setXYpos(cp.xpos(), cp.ypos()+100)\n    crop\[\"tile_color\"].setValue(3036654335)\n    knob_name = knob_names\[export_mode]\n    for i, pt in enumerate(corners):\n        if mode == 0:\n            if i == 2:\n                index = 3\n            elif i == 3:\n                index = 2\n            else:\n                index = i\n        else:\n            index = i\n        knob = cp\[\"\{\}\{\}\".format(knob_name, index+1)]\n        knob.setAnimated()\n        if export_mode == \"match-move\":\n            cp\[\"from\{\}\".format(index+1)].setExpression(\"\{\}(refframe)\".format(knob.name()))\n        for f in range(int(start_f), int(end_f)+1):\n            pos = projectPointAt(cam, pt, f)\n            knob.setValueAt(pos\[0], f, 0)\n            knob.setValueAt(pos\[1], f, 1)\n"}
+ addUserKnob {26 ""}
  addUserKnob {12 pt l position}
  addUserKnob {22 set_pt l set -STARTLINE T "node = nuke.thisNode()\n\ndef sample(node, pos):\n    return \[nuke.sample(node, \"r\", pos\[0], pos\[1]), nuke.sample(node, \"g\", pos\[0], pos\[1]), nuke.sample(node, \"b\", pos\[0], pos\[1])]\n\n\npos = node\[\"pt\"].getValue()\nonly = node\[\"only_p\"].getValue()\nnode.begin()\nPP = nuke.toNode(\"P\")\nNN = nuke.toNode(\"N\")\nif only==0:\n\tnuke.toNode(\"Axis1\")\[\"translate\"].setValue(sample(NN, pos))\nelse:\n\tnuke.toNode(\"Axis1\")\[\"translate\"].setValue(\[0,0,0])\nxform = nuke.toNode(\"xform\")\np3d = sample(PP, pos)\nxform\[\"matrix\"].setValueAt(p3d\[0], 1, 3)\nxform\[\"matrix\"].setValueAt(p3d\[1], 1, 7)\nxform\[\"matrix\"].setValueAt(p3d\[2], 1, 11)\nnuke.toNode(\"Wireframe1\")\[\"line_color\"].setValue(\[0,1,0, 1])\nnode.end()"}
  addUserKnob {13 offset}
@@ -29,8 +29,8 @@ addUserKnob {26 ""}
  addUserKnob {26 ""}
  addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
 }
- add_layer {P P.x P.y P.z}
- add_layer {N N.x N.y N.z}
+add_layer {P P.x P.y P.z}
+add_layer {N N.x N.y N.z}
  Axis2 {
   inputs 0
   translate {0 1 0}
@@ -44,37 +44,6 @@ push 0
   name Axis_orient
   xpos -854
   ypos 32
- }
- Constant {
-  inputs 0
-  channels rgb
-  format "512 512 0 0 512 512 1 square_512"
-  name Constant1
-  xpos -430
-  ypos 402
-  postage_stamp false
- }
- Grid {
-  number 4
-  size {{parent.Wireframe1.line_width*2}}
-  color {0 1 0 1}
-  name Grid1
-  xpos -430
-  ypos 436
- }
- CornerPin2D {
-  to1 {{pt1} {pt1}}
-  to2 {{pt2} {pt2}}
-  to3 {{pt3} {pt3}}
-  to4 {{pt4} {pt4}}
-  invert false
-  from1 {0 0}
-  from2 {512 0}
-  from3 {512 512}
-  from4 {0 512}
-  name CornerPin2D1
-  xpos -430
-  ypos 468
  }
  Input {
   inputs 0
@@ -124,6 +93,151 @@ push 0
   addUserKnob {7 d_fstop l fstop R 0 30}
   d_fstop 16
  }
+set N2a600800 [stack 0]
+ Wireframe {
+  inputs 0
+  line_width 1
+  line_color {0 1 1 1}
+  name Wireframe2
+  xpos 837
+  ypos 126
+ }
+ Input {
+  inputs 0
+  name geo
+  xpos 650
+  ypos 39
+  number 2
+ }
+ ApplyMaterial {
+  inputs 2
+  name ApplyMaterial2
+  xpos 650
+  ypos 126
+ }
+ Input {
+  inputs 0
+  name in
+  xpos 0
+ }
+set N596ba000 [stack 0]
+ Remove {
+  name Remove1
+  xpos -144
+  ypos 305
+ }
+set N596b9c00 [stack 0]
+ ScanlineRender {
+  inputs 3
+  conservative_shader_sampling false
+  motion_vectors_type distance
+  output_shader_vectors true
+  P_channel P
+  N_channel N
+  name ScanlineRender2
+  xpos 650
+  ypos 311
+ }
+set N67a9d400 [stack 0]
+ Shuffle {
+  in P
+  in2 alpha
+  alpha red2
+  name geo_P
+  xpos 600
+  ypos 459
+ }
+push $N596ba000
+ Dot {
+  name Dot1
+  xpos 236
+  ypos 4
+ }
+set N596b8400 [stack 0]
+ Shuffle {
+  in P
+  name src_P
+  xpos 202
+  ypos 87
+ }
+ Merge2 {
+  inputs 2
+  name Merge3
+  xpos 202
+  ypos 459
+  disable {{"!\[exists parent.input2]"}}
+ }
+ NoOp {
+  name P
+  xpos 202
+  ypos 567
+ }
+push $N67a9d400
+ Shuffle {
+  in N
+  in2 alpha
+  alpha red2
+  name geo_N
+  xpos 775
+  ypos 434
+ }
+push $N596b8400
+ Shuffle {
+  in N
+  name src_N
+  xpos 327
+  ypos 87
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 327
+  ypos 434
+  disable {{"!\[exists parent.input2]"}}
+ }
+ NoOp {
+  name N
+  xpos 327
+  ypos 567
+ }
+push $N67a9d400
+ Dot {
+  name Dot3
+  xpos 684
+  ypos 686
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "512 512 0 0 512 512 1 square_512"
+  name Constant1
+  xpos -430
+  ypos 402
+  postage_stamp false
+ }
+ Grid {
+  number 4
+  size {{parent.Wireframe1.line_width*2}}
+  color {0 1 0 1}
+  name Grid1
+  xpos -430
+  ypos 436
+ }
+ CornerPin2D {
+  to1 {{pt1} {pt1}}
+  to2 {{pt2} {pt2}}
+  to3 {{pt3} {pt3}}
+  to4 {{pt4} {pt4}}
+  invert false
+  from1 {0 0}
+  from2 {512 0}
+  from3 {512 512}
+  from4 {0 512}
+  name CornerPin2D1
+  xpos -430
+  ypos 468
+ }
+push $N2a600800
  Wireframe {
   inputs 0
   operation "see through"
@@ -151,7 +265,6 @@ push 0
   image_aspect false
   rows 4
   columns 4
-  uniform_scale 1
   control_points {3 3 3 6
 
 1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0}
@@ -189,17 +302,7 @@ push 0
   xpos -557
   ypos 311
  }
- Input {
-  inputs 0
-  name in
-  xpos 0
- }
-set Nbab4a400 [stack 0]
- Remove {
-  name Remove1
-  xpos -144
-  ypos 305
- }
+push $N596b9c00
  ScanlineRender {
   inputs 3
   conservative_shader_sampling false
@@ -222,7 +325,8 @@ set Nbab4a400 [stack 0]
   xpos -249
   ypos 573
  }
-push $Nbab4a400
+set N596b9000 [stack 0]
+push $N596ba000
  Merge2 {
   inputs 2
   bbox B
@@ -231,29 +335,28 @@ push $Nbab4a400
   xpos 0
   ypos 569
  }
+push $N596b9000
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input0]"}}
+  name Switch2
+  xpos 0
+  ypos 620
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  Achannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue -rgba.alpha}
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge4
+  xpos 0
+  ypos 683
+  disable {{"!\[exists parent.input2]"}}
+ }
  Output {
   name Output1
   xpos 0
-  ypos 749
- }
-push $Nbab4a400
- Dot {
-  name Dot1
-  xpos 236
-  ypos 4
- }
-set Nbab4a000 [stack 0]
- Shuffle {
-  in P
-  name P
-  xpos 202
-  ypos 87
- }
-push $Nbab4a000
- Shuffle {
-  in N
-  name N
-  xpos 327
-  ypos 87
+  ypos 784
  }
 end_group
