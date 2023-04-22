@@ -7,6 +7,7 @@ import W_hotbox, W_hotboxManager
 import dDot
 import gizmo_loader
 import tracker_to_node
+import set_gui
 
 
 ## commands
