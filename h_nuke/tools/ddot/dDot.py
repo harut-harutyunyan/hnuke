@@ -1,3 +1,4 @@
+import os
 from PySide2 import QtCore, QtGui, QtWidgets
 import nuke
 import nukescripts
@@ -14,6 +15,24 @@ QLabel:hover{
     color: #dddddd;
 }
 """
+
+ICONPATH = os.path.dirname(__file__)
+
+
+def set_icon(widget, name=None, size=None):
+    """
+    Sets icon for a widget. Looks in ICONPATH for icon. Olny .png supported
+    @args:
+        widget: QWidget
+        name: string icon name
+        size: tuple height width
+    @return
+    """
+    icon = os.path.join(ICONPATH, name)
+
+    widget.setIcon(QtGui.QIcon(icon))
+    if size:
+        widget.setIconSize(QtCore.QSize(size[0], size[1]))
 
 def tilecolor2rgb(tile_col):
     """
@@ -91,7 +110,12 @@ def get_tile_color(node, mode='hex'):
         list rgb or int hex color
     """
 
-    tile_col = node['tile_color'].getValue()
+    font_color = node["note_font_color"].getValue()
+    if font_color == 0.0:
+        tile_col = node['tile_color'].getValue()
+    else:
+        tile_col = font_color
+
     if tile_col == 0.0:
         tile_col = get_default_color(node)
 
@@ -115,7 +139,9 @@ class DDot(object):
             node.setSelected(False)
 
     @classmethod
-    def get_parent_nodes(cls):
+    def get_parent_nodes(cls, favourites = False):
+        if favourites:
+            return [n for n in nuke.allNodes("Dot") if n.knob("parent") and n.knob("favourite")]
         return [n for n in nuke.allNodes("Dot") if n.knob("parent")]
 
     @classmethod
@@ -279,6 +305,20 @@ class DDot(object):
             if n.knob('child') and n.knob('label'). getValue() == childName:
                 n.setSelected(True)
 
+    @classmethod
+    def is_favourite(cls, dot):
+        if dot.knob("parent") and dot.knob("favourite"):
+            return True
+
+    @classmethod
+    def make_favourite(cls, dot):
+        if not cls.is_favourite(dot):
+            dot.addKnob(nuke.Text_Knob('favourite', 'favourite'))
+
+    @classmethod
+    def un_favourite(cls, dot):
+        if cls.is_favourite(dot):
+            dot.removeKnob(dot.knob("favourite"))
 
 class DDotManager(QtWidgets.QDialog):
     """DDotManager dialog"""
@@ -356,22 +396,31 @@ class DDotManager(QtWidgets.QDialog):
     def create_widgets(self):
         self.close_btn = QtWidgets.QPushButton("Close")
         self.check_inputs_btn = QtWidgets.QPushButton("Check Inputs")
+        self.favourites_btn = QtWidgets.QPushButton()
+        set_icon(self.favourites_btn, "star.svg", (16, 16))
+        self.favourites_btn.setCheckable(True)
         self.shortcuts_list = ShortcutList()
 
         self.link_menu = self.shortcuts_list.link_context_menu
 
     def create_layout(self):
         self.manager_layout = QtWidgets.QVBoxLayout(self)
-        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.upper_btn_layout = QtWidgets.QHBoxLayout()
+        self.lower_btn_layout = QtWidgets.QHBoxLayout()
+
+        self.manager_layout.addLayout(self.upper_btn_layout)
+        self.upper_btn_layout.addWidget(self.favourites_btn)
+        self.upper_btn_layout.addItem(self.spacer())
+        self.upper_btn_layout.addWidget(self.check_inputs_btn)
 
         self.manager_layout.addWidget(self.shortcuts_list)
-        self.btn_layout.addWidget(self.check_inputs_btn)
-        self.btn_layout.addItem(self.spacer())
-        self.btn_layout.addWidget(self.close_btn)
+        # self.lower_btn_layout.addItem(self.spacer())
+        # self.lower_btn_layout.addWidget(self.close_btn)
 
-        self.manager_layout.addLayout(self.btn_layout)
+        # self.manager_layout.addLayout(self.lower_btn_layout)
 
     def create_connections(self):
+        self.favourites_btn.clicked.connect(self.populate)
         self.close_btn.clicked.connect(self.close)
         self.check_inputs_btn.clicked.connect(DDot.check_input)
         self.shortcuts_list.itemDoubleClicked.connect(self.frame_on_link)
@@ -398,6 +447,11 @@ class DDotManager(QtWidgets.QDialog):
         self.link_menu.addAction("Show Children")
         self.link_menu.addAction("Rename Children")
         self.link_menu.addAction("Connection Visibility")
+        self.link_menu.addSeparator()
+        if DDot.is_favourite(nuke.toNode(header_name)):
+            self.link_menu.addAction("UnFavourite")
+        else:
+            self.link_menu.addAction("Make Favourite")
 
         # parent_pos = self.shortcuts_list.mapToGlobal(QtCore.QPoint(0, 0))
         cursor_position = QtGui.QCursor.pos()
@@ -413,6 +467,14 @@ class DDotManager(QtWidgets.QDialog):
                 self._ddot_rename_children()
             elif action_name == "Connection Visibility":
                 self._ddot_connection_vis()
+            elif action_name == "Make Favourite":
+                DDot.make_favourite(nuke.toNode(self.current_item()))
+                if self.favourites_btn.isChecked():
+                    self.populate()
+            elif action_name == "UnFavourite":
+                DDot.un_favourite(nuke.toNode(self.current_item()))
+                if self.favourites_btn.isChecked():
+                    self.populate()
             else:
                 print("{} triggered".format(action_name))
 
@@ -446,7 +508,7 @@ class DDotManager(QtWidgets.QDialog):
 
     def populate(self):
         self.shortcuts_list.clear()
-        parents = DDot.get_parent_nodes()
+        parents = DDot.get_parent_nodes(favourites=self.favourites_btn.isChecked())
         for parent in parents:
             parent_item = QtWidgets.QListWidgetItem()
             parent_item.setSizeHint(QtCore.QSize(ICON_SIZE, ICON_SIZE))
@@ -612,6 +674,11 @@ def dot_to_parent(sel_list):
             for node in sel_list:
                 DDot.connect(parent, node)
 
+def not_none_list(val_list):
+    for val in val_list:
+        if val is not None:
+            return True
+    return False
 
 def ddot_start():
     sel_list = nuke.selectedNodes()
@@ -629,10 +696,10 @@ def ddot_start():
             if node.Class() == "Dot" and not node.knob("parent"):
                 DDot.connect(parent, node)
 
-    elif min([s.Class()=="Dot" for s in sel_list]) and max([s.knob('child') for s in sel_list])==None and max([s.knob('parent') for s in sel_list])==None:
+    elif True in [s.Class()=="Dot" for s in sel_list] and not_none_list([s.knob('child') for s in sel_list])==False and not_none_list([s.knob('parent') for s in sel_list])==False:
         dot_to_parent(sel_list)
 
-    elif max([s.knob('child') for s in sel_list]):
+    elif not_none_list([s.knob('child') for s in sel_list]):
         DDot.auto_connect()
     else:
         for node in sel_list:
