@@ -1,8 +1,8 @@
 Group {
- name ScreenDilate
+ name AlphaDilate
  tile_color 0x8535d5ff
  lock_connections true
- addUserKnob {20 Dilate l "Screen Dilate"}
+ addUserKnob {20 Dilate l "Alpha Dilate"}
  addUserKnob {41 screenClipMin l "clip black" T Keylight1.screenClipMin}
  addUserKnob {41 screenClipMax l "clip white" T Keylight1.screenClipMax}
  addUserKnob {26 ""}
