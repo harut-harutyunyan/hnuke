@@ -2,12 +2,13 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: BBox Union/B
+# NAME: Over/Under
 #
 #----------------------------------------------------------------------------------------------------------
 
 for i in nuke.selectedNodes():
-    if i.knob('bbox').value() == 'union':
-        i.knob('bbox').setValue('B')
-    else:
-        i.knob('bbox').setValue('union')
+	i.knob('output').setValue('rgba')
+	if i.knob('operation').value() == 'over':
+	    i.knob('operation').setValue('under')
+	else:
+	    i.knob('operation').setValue('over')

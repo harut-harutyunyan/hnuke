@@ -33,6 +33,11 @@ if "QS_ROOT_PATH" in os.environ:
 
 #___________________________________________________________________________________________________________________
 
+# animation menu
+
+m = nuke.menu("Animation")
+m.addSeparator()
+m.addCommand("$GUI", 'set_gui.gui_val()')
 
 ## knob defaults
 

@@ -37,7 +37,3 @@ def gui_val():
         render_num = panel.render_num.getValue()
         expression = "[python {} if nuke.executing() else {}]".format(render_num, work_num)
         k.setExpression(expression)
-
-
-m = nuke.menu("Animation")
-m.addCommand("$GUI", "gui_val()")
