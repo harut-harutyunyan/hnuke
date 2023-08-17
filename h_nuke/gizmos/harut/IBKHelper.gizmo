@@ -443,7 +443,7 @@ set N197a2c00 [stack 0]
 set N197e1c00 [stack 0]
  EdgeBlur {
   channels rgba
-  size 50
+  size 5
   name EdgeBlur3
   xpos -1125
   ypos 324
