@@ -36,7 +36,7 @@ Group {
  __hsv_ch saturation
  addUserKnob {6 __hsv_3d l "3D view" -STARTLINE +HIDDEN}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {26 credit l "" t "© Harut Harutyunyan\nhar8unyan@gmail.com\n2022" +STARTLINE T "<font><br/><b><a href=\"https://linktr.ee/har8unyan\" style=\"color:#666\">Harut Harutyunyan</a></b></font>"}
  addUserKnob {20 checklist l Checklist}
  addUserKnob {1 check}
  addUserKnob {22 add l Add -STARTLINE T "n=nuke.thisNode()\nch = n\[\"check\"].value()\nchname=ch.replace(\" \", \"_\")\nknob = nuke.Boolean_Knob('ch__'+chname.lower(), '<font color=\"yellow\">'+ch)\nknob.setFlag(nuke.STARTLINE)\nn.addKnob(knob)\nn\[\"check\"].setValue(\"\")"}

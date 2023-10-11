@@ -12,16 +12,12 @@ sel = nuke.selectedNodes()
 if sel:
     sel = sel[0]
     dependent = nuke.dependentNodes(nuke.INPUTS | nuke.HIDDEN_INPUTS, sel)
-
-    if nuke.Root()["colorManagement"].getValue() > 0:
-        node_class = "OCIOLogConvert"
-    else:
-        node_class = "Log2Lin"
-    
+    node_class = "OCIOColorSpace"
     lin_log = nuke.createNode(node_class, inpanel=False)
-    lin_log["operation"].setValue(1)
+    lin_log["out_colorspace"].setValue("compositing_log")
     lin_log.setName(node_class+"_to_LOG")
     log_lin = nuke.createNode(node_class, inpanel=False)
+    log_lin["in_colorspace"].setValue("compositing_log")
     log_lin.setName(node_class+"_to_LIN")
     
     for n in dependent:

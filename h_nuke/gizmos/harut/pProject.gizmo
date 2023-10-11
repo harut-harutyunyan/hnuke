@@ -24,7 +24,7 @@ Group {
  addUserKnob {7 normal_mix l mix +HIDDEN}
  normal_mix 1
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {26 credit l "" t "© Harut Harutyunyan\nhar8unyan@gmail.com\n2022" +STARTLINE T "<font><br/><b><a href=\"https://linktr.ee/har8unyan\" style=\"color:#666\">Harut Harutyunyan</a></b></font>"}
  addUserKnob {20 Advanced}
  addUserKnob {6 calc_v l "calculate vaperture" t "calculate fov based on image aspect ratio" -STARTLINE}
  calc_v true

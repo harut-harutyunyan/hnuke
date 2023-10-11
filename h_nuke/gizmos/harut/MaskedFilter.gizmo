@@ -13,7 +13,7 @@ addUserKnob {41 blur_mask l "blur samples" T Blur2.size}
 addUserKnob {26 "" +STARTLINE}
 addUserKnob {41 control l "control expression" t "parent this to the value you want to control" T TimeBlur4.exp}
 addUserKnob {26 ""}
-addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {26 credit l "" t "© Harut Harutyunyan\nhar8unyan@gmail.com\n2022" +STARTLINE T "<font><br/><b><a href=\"https://linktr.ee/har8unyan\" style=\"color:#666\">Harut Harutyunyan</a></b></font>"}
 }
 Input {
 inputs 0

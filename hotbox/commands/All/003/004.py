@@ -2,76 +2,44 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: DiffClamped
+# NAME: GUI Switch
 #
 #----------------------------------------------------------------------------------------------------------
 
+def create_switch():
+    grp = nuke.nodes.Group(tile_color = 4283782655)
+    grp.setName("gui_switch")
+    grp.begin()
+    inpt1 = nuke.nodes.Input(name="render")
+    inpt2 = nuke.nodes.Input(name="work")
+    sw = nuke.nodes.Switch()
+    sw["which"].setExpression("[python not nuke.executing()]")
+    sw.setInput(0, inpt1)
+    sw.setInput(1, inpt2)
+    output = nuke.nodes.Output()
+    output.setInput(0, sw)
+    grp.end()
+
+    return grp
+
+
+node = nuke.selectedNode()
+
+dot = nuke.nodes.Dot()
+sw = create_switch()
+sw.setXYpos(node.xpos(), node.ypos()+node.screenHeight()*2)
+dot.setInput(0, node.input(0))
+dot.setXYpos(node.xpos()-5+int(node.screenWidth()/2), node.ypos()-node.screenHeight())
+node.setXpos(node.xpos()+node.screenWidth())
+node.setInput(0, dot)
+sw.setInput(0, node)
+sw.setInput(1, dot)
 
 
 
-if nuke.NUKE_VERSION_MAJOR < 11:
-    from PySide import QtGui as QtWidgets
-else:
-    from PySide2 import QtWidgets
-
-script = r'''set cut_paste_input [stack 0]
-push $cut_paste_input
-push 0
-Group {
- inputs 2
- name DifferenceClamped
- selected true
- xpos 700
- ypos -206
- addUserKnob {20 User}
- addUserKnob {41 thresh l threshhold T Expression1.thresh}
-}
- Input {
-  inputs 0
-  name A
-  xpos 503
-  ypos -295
-  number 1
- }
- Input {
-  inputs 0
-  name B
-  selected true
-  xpos 659
-  ypos -353
- }
- Difference {
-  inputs 2
-  name Difference1
-  xpos 659
-  ypos -301
- }
- Expression {
-  expr3 a>thresh/10000?1:0
-  name Expression1
-  xpos 659
-  ypos -263
-  addUserKnob {20 User}
-  addUserKnob {7 thresh}
-  thresh 0.1
- }
- Grade {
-  white {1 0.3333333433 0.3333333433 1}
-  multiply 1.25
-  maskChannelInput rgba.alpha
-  name Grade3
-  xpos 659
-  ypos -208
- }
- Output {
-  name Output1
-  xpos 663
-  ypos -144
- }
-end_group
-'''
-
-
-clipboard = QtWidgets.QApplication.clipboard()
-clipboard.setText(script)
-nuke.nodePaste('%clipboard%')
+dependent = nuke.dependentNodes(nuke.INPUTS | nuke.HIDDEN_INPUTS, node)
+for n in dependent:
+    for i in range(n.inputs()):
+        if n.input(i) == node:
+            n.setInput(i, sw)
+            continue

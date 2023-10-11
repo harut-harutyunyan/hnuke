@@ -27,7 +27,7 @@ Group {
  addUserKnob {41 line_width l "line width" T Wireframe1.line_width}
  addUserKnob {41 world_matrix l "" +STARTLINE +INVISIBLE T Axis_orient.world_matrix}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {26 credit l "" t "© Harut Harutyunyan\nhar8unyan@gmail.com\n2022" +STARTLINE T "<font><br/><b><a href=\"https://linktr.ee/har8unyan\" style=\"color:#666\">Harut Harutyunyan</a></b></font>"}
 }
 add_layer {P P.x P.y P.z}
 add_layer {N N.x N.y N.z}

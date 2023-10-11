@@ -28,7 +28,7 @@ Group {
  prj_frame 1001
  addUserKnob {22 prj_set_frame l "set to current" -STARTLINE +HIDDEN T "nuke.thisNode()\[\"prj_frame\"].setValue(nuke.frame())"}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {26 credit l "" t "© Harut Harutyunyan\nhar8unyan@gmail.com\n2022" +STARTLINE T "<font><br/><b><a href=\"https://linktr.ee/har8unyan\" style=\"color:#666\">Harut Harutyunyan</a></b></font>"}
 }
  BackdropNode {
   inputs 0

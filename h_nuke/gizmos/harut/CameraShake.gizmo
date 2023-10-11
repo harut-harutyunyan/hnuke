@@ -46,7 +46,7 @@ Group {
  addUserKnob {12 output_val l output}
  output_val {{(jitter_on==1?jitter.translate.x:0)+(shake_on==1?shake.translate.x:0)+(float_on==1?float.translate.x:0)} {(jitter_on==1?jitter.translate.y:0)+(shake_on==1?shake.translate.y:0)+(float_on==1?float.translate.y:0)}}
  addUserKnob {26 ""}
- addUserKnob {26 credit l "" +STARTLINE T "<font style=\"color:#666\"><br/><b>Harut Harutyunyan</b> - har8unyan@gmail.com</font>"}
+ addUserKnob {26 credit l "" t "© Harut Harutyunyan\nhar8unyan@gmail.com\n2022" +STARTLINE T "<font><br/><b><a href=\"https://linktr.ee/har8unyan\" style=\"color:#666\">Harut Harutyunyan</a></b></font>"}
 }
  Input {
   inputs 0
