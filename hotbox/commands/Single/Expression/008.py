@@ -35,6 +35,9 @@ for node in sel:
     
     knob = nuke.Text_Knob('div', '')
     node.addKnob(knob)
+    knob = nuke.Link_Knob('maskChannelInput_01', 'mask')
+    knob.setLink('this.maskChannelInput')
+    node.addKnob(knob)
     knob = nuke.Link_Knob('unpremult_01', 'unpremult')
     knob.setLink('this.unpremult')
     node.addKnob(knob)

@@ -4,10 +4,11 @@ import nuke
 load = [
     "gizmos",
     "scripts",
-    "tools/look_manager",
+    # "tools/look_manager",
     "tools/w_hotbox",
-    "tools/ddot",
+    # "tools/ddot",
     "tools/quick_share",
+    "tools/stamps",
     ]
 
 current_dir = os.path.dirname(__file__)

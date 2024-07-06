@@ -4,7 +4,7 @@ import nuke
 import nukescripts
 import W_smartAlign
 import W_hotbox, W_hotboxManager
-import dDot
+# import dDot
 import gizmo_loader
 import tracker_to_node
 import set_gui
