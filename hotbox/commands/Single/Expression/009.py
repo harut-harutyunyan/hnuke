@@ -11,7 +11,6 @@ sel = nuke.selectedNodes()
 for node in sel:
     #node = nuke.createNode("Expression")
     node.setName("pNoise1")
-    sel = nuke.selectedNodes()
     
     knob = nuke.Tab_Knob('pNoise', 'pNoise')
     node.addKnob(knob)
