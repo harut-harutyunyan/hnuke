@@ -2,12 +2,14 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Set Color
+# NAME: Mirror
 #
 #----------------------------------------------------------------------------------------------------------
 
-sel = nuke.selectedNodes()
-if sel:
-    col = nuke.getColor()
-    for node in sel:
-        node["tile_color"].setValue(col)
+selection = nuke.selectedNodes()
+allXpos = [i.xpos()+(i.screenWidth()/2) for i in selection]
+minXpos = min(allXpos)
+maxXpos = max(allXpos)
+
+for index, i in enumerate(selection):
+    i.setXpos(int((maxXpos - allXpos[index] + minXpos)-(i.screenWidth()/2)))

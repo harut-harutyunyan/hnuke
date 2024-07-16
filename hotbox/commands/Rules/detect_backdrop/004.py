@@ -2,12 +2,11 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: 1
-# COLOR: #111111
-# TEXTCOLOR: #ff5555
+# NAME: khaki
+# COLOR: #5a5b44
 #
 #----------------------------------------------------------------------------------------------------------
 
-from look_manager import LookManagerUtil
 for node in nuke.selectedNodes():
-    LookManagerUtil.set_look(node, 1)
+    if node.Class() == "BackdropNode":
+        node["tile_color"].setValue(1515930879)

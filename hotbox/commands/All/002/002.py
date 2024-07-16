@@ -2,16 +2,13 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# NAME: Stencil
+# NAME: Keylight
 #
 #----------------------------------------------------------------------------------------------------------
 
-sel = nuke.selectedNodes()
-if len(sel) == 1:
-    if sel[0].Class()=="ChannelMerge":
-        cm = sel[0]
-    else:
-        cm = nuke.createNode("ChannelMerge", inpanel=False)
-else:
-    cm = nuke.createNode("ChannelMerge", inpanel=False)
-cm["operation"].setValue("stencil")
+kl = nuke.createNode("Keylight", inpanel=False)
+gr = nuke.createNode("Grade", inpanel=False)
+gr["channels"].setValue("alpha")
+gr["white_clamp"].setValue(1)
+gr.setInput(0, kl)
+gr.setXYpos(kl.xpos(), kl.ypos()+kl.screenHeight()+25)

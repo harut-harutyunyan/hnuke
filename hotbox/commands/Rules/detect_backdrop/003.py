@@ -2,12 +2,11 @@
 #
 # AUTOMATICALLY GENERATED FILE TO BE USED BY W_HOTBOX
 #
-# IGNORE CLASSES: 0
+# NAME: white
+# COLOR: #777777
 #
 #----------------------------------------------------------------------------------------------------------
 
-sel = nuke.selectedNodes()
-if sel:
-    ret = sel[0].knob("__look_n_1")
-else:
-    ret = False
+for node in nuke.selectedNodes():
+    if node.Class() == "BackdropNode":
+        node["tile_color"].setValue(2004318207)
