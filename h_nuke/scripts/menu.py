@@ -49,8 +49,6 @@ nuke.knobDefault("ColorBars.postage_stamp", "False")
 nuke.knobDefault("Views.views_colours true")
 nuke.knobDefault("Tracker4.zoom_window_behaviour", "0")
 nuke.knobDefault("Colorspace.label", "[value colorspace_in] -> [value colorspace_out]")
-nuke.knobDefault("Shuffle.label", "<font size=5 color=orange><b>[value in]")
-nuke.knobDefault("Shuffle2.label", "<font size=5 color=orange><b>[value in1]")
 
 #___________________________________________________________________________________________________________________
 
