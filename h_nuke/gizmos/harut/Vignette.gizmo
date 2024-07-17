@@ -1,0 +1,124 @@
+Group {
+ name Vignette
+ addUserKnob {20 User l Vignette}
+ addUserKnob {14 size l scale R 0 100}
+ size 1
+ addUserKnob {41 whitepoint l falloff T Grade2.whitepoint}
+ addUserKnob {6 outputmask l "output mask" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {41 black l lift T Grade1.black}
+ addUserKnob {41 multiply T Grade1.multiply}
+ addUserKnob {41 gamma T Grade1.gamma}
+ addUserKnob {26 ""}
+}
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width {{width}}
+  box_height {{width}}
+  box_fixed true
+  pbb true
+  name Reformat2
+  xpos 777
+  ypos -484
+ }
+ Expression {
+  expr0 "(x+.5) / width"
+  expr1 "(y+.5) / height"
+  name Expression1
+  xpos 777
+  ypos -413
+ }
+ Add {
+  channels rgb
+  value {-0.5 -0.5 0 1}
+  name center
+  xpos 777
+  ypos -333
+ }
+ Multiply {
+  channels rgb
+  value {{1/parent.size.w} {1/parent.size.h} 0 0}
+  name Multiply2
+  xpos 777
+  ypos -243
+ }
+ Expression {
+  expr3 1-(sqrt((r*r)+(g*g)+(b*b)))
+  name SphereMatte1
+  xpos 777
+  ypos -205
+ }
+ Invert {
+  channels alpha
+  name Invert1
+  xpos 777
+  ypos -163
+ }
+ Expression {
+  expr3 smoothstep(0,1,a)
+  name Smooth
+  xpos 777
+  ypos -125
+ }
+ Grade {
+  channels alpha
+  blackpoint 0.3
+  white_clamp true
+  name Grade2
+  xpos 777
+  ypos -80
+ }
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 alpha
+  fromInput2 {{0} B}
+  mappings "4 rgba.alpha 0 0 rgba.red 0 0 rgba.alpha 0 0 rgba.green 0 1 rgba.alpha 0 0 rgba.blue 0 2 rgba.alpha 0 0 rgba.alpha 0 3"
+  name Shuffle1
+  tile_color 0xfefefeff
+  xpos 777
+  ypos 61
+ }
+ Reformat {
+  pbb true
+  name Reformat3
+  xpos 777
+  ypos 112
+ }
+ Crop {
+  box {0 0 {width} {height}}
+  name Crop1
+  xpos 777
+  ypos 138
+ }
+set N2f901800 [stack 0]
+push $N2f901800
+ Input {
+  inputs 0
+  name Input
+  xpos 385
+  ypos -180
+ }
+ Grade {
+  inputs 1+1
+  multiply 0
+  black_clamp false
+  name Grade1
+  xpos 385
+  ypos 138
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos 385
+  ypos 247
+  disable {{1-parent.outputmask}}
+ }
+ Output {
+  name Output1
+  xpos 385
+  ypos 598
+ }
+end_group
