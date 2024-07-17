@@ -32,5 +32,5 @@ bd["appearance"].setValue(1)
 bd["border_width"].setValue(4)
 txt = nuke.getInput("Change label", "")
 if txt:
-    bd["label"].setValue("<center><font size=5 color=white><b>"+txt)
+    bd["label"].setValue("<center><font size=5 color=white><b>"+txt.upper())
     bd["note_font"].setValue("Arial")
