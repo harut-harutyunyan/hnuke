@@ -49,6 +49,10 @@ nuke.knobDefault("ColorBars.postage_stamp", "False")
 nuke.knobDefault("Views.views_colours true")
 nuke.knobDefault("Tracker4.zoom_window_behaviour", "0")
 nuke.knobDefault("Colorspace.label", "[value colorspace_in] -> [value colorspace_out]")
+nuke.knobDefault("Write.channels", "rgba")
+nuke.knobDefault("Roto.cliptype", "0")
+nuke.knobDefault("RotoPaint.cliptype", "0")
+nuke.knobDefault("Project3D2.crop", "0")
 
 #___________________________________________________________________________________________________________________
 

@@ -4,9 +4,6 @@ push $cut_paste_input
 Group {
  name TrueExponentialBlur
  tile_color 0xcc804eff
- selected true
- xpos -690
- ypos -463
  addUserKnob {20 BlankKernel}
  addUserKnob {41 "Local GPU: " T BlinkScript2.gpuName}
  addUserKnob {41 "Use GPU if Available" T BlinkScript2.useGPUIfAvailable}
