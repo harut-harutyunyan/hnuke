@@ -1,0 +1,86 @@
+Group {
+ inputs 2
+ name PlusScreenHypot
+ tile_color 0x4b5ec6ff
+ addUserKnob {20 User l Dissolve}
+ addUserKnob {26 txt l "" +STARTLINE T "Plus (0) -> Screen (1) -> Hypot (2)"}
+ addUserKnob {7 which l Which R 0 2}
+ which 1
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 which_1 l Mix T Dissolve2.which}
+}
+ Input {
+  inputs 0
+  name A
+  xpos -108
+  ypos -7
+  number 1
+ }
+set N591a9c00 [stack 0]
+ Input {
+  inputs 0
+  name B
+  xpos 125
+  ypos -8
+ }
+set N8ce53400 [stack 0]
+ Merge2 {
+  inputs 2
+  operation hypot
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge2
+  xpos 125
+  ypos 138
+ }
+push 0
+push $N591a9c00
+push $N8ce53400
+ Merge2 {
+  inputs 2
+  operation screen
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge1
+  xpos 15
+  ypos 135
+ }
+push $N591a9c00
+push $N8ce53400
+ Merge2 {
+  inputs 2
+  operation plus
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Plus
+  xpos -108
+  ypos 135
+ }
+ Dissolve {
+  inputs 3+1
+  which {{parent.which}}
+  name Dissolve1
+  xpos 15
+  ypos 251
+ }
+push $N8ce53400
+ Dot {
+  name Dot1
+  xpos 263
+  ypos -4
+ }
+ Dot {
+  name Dot6
+  xpos 263
+  ypos 381
+ }
+ Dissolve {
+  inputs 2
+  which 1
+  name Dissolve2
+  xpos 15
+  ypos 371
+ }
+ Output {
+  name Output1
+  xpos 15
+  ypos 447
+ }
+end_group
