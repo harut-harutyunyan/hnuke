@@ -107,7 +107,7 @@ push $N1dc1e040
  }
 set N20c02b40 [stack 0]
  Switch {
-  which {{custom_despill}}
+  which {{parent.mode==3}}
   name despill
   xpos 207
   ypos 140

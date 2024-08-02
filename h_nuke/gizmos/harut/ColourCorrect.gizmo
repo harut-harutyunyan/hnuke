@@ -1,0 +1,146 @@
+Group {
+ name ColourCorrect
+ tile_color 0x8535d5ff
+ addUserKnob {20 colorcorrect l ColorCorrect}
+ addUserKnob {41 saturation T Saturation1.saturation}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {7 tint R -1 1}
+ tint {0}
+ addUserKnob {7 temperature R -1 1}
+ temperature {0}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 contrast T Contrast.contrast}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 multiply T Grade3.multiply}
+ addUserKnob {41 gamma T Grade3.gamma}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 saturation_1 l saturation T Saturation2.saturation}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {6 black_clamp l "black clamp" +STARTLINE}
+ black_clamp true
+ addUserKnob {6 white_clamp l "white clamp" -STARTLINE}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannel l "mask channel" T Keymix1.maskChannel}
+ addUserKnob {7 mix}
+ mix 1
+}
+ Input {
+  inputs 0
+  name mask
+  xpos 192
+  ypos 635
+  number 1
+ }
+ Invert {
+  name Invert1
+  xpos 192
+  ypos 757
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 0
+  ypos -316
+ }
+set N43186400 [stack 0]
+ Dot {
+  name Dot2
+  xpos -162
+  ypos -312
+ }
+ Dot {
+  name Dot1
+  xpos -162
+  ypos 656
+ }
+set Ned804000 [stack 0]
+push $Ned804000
+push $N43186400
+ Saturation {
+  name Saturation1
+  xpos 0
+  ypos -194
+ }
+ Colorspace {
+  colorspace_out CIE-XYZ
+  name Colorspace3
+  label "\[value colorspace_in] -> \[value colorspace_out]"
+  xpos 0
+  ypos -67
+ }
+ Multiply {
+  value {1 {(tint+1)*0.1+0.9} {(temperature+1)*0.5+0.5} 1}
+  name Multiply1
+  xpos 0
+  ypos 132
+ }
+ Colorspace {
+  colorspace_in CIE-XYZ
+  name Colorspace4
+  label "\[value colorspace_in] -> \[value colorspace_out]"
+  xpos 0
+  ypos 194
+ }
+ Grade {
+  multiply {1}
+  gamma {1}
+  name Grade3
+  xpos 0
+  ypos 409
+ }
+ Expression {
+  temp_name0 gamma
+  temp_expr0 1/contrast
+  temp_name1 mult
+  temp_expr1 "pow(pivot, 1-contrast)"
+  expr0 "pow(r, 1/gamma) * mult"
+  expr1 "pow(g, 1/gamma) * mult"
+  expr2 "pow(b, 1/gamma) * mult"
+  name Contrast
+  tile_color 0x7aa9ffff
+  xpos 0
+  ypos 495
+  addUserKnob {20 cont_tab l Contrast}
+  addUserKnob {7 contrast R 0.001 3}
+  contrast 1
+  addUserKnob {7 pivot}
+  pivot 0.18
+  addUserKnob {26 div l "" +STARTLINE}
+  addUserKnob {41 maskChannelInput_01 l mask T this.maskChannelInput}
+  addUserKnob {41 unpremult_01 l unpremult T this.unpremult}
+  addUserKnob {41 mix_01 l mix T this.mix}
+ }
+ Saturation {
+  name Saturation2
+  xpos 0
+  ypos 545
+ }
+ Clamp {
+  channels rgb
+  minimum_enable {{parent.black_clamp}}
+  maximum_enable {{parent.white_clamp}}
+  name Clamp1
+  xpos 0
+  ypos 595
+ }
+ Merge2 {
+  inputs 2
+  operation copy
+  mix {{1-parent.mix}}
+  name Merge1
+  xpos 0
+  ypos 652
+ }
+ Keymix {
+  inputs 3
+  channels rgb
+  name Keymix1
+  xpos 0
+  ypos 763
+ }
+ Output {
+  name Output1
+  xpos 0
+  ypos 871
+ }
+end_group
