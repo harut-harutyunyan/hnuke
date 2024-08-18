@@ -53,6 +53,7 @@ nuke.knobDefault("Write.channels", "rgba")
 nuke.knobDefault("Roto.cliptype", "0")
 nuke.knobDefault("RotoPaint.cliptype", "0")
 nuke.knobDefault("Project3D2.crop", "0")
+nuke.knobDefault("STMap.uv", "rgb")
 
 #___________________________________________________________________________________________________________________
 
