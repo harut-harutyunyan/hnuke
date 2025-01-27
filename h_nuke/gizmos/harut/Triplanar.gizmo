@@ -1,0 +1,192 @@
+Group {
+ inputs 3
+ name triplanar
+ selected true
+ xpos 1372
+ ypos 440
+ addUserKnob {20 User}
+ addUserKnob {41 blend T Grade1.mix}
+}
+ Input {
+  inputs 0
+  name N
+  xpos 330
+  ypos 552
+  number 1
+ }
+ Expression {
+  expr0 abs(r)
+  expr1 abs(g)
+  expr2 abs(b)
+  name Expression7
+  xpos 330
+  ypos 747
+ }
+set N57436c00 [stack 0]
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle6
+  tile_color 0xccff
+  xpos 570
+  ypos 822
+ }
+ Grade {
+  channels alpha
+  blackpoint 0.6
+  whitepoint 0.85
+  white_clamp true
+  name Grade1
+  xpos 570
+  ypos 872
+ }
+ set Cb10a4000 [stack 0]
+ Input {
+  inputs 0
+  name P
+  xpos -284
+  ypos 251
+ }
+ Dot {
+  name Dot1
+  xpos -250
+  ypos 439
+ }
+set N579bec00 [stack 0]
+ Expression {
+  expr0 r-floor(r)
+  expr1 g-floor(g)
+  expr2 0
+  name Expression6
+  tile_color 0x55bfffff
+  xpos -422
+  ypos 614
+ }
+ Input {
+  inputs 0
+  name img
+  xpos -647
+  ypos 641
+  number 2
+ }
+ Dot {
+  name Dot2
+  xpos -613
+  ypos 795
+ }
+set N8e113000 [stack 0]
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap1
+  xpos -422
+  ypos 785
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge3
+  xpos -422
+  ypos 1285
+ }
+push $N57436c00
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle5
+  tile_color 0xcc00ff
+  xpos 450
+  ypos 822
+ }
+clone $Cb10a4000 {
+  xpos 450
+  ypos 872
+  selected false
+ }
+push $N579bec00
+ Expression {
+  expr0 r-floor(r)
+  expr1 b-floor(b)
+  expr2 0
+  name Expression1
+  tile_color 0x6aff55ff
+  xpos -284
+  ypos 615
+ }
+push $N8e113000
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap2
+  xpos -284
+  ypos 855
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge2
+  xpos -284
+  ypos 1155
+ }
+ Merge2 {
+  inputs 2
+  operation max
+  name Merge4
+  xpos -284
+  ypos 1455
+ }
+push $N57436c00
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle4
+  tile_color 0xcc0000ff
+  xpos 330
+  ypos 822
+ }
+clone $Cb10a4000 {
+  xpos 330
+  ypos 872
+  selected true
+ }
+push $N579bec00
+ Expression {
+  expr0 g-floor(g)
+  expr1 b-floor(b)
+  expr2 0
+  name Expression5
+  tile_color 0xff5555ff
+  xpos -154
+  ypos 620
+ }
+push $N8e113000
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap3
+  xpos -154
+  ypos 938
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge1
+  xpos -154
+  ypos 1031
+ }
+ Merge2 {
+  inputs 2
+  operation max
+  name Merge5
+  xpos -154
+  ypos 1590
+ }
+ Output {
+  name Output1
+  xpos -154
+  ypos 1771
+ }
+end_group
